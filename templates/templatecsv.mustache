@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div>
+    <div class="float-right">
+        <form action="" method="post">
+            <input type="hidden" value="csv" name="1" id="ok">
+            <input type="hidden" value='{{singlecsv}}' name="singlecsv">
+            <input type="submit" value='{{csvgen}}' name="csv" id='csv' class="btn btn-primary">
+        </form>
+    </div>
+</div>
+
+<div class="padding-top-bottom">
+    <h5>Download CSV</h5>
+    <ul id='link'>
+        {{#filenamearray}}
+        <li>
+          <i class='fa fa-download'></i>
+          <a href='export.php?f={{.}}'>Download {{.}}</a>
+        </li>
+        {{/filenamearray}}
+    </ul>
+</div>
+
+</body>
+</html>
+
