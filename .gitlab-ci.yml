@@ -14,7 +14,7 @@ fortifySast:
     - fortifyclient.bat uploadFPR -url="${FORTIFY_SSC_URL}" --file="${FORTIFY_PATH_REPORT}"/"${CI_PROJECT_NAME}".fpr -application="${CI_PROJECT_NAME}" -applicationVersion=Current -authtoken="${FORTIFY_AUTHTOKEN}"
   allow_failure: true
   only:
-    - general_fix # or the name of your main branch
+    - master # or the name of your main branch
   when: manual
 
 sonarqube-check:
@@ -33,7 +33,7 @@ sonarqube-check:
     - sonar-scanner
   allow_failure: true
   only:
-    - general_fix # or the name of your main branch
+    - master # or the name of your main branch
 
 generate_artifact:
   stage: artifact
