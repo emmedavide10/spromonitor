@@ -65,7 +65,7 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight, $waistcircumference, $glicemy, $title = '') {
+    public function generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight, $waistcircumference, $glicemy, $title = ''): string {
         global $OUTPUT;
 
         // Create chart series for each data array.
@@ -89,7 +89,7 @@ class utility {
         $chart->set_labels($arrayglicemia[1]);
 
         // Render the chart using the Moodle output renderer.
-        echo $OUTPUT->render($chart);
+        return $OUTPUT->render($chart);
     }
 
     /**
@@ -136,7 +136,7 @@ class utility {
                        FROM {surveyprofield_numeric} num
                        WHERE num.variable = :circvita';
         $resultitem = $DB->get_record_sql($itemsql, ['circvita' => 'misurazione vita']);
-        $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];               
+        $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];
         $result = $DB->get_records_sql($query, $queryparam);
         array_push($results, $result);
 
@@ -146,10 +146,10 @@ class utility {
                        WHERE num.variable = :glicemiavarname';
 
         $resultitem = $DB->get_record_sql($itemsql, ['glicemiavarname' => 'glicemia']);
-        $glicemiaparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];         
+        $glicemiaparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];
         $result = $DB->get_records_sql($query, $glicemiaparam);
         array_push($results, $result);
-   
+
 
         // Return the results array.
         return $results;
@@ -212,7 +212,6 @@ class utility {
             echo \html_writer::tag('h5', $message);
         } else {
             // Otherwise, generate the chart with the specified title.
-            $title = $title;
             echo \html_writer::tag(
                 'div class="padding-top-bottom"',
                 $this->generatechart($arraypeso, $arrayvita, $arrayglicemia, $title, $weight, $waistcircumference, $glicemy)
@@ -245,7 +244,7 @@ class utility {
             // The second element of $arraypeso is the creation date, which is always the same
             // for all three parameters.
             $elementarray = array($arraypeso[1][$j], $arraypeso[0][$j], $arrayvita[0][$j], $arrayglicemia[0][$j]);
-            
+
             // Add the new array to the merged array.
             array_push($mergedarray, $elementarray);
         }
@@ -286,7 +285,7 @@ class utility {
 
             // Loop through the merged array and create a new array for each row of data.
             foreach ($mergedarray as $elementarray) {
-                for ($j = 0; $j < count($mergedarray); $j++) {
+                /* for ($j = 0; $j < count($mergedarray); $j++) {
                     $newelement = array(
                         $date => $elementarray[$j], $weight => $elementarray[$j + 1],
                         $waistcircumference => $elementarray[$j + 2],
@@ -294,7 +293,13 @@ class utility {
                     );
                     array_push($csv, $newelement);
                     break;
-                }
+                } */
+                $newelement = array(
+                    $date => $elementarray[0], $weight => $elementarray[1],
+                    $waistcircumference => $elementarray[2],
+                    $glicemy => $elementarray[3]
+                );
+                array_push($csv, $newelement);
             }
 
             // Loop through the data and write each row to the CSV file.
