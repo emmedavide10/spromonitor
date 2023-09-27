@@ -24,7 +24,7 @@
 
 use tool_monitoring\utility;
 
-require(__DIR__ . '/../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,8 +36,6 @@ $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT); // Course_module id.
 
-require_login();
-
 if (!isset($username)) {
     $username = $singlecsv;
 }
@@ -46,7 +44,7 @@ $utility = new utility();
 
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
 
-if($courseid == 0 || !isset($courseid)){
+if ($courseid == 0 || !isset($courseid)) {
     $courseid = $COURSE->id;
 }
 $context = \context_course::instance($courseid);
