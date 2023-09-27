@@ -285,15 +285,6 @@ class utility {
 
             // Loop through the merged array and create a new array for each row of data.
             foreach ($mergedarray as $elementarray) {
-                /* for ($j = 0; $j < count($mergedarray); $j++) {
-                    $newelement = array(
-                        $date => $elementarray[$j], $weight => $elementarray[$j + 1],
-                        $waistcircumference => $elementarray[$j + 2],
-                        $glicemy => $elementarray[$j + 3]
-                    );
-                    array_push($csv, $newelement);
-                    break;
-                } */
                 $newelement = array(
                     $date => $elementarray[0], $weight => $elementarray[1],
                     $waistcircumference => $elementarray[2],
