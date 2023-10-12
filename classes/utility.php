@@ -101,7 +101,7 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($userid = null) {
+    public function executequeries($courseid, $userid = null) {
         global $DB, $USER;
 
         // If $userid argument is not provided, use the current user.
@@ -115,37 +115,49 @@ class utility {
 
         // Query to select SurveyPro module submissions based on user and specific module item.
         $query = 'SELECT s.timecreated, a.content
-              FROM {surveypro_submission} s
-                  JOIN {surveypro_answer} a ON a.submissionid = s.id
-              WHERE s.status = :status
-              AND s.userid = :userid
-              AND a.itemid = :itemid';
+                  FROM {surveypro_submission} s
+                      JOIN {surveypro_answer} a ON a.submissionid = s.id
+                  WHERE s.status = :status
+                  AND s.userid = :userid
+                  AND a.itemid = :itemid';
 
         // Parameters and query to select the "peso" item from SurveyPro module.
         $itemsql = 'SELECT num.itemid
-                   FROM {surveyprofield_numeric} num
-                   WHERE num.variable = :pesovarname';
-        $resultitem = $DB->get_record_sql($itemsql, ['pesovarname' => 'peso']);
-        $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];
+                    FROM {surveyprofield_numeric} num
+                        JOIN {surveypro_item} i ON i.id = num.itemid
+                        JOIN {surveypro} sp ON sp.id = i.surveyproid
+                    WHERE num.variable = :pesovarname
+                        AND sp.course = :courseid';
+        $resultitem = $DB->get_record_sql($itemsql, ['pesovarname' => 'peso', 'courseid' => $courseid]);
+
+        $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$resultitem->itemid];
         $result = $DB->get_records_sql($query, $queryparam);
         array_push($results, $result);
 
 
         // Parameters and query to select the "misurazione vita" item from SurveyPro module.
         $itemsql = 'SELECT num.itemid
-                       FROM {surveyprofield_numeric} num
-                       WHERE num.variable = :circvita';
-        $resultitem = $DB->get_record_sql($itemsql, ['circvita' => 'misurazione vita']);
+                    FROM {surveyprofield_numeric} num
+                       JOIN {surveypro_item} i ON i.id = num.itemid
+                       JOIN {surveypro} sp ON sp.id = i.surveyproid
+                    WHERE num.variable = :circvita
+                        AND sp.course = :courseid';
+        $resultitem = $DB->get_record_sql($itemsql, ['circvita' => 'misurazione vita', 'courseid' => $courseid]);
+
         $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];
         $result = $DB->get_records_sql($query, $queryparam);
         array_push($results, $result);
 
         // Parameters and query to select the "glicemia" item from SurveyPro module.
         $itemsql = 'SELECT num.itemid
-                       FROM {surveyprofield_numeric} num
-                       WHERE num.variable = :glicemiavarname';
+                    FROM {surveyprofield_numeric} num
+                        JOIN {surveypro_item} i ON i.id = num.itemid
+                        JOIN {surveypro} sp ON sp.id = i.surveyproid
+                    WHERE num.variable = :glicemiavarname
+                        AND sp.course = :courseid';
 
-        $resultitem = $DB->get_record_sql($itemsql, ['glicemiavarname' => 'glicemia']);
+        $resultitem = $DB->get_record_sql($itemsql, ['glicemiavarname' => 'glicemia', 'courseid' => $courseid]);
+
         $glicemiaparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];
         $result = $DB->get_records_sql($query, $glicemiaparam);
         array_push($results, $result);
@@ -191,7 +203,7 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($message, $title, $weight, $waistcircumference, $glicemy, $userid = null) {
+    public function singleuserchart($courseid, $message, $title, $weight, $waistcircumference, $glicemy, $userid = null) {
         global $USER;
 
         // Set the user ID to the current user if not specified.
@@ -200,7 +212,7 @@ class utility {
         }
 
         // Execute the queries to retrieve the chart data.
-        $results = $this->executequeries($userid);
+        $results = $this->executequeries($courseid, $userid);
 
         // Prepare the chart data arrays.
         $arraypeso = $this->preparearray($results[0]);

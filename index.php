@@ -28,13 +28,12 @@ require_once(__DIR__ . '/../../../config.php');
 
 defined('MOODLE_INTERNAL') || die();
 
-global $COURSE;
-
 // If you search by username in the search bar.
 $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
-$courseid = optional_param('courseid', 0, PARAM_INT); // Course_module id.
+$courseid = optional_param('context_id', 0, PARAM_INT);
+$context = \context_course::instance($courseid);
 
 if (!isset($username)) {
     $username = $singlecsv;
@@ -43,12 +42,6 @@ if (!isset($username)) {
 $utility = new utility();
 
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
-
-if ($courseid == 0 || !isset($courseid)) {
-    $courseid = $COURSE->id;
-}
-$context = \context_course::instance($courseid);
-
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php');
 $PAGE->set_pagelayout('standard');
@@ -63,14 +56,15 @@ $PAGE->requires->js_call_amd(
 
 echo $OUTPUT->header();
 
-
 // Retrieve all user id in session with 'student' role associated.
 $sqlstudent = 'SELECT u.id, u.username
-               FROM {role_assignments} ra
+               FROM mdl_role_assignments ra
                    JOIN {user} u on u.id = ra.userid
                    JOIN {role} r ON r.id = ra.roleid
-               WHERE r.id = :roleid';
-$idrolestudent = ['roleid' => 5];
+                   JOIN {context} ctx ON ctx.id = ra.contextid
+               WHERE r.id = :roleid
+                   AND ctx.instanceid = :courseid';
+$idrolestudent = ['roleid' => 5, 'courseid' => $courseid];
 $querystudents = $DB->get_records_sql($sqlstudent, $idrolestudent);
 
 $querycountstudent = 'SELECT count(*) as num
@@ -85,8 +79,10 @@ $numstudent = $resultcountstudent->num;
 $queryroleid = 'SELECT r.id
                 FROM {role_assignments} ra
                     JOIN {role} r on r.id = ra.roleid
-                WHERE ra.userid = :userid';
-$paramqueryroleid = ['userid' => $USER->id];
+                    JOIN {context} ctx ON ctx.id = ra.contextid
+                WHERE ra.userid = :userid
+                    AND ctx.instanceid = :courseid';
+$paramqueryroleid = ['userid' => $USER->id, 'courseid' => $courseid];
 $resultroleid = $DB->get_record_sql($queryroleid, $paramqueryroleid);
 $roleid = $resultroleid->id;
 
@@ -108,9 +104,9 @@ $csvgen = get_string('csvgen', 'tool_monitoring');
 
 $canaccessallcharts = has_capability('tool/monitoring:accessallcharts', $context);
 
-
 if (!$canaccessallcharts) {
     $utility->singleuserchart(
+        $courseid,
         $messageemptychart,
         $weight,
         $waistcircumference,
@@ -119,8 +115,6 @@ if (!$canaccessallcharts) {
         null
     );
 } else {
-
-
     $data = array(
         'searchusername' => $searchusername,
         'formAction' => '',
@@ -156,8 +150,7 @@ if (!$canaccessallcharts) {
 
             $username = $mysinglestudent->username;
             $userid = $mysinglestudent->id;
-
-            $results = $utility->executequeries($userid);
+            $results = $utility->executequeries($courseid, $userid);
 
             // CHART WEIGHT.
             $arraypeso = $utility->preparearray($results[0]);
@@ -197,7 +190,7 @@ if (!$canaccessallcharts) {
             $username = $student->username;
             $userid = $student->id;
 
-            $results = $utility->executequeries($userid);
+            $results = $utility->executequeries($courseid, $userid);
 
             // CHART WEIGHT.
             $arraypeso = $utility->preparearray($results[0]);
