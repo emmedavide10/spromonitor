@@ -170,7 +170,6 @@ if (!$canaccessallcharts) {
                 $utility->writingfile($datestring, $weight, $waistcircumference, $glicemy, $filename, $delimiter, $mergedarray);
             }
 
-
             $data = array(
                 'filenamearray' => $filename,
                 'singlecsv' => $username,
