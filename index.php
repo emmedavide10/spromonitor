@@ -114,6 +114,7 @@ if (!$canaccessallcharts) {
         $titlechart,
         null
     );
+    
 } else {
     $data = array(
         'searchusername' => $searchusername,
