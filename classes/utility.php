@@ -26,7 +26,6 @@ namespace tool_monitoring;
 
 /**
  * Utility class.
- *
  * @package    tool_monitoring
  * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -22,8 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use tool_monitoring\utility;
-use Config;
+use tool_monitoring\Utility;
 
 require_once __DIR__ . '/../../../config.php';
 
@@ -35,6 +34,14 @@ $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 $courseid = optional_param('context_id', 0, PARAM_INT);
 
+if (!isset($username)) {
+    $username = $singlecsv;
+}
+
+$utility = new utility();
+
+$pagetitle = get_string('pagetitle', 'tool_monitoring');
+
 if($courseid == 0 || !isset($courseid)){
     $courseid = $_SESSION['courseid'];
 }else{
@@ -43,13 +50,6 @@ if($courseid == 0 || !isset($courseid)){
 
 $context = \context_course::instance($courseid);
 
-if (!isset($username)) {
-    $username = $singlecsv;
-}
-
-$utility = new utility();
-
-$pagetitle = get_string('pagetitle', 'tool_monitoring');
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php');
 $PAGE->set_pagelayout('standard');
@@ -147,11 +147,12 @@ if (!$canaccessallcharts) {
         if (!empty($mysinglestudent)) {
 
             $utility->singleuserchart(
+                $courseid,
                 '',
-                $glicemy,
+                $clinicaldata . $username,
                 $weight,
                 $waistcircumference,
-                $clinicaldata . $username,
+                $glicemy,
                 $mysinglestudent->id
             );
 
