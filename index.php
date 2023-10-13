@@ -23,8 +23,9 @@
  */
 
 use tool_monitoring\utility;
+use Config;
 
-require_once(__DIR__ . '/../../../config.php');
+require_once __DIR__ . '/../../../config.php';
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -175,7 +176,8 @@ if (!$canaccessallcharts) {
                 $date = userdate(time(), '%d%m%Y', 99, false, false);
                 $filename = 'file_' . $date . '_' . $username . '.csv';
                 $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename;
-                $utility->writingfile($datestring, $weight, $waistcircumference, $glicemy, $filename, $delimiter, $mergedarray);
+                $utility->writingfile($datestring, $weight, $waistcircumference, $glicemy, $filename,
+                $delimiter, $mergedarray);
             }
 
             $data = array(
@@ -186,7 +188,8 @@ if (!$canaccessallcharts) {
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
         } else {
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
-            echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' . $messagenotfound . $username . '</h5>');
+            echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' . 
+            $messagenotfound . $username . '</h5>');
         }
     } else {
         $filenamearray = array();
@@ -238,7 +241,8 @@ if (!$canaccessallcharts) {
                 if (isset($csv)) {
                     array_push($filenamearray, $filename);
                     // Set headers to force download.
-                    $utility->writingfile($datestring, $weight, $waistcircumference, $glicemy, $filename, $delimiter, $mergedarray);
+                    $utility->writingfile($datestring, $weight, $waistcircumference, $glicemy, $filename,
+                    $delimiter, $mergedarray);
                 }
             }
         }

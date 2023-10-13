@@ -31,9 +31,10 @@ namespace tool_monitoring;
  * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class utility {
+class Utility {
     /**
-     * Returns an array containing two elements: the content and timecreated of all chart parameters in the input recordset.
+     * Returns an array containing two elements: the content and timecreated of all chart parameters 
+     * in the input recordset.
      *
      * @param moodle_recordset $result The recordset containing the chart parameters.
      * @return array An array containing two elements: the content and timecreated of all chart parameters.
@@ -65,7 +66,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight, $waistcircumference, $glicemy, $title = ''): string {
+    public function generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight, $waistcircumference, $glicemy,
+                                  $title = ''): string {
         global $OUTPUT;
 
         // Create chart series for each data array.
@@ -203,7 +205,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($courseid, $message, $title, $weight, $waistcircumference, $glicemy, $userid = null) {
+    public function singleuserchart($courseid, $message, $title, $weight, $waistcircumference, $glicemy, 
+                                    $userid = null) {
         global $USER;
 
         // Set the user ID to the current user if not specified.
@@ -226,7 +229,8 @@ class utility {
             // Otherwise, generate the chart with the specified title.
             echo \html_writer::tag(
                 'div class="padding-top-bottom"',
-                $this->generatechart($arraypeso, $arrayvita, $arrayglicemia, $title, $weight, $waistcircumference, $glicemy)
+                $this->generatechart($arraypeso, $arrayvita, $arrayglicemia, $title, $weight, 
+                                     $waistcircumference, $glicemy)
             );
         }
     }

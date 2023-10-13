@@ -23,16 +23,18 @@
 
 
 namespace tool_monitoring;
+use Config;
 
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require_once __DIR__ . '/../../../config.php';
 
 defined('MOODLE_INTERNAL') || die();
+define('MONITORING_CSV_PATH', '/tool_monitoring/csv/');
 
 require_login();
 
 $filename = required_param('f', PARAM_TEXT);
 
-if (file_exists($CFG->tempdir.'/tool_monitoring/csv/'.$filename)) {
+if (file_exists($CFG->tempdir.MONITORING_CSV_PATH.$filename)) {
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"$filename\"");
     header('Expires: 0');
