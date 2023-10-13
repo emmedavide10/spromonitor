@@ -56,8 +56,6 @@ $PAGE->requires->js_call_amd(
 
 echo $OUTPUT->header();
 
-
-
 // Retrieve all user id in session with 'student' role associated.
 $sqlstudent = 'SELECT u.id, u.username
                FROM mdl_role_assignments ra
