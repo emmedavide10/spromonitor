@@ -33,7 +33,7 @@ namespace tool_monitoring;
  */
 class Utility {
     /**
-     * Returns an array containing two elements: the content and timecreated of all chart parameters 
+     * Returns an array containing two elements: the content and timecreated of all chart parameters
      * in the input recordset.
      *
      * @param moodle_recordset $result The recordset containing the chart parameters.
@@ -67,7 +67,7 @@ class Utility {
      * @author Davide Mirra
      */
     public function generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight, $waistcircumference, $glicemy,
-                                  $title = ''): string {
+                                $title = ''): string {
         global $OUTPUT;
 
         // Create chart series for each data array.
@@ -205,7 +205,7 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($courseid, $message, $title, $weight, $waistcircumference, $glicemy, 
+    public function singleuserchart($courseid, $message, $title, $weight, $waistcircumference, $glicemy,
                                     $userid = null) {
         global $USER;
 
@@ -229,8 +229,8 @@ class Utility {
             // Otherwise, generate the chart with the specified title.
             echo \html_writer::tag(
                 'div class="padding-top-bottom"',
-                $this->generatechart($arraypeso, $arrayvita, $arrayglicemia, $title, $weight, 
-                                     $waistcircumference, $glicemy)
+                $this->generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight,
+                                    $waistcircumference, $glicemy, $title)
             );
         }
     }

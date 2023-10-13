@@ -188,7 +188,9 @@ if (!$canaccessallcharts) {
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
         } else {
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
-            echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' . 
+            echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
+
+        
             $messagenotfound . $username . '</h5>');
         }
     } else {

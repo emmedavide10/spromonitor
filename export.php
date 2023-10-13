@@ -41,8 +41,8 @@ if (file_exists($CFG->tempdir.MONITORING_CSV_PATH.$filename)) {
     header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
     header('Pragma: public');
 
-    $exportfilehandler = fopen($CFG->tempdir.'/tool_monitoring/csv/'.$filename, 'rb');
-    print fread($exportfilehandler, filesize($CFG->tempdir.'/tool_monitoring/csv/'.$filename));
+    $exportfilehandler = fopen($CFG->tempdir.MONITORING_CSV_PATH.$filename, 'rb');
+    print fread($exportfilehandler, filesize($CFG->tempdir.MONITORING_CSV_PATH.$filename));
     fclose($exportfilehandler);
 } else {
       echo 'The requested file does\'t exist';
