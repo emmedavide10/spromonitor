@@ -33,6 +33,13 @@ $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 $courseid = optional_param('context_id', 0, PARAM_INT);
+
+if($courseid == 0 || !isset($courseid)){
+    $courseid = $_SESSION['courseid'];
+}else{
+    $_SESSION['courseid'] = $courseid;
+}
+
 $context = \context_course::instance($courseid);
 
 if (!isset($username)) {
