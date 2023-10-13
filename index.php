@@ -124,8 +124,6 @@ if (!$canaccessallcharts) {
     // Redirect calendar.
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
-
-
     if ($username) {
         // Retrieve all user id in session with 'student' role associated.
         $sqlstudent = 'SELECT u.id, u.username
