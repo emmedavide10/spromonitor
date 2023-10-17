@@ -24,19 +24,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pagetitle'] = 'Clinical data monitoring';
+$string['pagetitle'] = 'Weekly monitoring data: collection and trends';
 $string['pluginname'] = 'Monitoring';
-$string['messageemptychart'] = 'Your clinical data is empty';
-$string['titlechart'] = 'Your clinical data';
+$string['messageemptychart'] = 'Your monitoring data collection is empty';
+$string['titlechart'] = 'Your monitoring data';
 $string['insusername'] = 'Insert username';
 $string['searchusername'] = 'Search by username';
 $string['search'] = 'Search';
-$string['clinicaldata'] = 'Clinical data: ';
+$string['clinicaldata'] = 'Monitoring data: ';
 $string['messagenotfound'] = 'There isn\'t participant with this username: ';
 $string['date'] = 'Date';
 $string['weight'] = 'Weight (kg)';
 $string['waistcircumference'] = 'Waist Circumference (cm)';
-$string['glicemy'] = 'Blood glucose values (mg/dl)';
+$string['glicemy'] = 'Fasting blood sugar (mg/dl)';
 $string['csvgen'] = 'Generate CSV';
 $string['gocalendar'] = 'Go to calendar';
 $string['monitoring:accessallcharts'] = 'Access all charts';

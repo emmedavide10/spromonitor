@@ -116,10 +116,10 @@ if (!$canaccessallcharts) {
     $utility->singleuserchart(
         $courseid,
         $messageemptychart,
+        $titlechart,
         $weight,
         $waistcircumference,
         $glicemy,
-        $titlechart,
         null
     );
     
