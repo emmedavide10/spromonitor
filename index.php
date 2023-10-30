@@ -43,9 +43,7 @@ $utility = new utility();
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
 
 if($courseid == 0 || !isset($courseid)){
-    $courseid = $_SESSION['courseid'];
-}else{
-    $_SESSION['courseid'] = $courseid;
+    $courseid = $_GET['courseid'];
 }
 
 $context = \context_course::instance($courseid);
