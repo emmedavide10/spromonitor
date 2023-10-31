@@ -34,19 +34,18 @@ $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 $courseid = optional_param('context_id', 0, PARAM_INT);
 
+$utility = new utility();
+
+$courseid = $utility -> assignCourseId($courseid);
+
+$context = \context_course::instance($courseid);
+
 if (!isset($username)) {
     $username = $singlecsv;
 }
 
-$utility = new utility();
-
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
 
-if($courseid == 0 || !isset($courseid)){
-    $courseid = $_GET['courseid'];
-}
-
-$context = \context_course::instance($courseid);
 
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php');
@@ -120,7 +119,6 @@ if (!$canaccessallcharts) {
         $glicemy,
         null
     );
-    
 } else {
     $data = array(
         'searchusername' => $searchusername,
@@ -168,15 +166,22 @@ if (!$canaccessallcharts) {
             $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
 
-            $filename='';
+            $filename = '';
             if (isset($singlecsv)) {
                 $delimiter = ';';
 
                 $date = userdate(time(), '%d%m%Y', 99, false, false);
                 $filename = 'file_' . $date . '_' . $username . '.csv';
                 $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename;
-                $utility->writingfile($datestring, $weight, $waistcircumference, $glicemy, $filename,
-                $delimiter, $mergedarray);
+                $utility->writingfile(
+                    $datestring,
+                    $weight,
+                    $waistcircumference,
+                    $glicemy,
+                    $filename,
+                    $delimiter,
+                    $mergedarray
+                );
             }
 
             $data = array(
@@ -189,8 +194,8 @@ if (!$canaccessallcharts) {
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
 
-        
-            $messagenotfound . $username . '</h5>');
+
+                $messagenotfound . $username . '</h5>');
         }
     } else {
         $filenamearray = array();
@@ -242,8 +247,15 @@ if (!$canaccessallcharts) {
                 if (isset($csv)) {
                     array_push($filenamearray, $filename);
                     // Set headers to force download.
-                    $utility->writingfile($datestring, $weight, $waistcircumference, $glicemy, $filename,
-                    $delimiter, $mergedarray);
+                    $utility->writingfile(
+                        $datestring,
+                        $weight,
+                        $waistcircumference,
+                        $glicemy,
+                        $filename,
+                        $delimiter,
+                        $mergedarray
+                    );
                 }
             }
         }

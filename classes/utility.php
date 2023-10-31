@@ -30,7 +30,8 @@ namespace tool_monitoring;
  * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Utility {
+class Utility
+{
     /**
      * Returns an array containing two elements: the content and timecreated of all chart parameters
      * in the input recordset.
@@ -41,7 +42,8 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function preparearray($result) {
+    public function preparearray($result)
+    {
         $content = array();
         $timecreated = array();
         // Iterate over each row in the recordset and extract the content and timecreated values.
@@ -65,8 +67,15 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight, $waistcircumference, $glicemy,
-                                $title = ''): string {
+    public function generatechart(
+        $arraypeso,
+        $arrayvita,
+        $arrayglicemia,
+        $weight,
+        $waistcircumference,
+        $glicemy,
+        $title = ''
+    ): string {
         global $OUTPUT;
 
         // Create chart series for each data array.
@@ -102,7 +111,8 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($courseid, $userid = null) {
+    public function executequeries($courseid, $userid = null)
+    {
         global $DB, $USER;
 
         // If $userid argument is not provided, use the current user.
@@ -179,7 +189,8 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function rendermustachefile($pathfile, $data) {
+    public function rendermustachefile($pathfile, $data)
+    {
         if (file_exists($pathfile)) {
             // Create a new Mustache engine and load the template file.
             $mustache = new \Mustache_Engine();
@@ -204,8 +215,15 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($courseid, $message, $title, $weight, $waistcircumference, $glicemy,
-                                    $userid = null) {
+    public function singleuserchart(
+        $courseid,
+        $message,
+        $title,
+        $weight,
+        $waistcircumference,
+        $glicemy,
+        $userid = null
+    ) {
         global $USER;
 
         // Set the user ID to the current user if not specified.
@@ -228,8 +246,15 @@ class Utility {
             // Otherwise, generate the chart with the specified title.
             echo \html_writer::tag(
                 'div class="padding-top-bottom"',
-                $this->generatechart($arraypeso, $arrayvita, $arrayglicemia, $weight,
-                                    $waistcircumference, $glicemy, $title)
+                $this->generatechart(
+                    $arraypeso,
+                    $arrayvita,
+                    $arrayglicemia,
+                    $weight,
+                    $waistcircumference,
+                    $glicemy,
+                    $title
+                )
             );
         }
     }
@@ -246,7 +271,8 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($arraypeso, $arrayvita, $arrayglicemia) {
+    public function createmergedarray($arraypeso, $arrayvita, $arrayglicemia)
+    {
         // Create an empty array to hold the merged data.
         $mergedarray = array();
 
@@ -282,7 +308,8 @@ class Utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingfile($date, $weight, $waistcircumference, $glicemy, $filename, $delimiter, $mergedarray) {
+    public function writingfile($date, $weight, $waistcircumference, $glicemy, $filename, $delimiter, $mergedarray)
+    {
         global $CFG;
 
         // Open the file for writing.
@@ -313,7 +340,34 @@ class Utility {
                 fputcsv($filehandler, $row, $delimiter);
             }
             fclose($filehandler);
-
         }
+    }
+
+
+    /**
+     * Assegna il valore di $courseid basato sulle variabili GET, POST e di sessione.
+     *
+     * @param int $courseid Il valore predefinito per $courseid.
+     * @return int Il valore di $courseid assegnato basato sulle variabili GET, POST e di sessione.
+     */
+    public function assignCourseId($courseid)
+    {
+
+        // Controlla se il valore è presente nelle variabili GET
+        if (isset($_GET['courseid']) || ($_GET['courseid'] != 0)) {
+            $courseid = $_GET['courseid'];
+        } elseif (isset($_POST['contextid']) || ($_POST['contextid'] != 0)) { // Controlla se il valore è presente nelle variabili POST
+            $courseid = $_POST['contextid'];
+        } else {
+            // Se il valore non è presente nelle variabili GET o POST, controlla se è presente nelle variabili di sessione
+            session_start(); // Assicurati che la sessione sia inizializzata
+            if (isset($_SESSION['contextid']) || ($_SESSION['contextid'] != 0)) {
+                $courseid = $_SESSION['contextid'];
+            } else {
+                $_SESSION['contextid'] = $courseid;
+            }
+        }
+
+        return $courseid;
     }
 }
