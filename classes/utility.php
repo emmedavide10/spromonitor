@@ -357,14 +357,13 @@ class Utility
         if (isset($_GET['courseid']) || ($_GET['courseid'] != 0)) {
             $courseid = $_GET['courseid'];
         }
-        if (isset($_POST['context_id']) || $_POST['context_id'] != 0) {
+        if (isset($_POST['context_id']) && $_POST['context_id'] != 0) {
             $courseid = $_POST['context_id'];
+            $_SESSION['context_id'] = $courseid;
         } else {
             // Se il valore non è presente nelle variabili GET o POST, controlla se è presente nelle variabili di sessione
             if (isset($_SESSION['context_id']) || ($_SESSION['context_id'] != 0)) {
                 $courseid = $_SESSION['context_id'];
-            } else {
-                $_SESSION['context_id'] = $courseid;
             }
         }
 
