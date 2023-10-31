@@ -356,14 +356,15 @@ class Utility
         // Controlla se il valore è presente nelle variabili GET
         if (isset($_GET['courseid']) || ($_GET['courseid'] != 0)) {
             $courseid = $_GET['courseid'];
-        } elseif (isset($_POST['contextid']) || ($_POST['contextid'] != 0)) { // Controlla se il valore è presente nelle variabili POST
-            $courseid = $_POST['contextid'];
+        }
+        if (isset($_POST['context_id']) || $_POST['context_id'] != 0) {
+            $courseid = $_POST['context_id'];
         } else {
             // Se il valore non è presente nelle variabili GET o POST, controlla se è presente nelle variabili di sessione
-            if (isset($_SESSION['contextid']) || ($_SESSION['contextid'] != 0)) {
-                $courseid = $_SESSION['contextid'];
+            if (isset($_SESSION['context_id']) || ($_SESSION['context_id'] != 0)) {
+                $courseid = $_SESSION['context_id'];
             } else {
-                $_SESSION['contextid'] = $courseid;
+                $_SESSION['context_id'] = $courseid;
             }
         }
 
