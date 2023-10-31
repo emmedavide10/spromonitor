@@ -360,7 +360,6 @@ class Utility
             $courseid = $_POST['contextid'];
         } else {
             // Se il valore non è presente nelle variabili GET o POST, controlla se è presente nelle variabili di sessione
-            session_start(); // Assicurati che la sessione sia inizializzata
             if (isset($_SESSION['contextid']) || ($_SESSION['contextid'] != 0)) {
                 $courseid = $_SESSION['contextid'];
             } else {
