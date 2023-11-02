@@ -352,19 +352,23 @@ class Utility
      */
     public function assignCourseId($courseid)
     {
-
         // Controlla se il valore è presente nelle variabili GET
-        if (isset($_GET['courseid']) || ($_GET['courseid'] != 0)) {
+        if (isset($_GET['courseid']) && $_GET['courseid'] != 0) {
             $courseid = $_GET['courseid'];
+            $_SESSION['courseid'] = $courseid;
         }
+
+        // Controlla se il valore è presente nelle variabili POST
         if (isset($_POST['context_id']) && $_POST['context_id'] != 0) {
             $courseid = $_POST['context_id'];
             $_SESSION['context_id'] = $courseid;
-        } else {
-            // Se il valore non è presente nelle variabili GET o POST, controlla se è presente nelle variabili di sessione
-            if (isset($_SESSION['context_id']) || ($_SESSION['context_id'] != 0)) {
-                $courseid = $_SESSION['context_id'];
-            }
+        }
+
+        // Se il valore non è presente nelle variabili GET o POST, controlla se è presente nelle variabili di sessione
+        if (isset($_SESSION['context_id']) && $_SESSION['context_id'] != 0) {
+            $courseid = $_SESSION['context_id'];
+        } elseif (isset($_SESSION['courseid']) && $_SESSION['courseid'] != 0) {
+            $courseid = $_SESSION['courseid'];
         }
 
         return $courseid;

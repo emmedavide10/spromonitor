@@ -36,7 +36,7 @@ $courseid = optional_param('context_id', 0, PARAM_INT);
 
 $utility = new utility();
 
-$courseid = $utility -> assignCourseId($courseid);
+$courseid = $utility->assignCourseId($courseid);
 
 $context = \context_course::instance($courseid);
 
