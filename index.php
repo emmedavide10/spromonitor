@@ -28,15 +28,14 @@ require_once __DIR__ . '/../../../config.php';
 
 defined('MOODLE_INTERNAL') || die();
 
+$utility = new utility();
+
 // If you search by username in the search bar.
 $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
-$courseid = optional_param('context_id', 0, PARAM_INT);
 
-$utility = new utility();
-
-$courseid = $utility->assignCourseId($courseid);
+$courseid = $utility -> get_courseid();
 
 $context = \context_course::instance($courseid);
 
@@ -45,10 +44,10 @@ if (!isset($username)) {
 }
 
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
-
+$param = ['courseid' => $courseid];
 
 $PAGE->set_context($context);
-$PAGE->set_url('/admin/tool/monitoring/index.php');
+$PAGE->set_url('/admin/tool/monitoring/index.php', $param);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading($pagetitle);
 $PAGE->requires->js_call_amd(
@@ -124,7 +123,8 @@ if (!$canaccessallcharts) {
         'searchusername' => $searchusername,
         'formAction' => '',
         'insusername' => $insusername,
-        'search' => $search
+        'search' => $search,
+        'courseid' => $courseid,
     );
     // Redirect calendar.
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
