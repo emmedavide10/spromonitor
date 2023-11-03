@@ -35,7 +35,7 @@ $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 
-$courseid = $utility -> get_courseid();
+$courseid = $utility->get_courseid();
 
 $context = \context_course::instance($courseid);
 
@@ -188,7 +188,9 @@ if (!$canaccessallcharts) {
                 'filenamearray' => $filename,
                 'singlecsv' => $username,
                 'csvgen' => $csvgen,
+                'courseid' => $courseid,
             );
+
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
         } else {
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
@@ -262,6 +264,7 @@ if (!$canaccessallcharts) {
         $data = array(
             'filenamearray' => $filenamearray,
             'csvgen' => $csvgen,
+            'courseid' => $courseid,
         );
         // Download csv files.
         $utility->rendermustachefile('templates/templatecsv.mustache', $data);
