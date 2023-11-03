@@ -119,6 +119,8 @@ if (!$canaccessallcharts) {
         null
     );
 } else {
+
+
     $data = array(
         'searchusername' => $searchusername,
         'formAction' => '',
@@ -126,7 +128,7 @@ if (!$canaccessallcharts) {
         'search' => $search,
         'courseid' => $courseid,
     );
-    // Redirect calendar.
+    
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
     if ($username) {
@@ -261,11 +263,13 @@ if (!$canaccessallcharts) {
                 }
             }
         }
+
         $data = array(
             'filenamearray' => $filenamearray,
             'csvgen' => $csvgen,
             'courseid' => $courseid,
         );
+
         // Download csv files.
         $utility->rendermustachefile('templates/templatecsv.mustache', $data);
     }
