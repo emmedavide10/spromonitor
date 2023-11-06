@@ -374,7 +374,7 @@ class Utility
      *
      * @return string il nome del file generato.
      */
-    function generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray)
+    public function generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray)
     {
         global $CFG;
 
