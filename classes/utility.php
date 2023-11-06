@@ -348,7 +348,7 @@ class Utility
      *
      * @return int Il valore di $courseid assegnato basato sulle variabili GET, POST e di sessione.
      */
-    public function get_courseid()
+    public function getCourseId()
     {
 
         // Controlla se il valore è presente nelle variabili GET
@@ -362,42 +362,42 @@ class Utility
 
 
 
-/**
- * Genera il nome del file.
- *
- * @param string $username Il nome utente da utilizzare nel nome del file.
- * @param bool $csv Un flag che indica se è richiesto un file CSV.
- * @param string $datestring Una stringa di data da utilizzare nel nome del file.
- * @param string $weight Una stringa che rappresenta il peso nel file CSV.
- * @param string $waistcircumference Una stringa che rappresenta la circonferenza della vita nel file CSV.
- * @param string $glicemy Una stringa che rappresenta la glicemia nel file CSV.
- *
- * @return string il nome del file generato.
- */
-function generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray) {
-    global $CFG; 
+    /**
+     * Genera il nome del file.
+     *
+     * @param string $username Il nome utente da utilizzare nel nome del file.
+     * @param bool $csv Un flag che indica se è richiesto un file CSV.
+     * @param string $datestring Una stringa di data da utilizzare nel nome del file.
+     * @param string $weight Una stringa che rappresenta il peso nel file CSV.
+     * @param string $waistcircumference Una stringa che rappresenta la circonferenza della vita nel file CSV.
+     * @param string $glicemy Una stringa che rappresenta la glicemia nel file CSV.
+     *
+     * @return string il nome del file generato.
+     */
+    function generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray)
+    {
+        global $CFG;
 
-    $delimiter = ';'; 
+        $delimiter = ';';
 
-    $date = userdate(time(), '%d%m%Y', 99, false, false); // Ottiene una data formattata come stringa.
-    $filename = 'file_' . $date . '_' . $username . '.csv'; // Crea il nome del file.
-    $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Crea il percorso completo del file.
+        $date = userdate(time(), '%d%m%Y', 99, false, false); // Ottiene una data formattata come stringa.
+        $filename = 'file_' . $date . '_' . $username . '.csv'; // Crea il nome del file.
+        $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Crea il percorso completo del file.
 
-    if (isset($csv)) { // Verifica se è richiesto un file CSV.
+        if (isset($csv)) { // Verifica se è richiesto un file CSV.
 
-        // Chiama la funzione writingfile() per scrivere il file CSV (il codice sorgente di writingfile() non è incluso in questa descrizione).
-        $this->writingfile(
-            $datestring,
-            $weight,
-            $waistcircumference,
-            $glicemy,
-            $filename,
-            $delimiter,
-            $mergedarray
-        );
+            // Chiama la funzione writingfile() per scrivere il file CSV (il codice sorgente di writingfile() non è incluso in questa descrizione).
+            $this->writingfile(
+                $datestring,
+                $weight,
+                $waistcircumference,
+                $glicemy,
+                $filename,
+                $delimiter,
+                $mergedarray
+            );
+        }
+
+        return $filename; // Restituisce il nome del file generato.
     }
-
-    return $filename; // Restituisce il nome del file generato.
-}
-    
 }

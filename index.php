@@ -35,7 +35,7 @@ $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 
-$courseid = $utility->get_courseid();
+$courseid = $utility->getCourseId();
 
 $context = \context_course::instance($courseid);
 
@@ -173,7 +173,8 @@ if (!$canaccessallcharts) {
 
             $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
-            $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray);
+            $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
+            $glicemy, $mergedarray);
 
             array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
 
@@ -234,7 +235,8 @@ if (!$canaccessallcharts) {
 
                 $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
-                $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray);
+                $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
+                $glicemy, $mergedarray);
 
                 array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
             }
