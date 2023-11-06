@@ -108,6 +108,8 @@ $csvgen = get_string('csvgen', 'tool_monitoring');
 
 $canaccessallcharts = has_capability('tool/monitoring:accessallcharts', $context);
 
+
+
 if (!$canaccessallcharts) {
     $utility->singleuserchart(
         $courseid,
@@ -120,7 +122,6 @@ if (!$canaccessallcharts) {
     );
 } else {
 
-
     $data = array(
         'searchusername' => $searchusername,
         'formAction' => '',
@@ -128,21 +129,28 @@ if (!$canaccessallcharts) {
         'search' => $search,
         'courseid' => $courseid,
     );
-    
+
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
-    if ($username) {
-        // Retrieve all user id in session with 'student' role associated.
-        $sqlstudent = 'SELECT u.id, u.username
-                       FROM {role_assignments} ra
-                           JOIN {user} u on u.id = ra.userid
-                           JOIN {role} r ON r.id = ra.roleid
-                       WHERE r.id = :roleid
-                           AND username = :username';
-        $paramsquery = ['roleid' => 5, 'username' => $username];
-        $mysinglestudent = $DB->get_record_sql($sqlstudent, $paramsquery);
+    // Retrieve all user id in session with 'student' role associated.
+    $sqlstudent = 'SELECT u.id, u.username
+            FROM {role_assignments} ra
+                JOIN {user} u on u.id = ra.userid
+                JOIN {role} r ON r.id = ra.roleid
+            WHERE r.id = :roleid
+                AND u.username LIKE :username';
+    $paramsquery = ['roleid' => 5, 'username' => '%' . $username . '%'];
+    $mysinglestudent = $DB->get_records_sql($sqlstudent, $paramsquery);
 
-        if (!empty($mysinglestudent)) {
+    if ($username && count($mysinglestudent) <= 1) {
+
+        foreach ($mysinglestudent as $student) {
+            $userid = $student->id;
+            $username = $student->username;
+        }
+        // Dopo aver ottenuto i risultati dalla query
+   
+        if (count($mysinglestudent) == 1) {
 
             $utility->singleuserchart(
                 $courseid,
@@ -151,11 +159,9 @@ if (!$canaccessallcharts) {
                 $weight,
                 $waistcircumference,
                 $glicemy,
-                $mysinglestudent->id
+                $userid
             );
 
-            $username = $mysinglestudent->username;
-            $userid = $mysinglestudent->id;
             $results = $utility->executequeries($courseid, $userid);
 
             // CHART WEIGHT.
@@ -186,6 +192,7 @@ if (!$canaccessallcharts) {
                 );
             }
 
+
             $data = array(
                 'filenamearray' => $filename,
                 'singlecsv' => $username,
@@ -194,7 +201,8 @@ if (!$canaccessallcharts) {
             );
 
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
-        } else {
+        } else if (count($mysinglestudent) == 0) {
+
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
 
@@ -202,6 +210,11 @@ if (!$canaccessallcharts) {
                 $messagenotfound . $username . '</h5>');
         }
     } else {
+
+        if ($mysinglestudent) {
+            $querystudents = $mysinglestudent;
+        }
+
         $filenamearray = array();
         foreach ($querystudents as $student) {
 
@@ -263,6 +276,8 @@ if (!$canaccessallcharts) {
                 }
             }
         }
+
+
 
         $data = array(
             'filenamearray' => $filenamearray,
