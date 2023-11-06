@@ -182,8 +182,7 @@ class Utility
      * Renders HTML output from a Mustache template file.
      *
      * @param string $pathfile The path to the Mustache template file.
-     * @param object $param The data object to pass to the template.
-     * @param string $nameparam The name of the data object parameter in the template.
+     * @param object $data The data object to pass to the template.
      * @return echo html render The HTML output rendered from the Mustache template.
      *
      * @since Moodle 3.1
@@ -351,11 +350,54 @@ class Utility
      */
     public function get_courseid()
     {
+
         // Controlla se il valore è presente nelle variabili GET
         $courseid = optional_param('courseid', 0, PARAM_INT);
         if ($courseid == 0) {
             $courseid = required_param('context_id', PARAM_INT);
         }
+
         return $courseid;
     }
+
+
+
+/**
+ * Genera il nome del file.
+ *
+ * @param string $username Il nome utente da utilizzare nel nome del file.
+ * @param bool $csv Un flag che indica se è richiesto un file CSV.
+ * @param string $datestring Una stringa di data da utilizzare nel nome del file.
+ * @param string $weight Una stringa che rappresenta il peso nel file CSV.
+ * @param string $waistcircumference Una stringa che rappresenta la circonferenza della vita nel file CSV.
+ * @param string $glicemy Una stringa che rappresenta la glicemia nel file CSV.
+ *
+ * @return string il nome del file generato.
+ */
+function generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray) {
+    global $CFG; 
+
+    $delimiter = ';'; 
+
+    $date = userdate(time(), '%d%m%Y', 99, false, false); // Ottiene una data formattata come stringa.
+    $filename = 'file_' . $date . '_' . $username . '.csv'; // Crea il nome del file.
+    $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Crea il percorso completo del file.
+
+    if (isset($csv)) { // Verifica se è richiesto un file CSV.
+
+        // Chiama la funzione writingfile() per scrivere il file CSV (il codice sorgente di writingfile() non è incluso in questa descrizione).
+        $this->writingfile(
+            $datestring,
+            $weight,
+            $waistcircumference,
+            $glicemy,
+            $filename,
+            $delimiter,
+            $mergedarray
+        );
+    }
+
+    return $filename; // Restituisce il nome del file generato.
+}
+    
 }

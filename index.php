@@ -108,7 +108,7 @@ $csvgen = get_string('csvgen', 'tool_monitoring');
 
 $canaccessallcharts = has_capability('tool/monitoring:accessallcharts', $context);
 
-
+$filenamearray = array();
 
 if (!$canaccessallcharts) {
     $utility->singleuserchart(
@@ -149,7 +149,7 @@ if (!$canaccessallcharts) {
             $username = $student->username;
         }
         // Dopo aver ottenuto i risultati dalla query
-   
+
         if (count($mysinglestudent) == 1) {
 
             $utility->singleuserchart(
@@ -173,35 +173,19 @@ if (!$canaccessallcharts) {
 
             $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
+            $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray);
 
-            $filename = '';
-            if (isset($singlecsv)) {
-                $delimiter = ';';
-
-                $date = userdate(time(), '%d%m%Y', 99, false, false);
-                $filename = 'file_' . $date . '_' . $username . '.csv';
-                $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename;
-                $utility->writingfile(
-                    $datestring,
-                    $weight,
-                    $waistcircumference,
-                    $glicemy,
-                    $filename,
-                    $delimiter,
-                    $mergedarray
-                );
-            }
-
+            array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
 
             $data = array(
-                'filenamearray' => $filename,
+                'filenamearray' => $filenamearray,
                 'singlecsv' => $username,
                 'csvgen' => $csvgen,
                 'courseid' => $courseid,
             );
 
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
-        } else if (count($mysinglestudent) == 0) {
+        } elseif (count($mysinglestudent) == 0) {
 
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
@@ -215,7 +199,6 @@ if (!$canaccessallcharts) {
             $querystudents = $mysinglestudent;
         }
 
-        $filenamearray = array();
         foreach ($querystudents as $student) {
 
             $username = $student->username;
@@ -249,35 +232,13 @@ if (!$canaccessallcharts) {
                     )
                 );
 
-
                 $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
-                // Each element of the array is an array in turn and each element will contain
-                // one element of each field (weight, waist circumference, blood sugar).
+                $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray);
 
-                $delimiter = ';';
-
-                $date = userdate(time(), '%d%m%Y', 99, false, false);
-                $filename = 'file_' . $date . '_' . $username . '.csv';
-                $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename;
-
-                if (isset($csv)) {
-                    array_push($filenamearray, $filename);
-                    // Set headers to force download.
-                    $utility->writingfile(
-                        $datestring,
-                        $weight,
-                        $waistcircumference,
-                        $glicemy,
-                        $filename,
-                        $delimiter,
-                        $mergedarray
-                    );
-                }
+                array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
             }
         }
-
-
 
         $data = array(
             'filenamearray' => $filenamearray,

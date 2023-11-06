@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+    #downloadSection {
+      display: none; /* Imposta il display su "none" per nascondere inizialmente l'elemento */
+    }
+  </style>
 </head>
 <body>
 <div>
     <div class="float-right">
-        <form action="" method="post">
+        <form action="" method="post" id="myForm">
             <input type="hidden" value="csv" name="1" id="ok">
-            <input type="hidden" value='{{singlecsv}}' name="singlecsv">
+            <input type="hidden" value="{{singlecsv}}" name="singlecsv">
             <input type="hidden" name="courseid" value="{{courseid}}">
-            <input type="submit" value='{{csvgen}}' name="csv" id='csv' class="btn btn-primary">
+            <input type="submit" value="{{csvgen}}" name="csv" id="csv" class="btn btn-primary">
         </form>
     </div>
 </div>
 
-<div class="padding-top-bottom" >
+<div class="padding-top-bottom" id="downloadSection">
     <h5>Download CSV</h5>
     <ul id='link'>
         {{#filenamearray}}
@@ -26,6 +31,11 @@
     </ul>
 </div>
 
+<script>
+document.getElementById('myForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    document.getElementById('downloadSection').style.display = 'inline'; // Show the download section
+});
+</script>
 </body>
 </html>
-
