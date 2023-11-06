@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head></head>
+<head>
+  <script>
+    function redirectToCalendar() {
+      var calendarurl = '{{calendarurl}}';
+      window.location.href = calendarurl;
+    }
+  </script>
+</head>
 <body>
-<button class='btn btn-light' style='color: #8b7676; border: none;'>
-  <i class='fa fa-calendar'></i>
-  <a href='{{calendarurl}}'>{{gocalendar}}</a>
-</button>
-<body>
-<html>
+  <button class='btn btn-light' style='color: #8b7676; border: none;' onclick="redirectToCalendar()">
+    <i class='fa fa-calendar'></i>
+    {{gocalendar}}
+  </button>
+</body>
+</html>
