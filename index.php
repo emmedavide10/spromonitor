@@ -60,35 +60,19 @@ $PAGE->requires->js_call_amd(
 
 echo $OUTPUT->header();
 
-// Retrieve all user id in session with 'student' role associated.
-$sqlstudent = 'SELECT u.id, u.username
-               FROM mdl_role_assignments ra
+$sqlusers = 'SELECT u.id, u.username
+               FROM {role_assignments} ra
                    JOIN {user} u on u.id = ra.userid
-                   JOIN {role} r ON r.id = ra.roleid
                    JOIN {context} ctx ON ctx.id = ra.contextid
-               WHERE r.id = :roleid
-                   AND ctx.instanceid = :courseid';
-$idrolestudent = ['roleid' => 5, 'courseid' => $courseid];
-$querystudents = $DB->get_records_sql($sqlstudent, $idrolestudent);
+                   WHERE ctx.instanceid = :courseid';
+$idcourse = ['courseid' => $courseid];
+$queryusers = $DB->get_records_sql($sqlusers, $idcourse);
 
-$querycountstudent = 'SELECT count(*) as num
+$querycountusers = 'SELECT count(*) as num
                       FROM {role_assignments} ra
-                          JOIN {user} u on u.id = ra.userid
-                          JOIN {role} r ON r.id = ra.roleid
-                      WHERE r.id = :roleid';
-$resultcountstudent = $DB->get_record_sql($querycountstudent, $idrolestudent);
-$numstudent = $resultcountstudent->num;
-
-// Retrieve role user in session.
-$queryroleid = 'SELECT r.id
-                FROM {role_assignments} ra
-                    JOIN {role} r on r.id = ra.roleid
-                    JOIN {context} ctx ON ctx.id = ra.contextid
-                WHERE ra.userid = :userid
-                    AND ctx.instanceid = :courseid';
-$paramqueryroleid = ['userid' => $USER->id, 'courseid' => $courseid];
-$resultroleid = $DB->get_record_sql($queryroleid, $paramqueryroleid);
-$roleid = $resultroleid->id;
+                          JOIN {user} u on u.id = ra.userid';
+$resultcountuser = $DB->get_record_sql($querycountusers);
+$numuser = $resultcountuser->num;
 
 $calendarparam['view'] = 'month';
 $calendarurl = new moodle_url('/calendar/view.php', $calendarparam);
@@ -132,25 +116,22 @@ if (!$canaccessallcharts) {
 
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
-    // Retrieve all user id in session with 'student' role associated.
-    $sqlstudent = 'SELECT u.id, u.username
+    $sqlusers = 'SELECT u.id, u.username
             FROM {role_assignments} ra
                 JOIN {user} u on u.id = ra.userid
-                JOIN {role} r ON r.id = ra.roleid
-            WHERE r.id = :roleid
-                AND u.username LIKE :username';
-    $paramsquery = ['roleid' => 5, 'username' => '%' . $username . '%'];
-    $mysinglestudent = $DB->get_records_sql($sqlstudent, $paramsquery);
+                WHERE u.username LIKE :username';
+    $paramsquery = ['username' => '%' . $username . '%'];
+    $usersearched = $DB->get_records_sql($sqlusers, $paramsquery);
 
-    if ($username && count($mysinglestudent) <= 1) {
+    if ($username && count($usersearched) <= 1) {
 
-        foreach ($mysinglestudent as $student) {
-            $userid = $student->id;
-            $username = $student->username;
+        foreach ($usersearched as $user) {
+            $userid = $user->id;
+            $username = $user->username;
         }
         // Dopo aver ottenuto i risultati dalla query
 
-        if (count($mysinglestudent) == 1) {
+        if (count($usersearched) == 1) {
 
             $utility->singleuserchart(
                 $courseid,
@@ -186,7 +167,7 @@ if (!$canaccessallcharts) {
             );
 
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
-        } elseif (count($mysinglestudent) == 0) {
+        } elseif (count($usersearched) == 0) {
 
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
@@ -196,14 +177,14 @@ if (!$canaccessallcharts) {
         }
     } else {
 
-        if ($mysinglestudent) {
-            $querystudents = $mysinglestudent;
+        if ($usersearched) {
+            $queryusers = $usersearched;
         }
 
-        foreach ($querystudents as $student) {
+        foreach ($queryusers as $user) {
 
-            $username = $student->username;
-            $userid = $student->id;
+            $username = $user->username;
+            $userid = $user->id;
 
             $results = $utility->executequeries($courseid, $userid);
 

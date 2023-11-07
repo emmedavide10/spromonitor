@@ -123,7 +123,7 @@ class Utility
         // Initialize the results array.
         $results = array();
 
-
+      
         // Query to select SurveyPro module submissions based on user and specific module item.
         $query = 'SELECT s.timecreated, a.content
                   FROM {surveypro_submission} s
