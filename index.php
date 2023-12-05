@@ -30,6 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $utility = new utility();
 
+
+
 // If you search by username in the search bar.
 $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
@@ -117,13 +119,19 @@ if (!$canaccessallcharts) {
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
     $sqlusers = 'SELECT u.id, u.username
-            FROM {role_assignments} ra
-                JOIN {user} u on u.id = ra.userid
-                WHERE u.username LIKE :username';
-    $paramsquery = ['username' => '%' . $username . '%'];
-    $usersearched = $DB->get_records_sql($sqlusers, $paramsquery);
+    FROM {role_assignments} ra
+        JOIN {user} u ON u.id = ra.userid
+        JOIN {context} ctx ON ctx.id = ra.contextid
+    WHERE ctx.instanceid = :courseid
+      AND u.username LIKE :username';
 
-    if ($username && count($usersearched) <= 1) {
+    $idcourse = ['courseid' => $courseid];
+    $usernameParam = ['username' => '%' . $username . '%'];
+
+    $usersearched = $DB->get_records_sql($sqlusers, array_merge($idcourse, $usernameParam));
+
+
+    if ($username) {
 
         foreach ($usersearched as $user) {
             $userid = $user->id;
@@ -131,7 +139,7 @@ if (!$canaccessallcharts) {
         }
         // Dopo aver ottenuto i risultati dalla query
 
-        if (count($usersearched) == 1) {
+        if (count($usersearched) === 1) {
 
             $utility->singleuserchart(
                 $courseid,
@@ -154,8 +162,15 @@ if (!$canaccessallcharts) {
 
             $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
-            $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
-            $glicemy, $mergedarray);
+            $filename = $utility->generateFilename(
+                $username,
+                $csv,
+                $datestring,
+                $weight,
+                $waistcircumference,
+                $glicemy,
+                $mergedarray
+            );
 
             array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
 
@@ -167,7 +182,7 @@ if (!$canaccessallcharts) {
             );
 
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
-        } elseif (count($usersearched) == 0) {
+        } elseif (count($usersearched) === 0) {
 
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
@@ -216,8 +231,15 @@ if (!$canaccessallcharts) {
 
                 $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
-                $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
-                $glicemy, $mergedarray);
+                $filename = $utility->generateFilename(
+                    $username,
+                    $csv,
+                    $datestring,
+                    $weight,
+                    $waistcircumference,
+                    $glicemy,
+                    $mergedarray
+                );
 
                 array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
             }
