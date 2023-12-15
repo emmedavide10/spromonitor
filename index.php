@@ -30,23 +30,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $utility = new utility();
 
-/*
-// Stampa le variabili GET
-echo "Contenuto della variabile \$_GET:\n";
-print_r($_GET);
-
-// Stampa le variabili POST
-echo "Contenuto della variabile \$_POST:\n";
-print_r($_POST);
-
-
-// Stampa le variabili SESSION
-echo "Contenuto della variabile \$_SESSION:\n";
-print_r($_SESSION);
-*/
-
-
-
 // If you search by username in the search bar.
 $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
@@ -105,7 +88,7 @@ $pagetitle = get_string('pagetitle', 'tool_monitoring');
 $paramsurl['courseid'] = $courseid;
 $paramsurl['sproid'] = $sproid;
 $paramsurl['selectedFields'] = $selectedFields;
-//$paramsurl['selectedFieldsSearch'] = $selectedFieldsSearch;
+$paramsurl['selectedFieldsSearch'] = $selectedFieldsSearch;
 
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php', $paramsurl);
@@ -187,22 +170,13 @@ if (!$canaccessallcharts) {
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
     $sqlusers = 'SELECT u.id, u.username
-    FROM {role_assignments} ra
-        JOIN {user} u ON u.id = ra.userid
-        JOIN {context} ctx ON ctx.id = ra.contextid
-    WHERE ctx.instanceid = :courseid
-      AND u.username LIKE :username';
+            FROM {role_assignments} ra
+                JOIN {user} u on u.id = ra.userid
+                WHERE u.username LIKE :username';
+    $paramsquery = ['username' => '%' . $username . '%'];
+    $usersearched = $DB->get_records_sql($sqlusers, $paramsquery);
 
-    $idcourse = ['courseid' => $courseid];
-    $usernameParam = ['username' => '%' . $username . '%'];
-
-    $usersearched = $DB->get_records_sql($sqlusers, array_merge($idcourse, $usernameParam));
-
-    //var_dump($usersearched); die;
-
-
-    if ($username) {
-        echo "search";
+    if ($username && count($usersearched) <= 1) {
 
         foreach ($usersearched as $user) {
             $userid = $user->id;
@@ -303,13 +277,8 @@ if (!$canaccessallcharts) {
                 );
                 $mergedarray = $utility->createmergedarray($variablesArray);
 
-                $filename = $utility->generateFilename(
-                    $username,
-                    $csv,
-                    $datestring,
-                    $variablesArray,
-                    $mergedarray
-                );
+                $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
+                $glicemy, $mergedarray);
 
                 array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
             }
