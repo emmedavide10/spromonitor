@@ -1,7 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <script>
+    // Funzione per tornare indietro di una pagina
+    function goBack() {
+      window.history.back();
+    }
+
+    // Funzione per il reindirizzamento al calendario
     function redirectToCalendar() {
       var calendarurl = '{{calendarurl}}';
       window.location.href = calendarurl;
@@ -9,9 +15,16 @@
   </script>
 </head>
 <body>
-  <button class='btn btn-light' style='color: #8b7676; border: none;' onclick="redirectToCalendar()">
+
+  <button class='btn btn-light' style='color: #8b7676; border: none; margin-top: 20px;' onclick="redirectToCalendar()">
     <i class='fa fa-calendar'></i>
     {{gocalendar}}
   </button>
+  <br><br>
+
+
+  <!-- Pulsante per tornare indietro -->
+  <button style='margin-top: 10px;' onclick="goBack()">Torna Indietro</button>
+
 </body>
 </html>

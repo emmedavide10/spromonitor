@@ -46,14 +46,17 @@ class Utility
     {
         $content = array();
         $timecreated = array();
-        // Iterate over each row in the recordset and extract the content and timecreated values.
+
+        // Itera su ogni riga nel recordset ed estrai i valori di content e timecreated.
         foreach ($result as $row) {
             $content[] = $row->content;
             $timecreated[] = date('d/m/Y', $row->timecreated);
         }
-        // Return the content and timecreated arrays as a single array.
-        return array($content, $timecreated);
+
+        // Restituisci gli array content e timecreated come un singolo array associativo.
+        return array('content' => $content, 'timecreated' => $timecreated);
     }
+
 
     /**
      * Returns the chart generated from the input data arrays.
@@ -68,39 +71,44 @@ class Utility
      * @author Davide Mirra
      */
     public function generatechart(
-        $arraypeso,
-        $arrayvita,
-        $arrayglicemia,
-        $weight,
-        $waistcircumference,
-        $glicemy,
-        $title = ''
+        $title = '',
+        $variablesArray,
+        $chartDataArrays
     ): string {
         global $OUTPUT;
 
+        // Rimuovi o commenta l'inversione dell'ordine delle variabili.
+        //$variablesArray = array_reverse($variablesArray);
+
         // Create chart series for each data array.
-        $answer1 = new \core\chart_series($weight, $arraypeso[0]);
-        $answer2 = new \core\chart_series($waistcircumference, $arrayvita[0]);
-        $answer3 = new \core\chart_series($glicemy, $arrayglicemia[0]);
+        $chartSeries = [];
+
+        foreach ($variablesArray as $index => $variable) {
+            $contentArray = $chartDataArrays[$index]['content'];
+            $timecreatedArray = $chartDataArrays[$index]['timecreated'];
+
+            // Create a new chart series for each variable.
+            $chartSeries[] = new \core\chart_series($variable, $contentArray);
+        }
 
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
-        $chart->set_legend_options(['position' => 'bottom', 'reverse' => true]);
+        $chart->set_legend_options(['position' => 'bottom', 'margin-bottom' => 30]);
 
-        // Add the chart series to the chart.
-        $chart->add_series($answer1);
-        $chart->add_series($answer2);
-        $chart->add_series($answer3);
+        // Aggiungi le serie al grafico nell'ordine normale.
+        foreach ($chartSeries as $series) {
+            $chart->add_series($series);
+        }
 
         // Set the x-axis labels to the date values in the input arrays.
-        $chart->set_labels($arraypeso[1]);
-        $chart->set_labels($arrayvita[1]);
-        $chart->set_labels($arrayglicemia[1]);
+        $chart->set_labels($timecreatedArray);
 
         // Render the chart using the Moodle output renderer.
         return $OUTPUT->render($chart);
     }
+
+
 
     /**
      * Returns the final result of all executed queries.
@@ -111,10 +119,9 @@ class Utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($courseid, $userid = null)
+    public function executequeries($userid = null, $selectedFieldsArray)
     {
         global $DB, $USER;
-
         // If $userid argument is not provided, use the current user.
         if (!isset($userid)) {
             $userid = $USER->id;
@@ -123,7 +130,6 @@ class Utility
         // Initialize the results array.
         $results = array();
 
-      
         // Query to select SurveyPro module submissions based on user and specific module item.
         $query = 'SELECT s.timecreated, a.content
                   FROM {surveypro_submission} s
@@ -132,51 +138,16 @@ class Utility
                   AND s.userid = :userid
                   AND a.itemid = :itemid';
 
-        // Parameters and query to select the "peso" item from SurveyPro module.
-        $itemsql = 'SELECT num.itemid
-                    FROM {surveyprofield_numeric} num
-                        JOIN {surveypro_item} i ON i.id = num.itemid
-                        JOIN {surveypro} sp ON sp.id = i.surveyproid
-                    WHERE num.variable = :pesovarname
-                        AND sp.course = :courseid';
-        $resultitem = $DB->get_record_sql($itemsql, ['pesovarname' => 'peso', 'courseid' => $courseid]);
-
-        $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$resultitem->itemid];
-        $result = $DB->get_records_sql($query, $queryparam);
-        array_push($results, $result);
-
-
-        // Parameters and query to select the "misurazione vita" item from SurveyPro module.
-        $itemsql = 'SELECT num.itemid
-                    FROM {surveyprofield_numeric} num
-                       JOIN {surveypro_item} i ON i.id = num.itemid
-                       JOIN {surveypro} sp ON sp.id = i.surveyproid
-                    WHERE num.variable = :circvita
-                        AND sp.course = :courseid';
-        $resultitem = $DB->get_record_sql($itemsql, ['circvita' => 'misurazione vita', 'courseid' => $courseid]);
-
-        $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];
-        $result = $DB->get_records_sql($query, $queryparam);
-        array_push($results, $result);
-
-        // Parameters and query to select the "glicemia" item from SurveyPro module.
-        $itemsql = 'SELECT num.itemid
-                    FROM {surveyprofield_numeric} num
-                        JOIN {surveypro_item} i ON i.id = num.itemid
-                        JOIN {surveypro} sp ON sp.id = i.surveyproid
-                    WHERE num.variable = :glicemiavarname
-                        AND sp.course = :courseid';
-
-        $resultitem = $DB->get_record_sql($itemsql, ['glicemiavarname' => 'glicemia', 'courseid' => $courseid]);
-
-        $glicemiaparam = ['status' => 0, 'userid' => $userid, 'itemid' => $resultitem->itemid];
-        $result = $DB->get_records_sql($query, $glicemiaparam);
-        array_push($results, $result);
-
-
+        foreach ($selectedFieldsArray as $itemid) {
+            // Execute the query for each item ID in the array.
+            $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
+            $result = $DB->get_records_sql($query, $queryparam);
+            array_push($results, $result);
+        }
         // Return the results array.
         return $results;
     }
+
 
     /**
      * Renders HTML output from a Mustache template file.
@@ -214,15 +185,9 @@ class Utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart(
-        $courseid,
-        $message,
-        $title,
-        $weight,
-        $waistcircumference,
-        $glicemy,
-        $userid = null
-    ) {
+    public function singleuserchart($message, $title, $variablesArray, $selectedFieldsArray, $userid = null)
+    {
+
         global $USER;
 
         // Set the user ID to the current user if not specified.
@@ -231,32 +196,38 @@ class Utility
         }
 
         // Execute the queries to retrieve the chart data.
-        $results = $this->executequeries($courseid, $userid);
+        $results = $this->executequeries($userid, $selectedFieldsArray);
 
-        // Prepare the chart data arrays.
-        $arraypeso = $this->preparearray($results[0]);
-        $arrayvita = $this->preparearray($results[1]);
-        $arrayglicemia = $this->preparearray($results[2]);
+        // Prepara gli array dei dati del grafico.
+        $chartDataArrays = [];
+        foreach ($results as $result) {
+            $chartDataArrays[] = $this->preparearray($result);
+        }
+        // Stampa e termina per vedere i risultati.
+        /*print_r($chartDataArrays);
+        die;*/
 
         // If the user has not completed the survey, display a message.
-        if (empty($arraypeso[0])) {
+        if (empty($chartDataArrays)) {
             echo \html_writer::tag('h5', $message);
         } else {
+            // Combine the selected fields into an array
+
             // Otherwise, generate the chart with the specified title.
             echo \html_writer::tag(
                 'div class="padding-top-bottom"',
                 $this->generatechart(
-                    $arraypeso,
-                    $arrayvita,
-                    $arrayglicemia,
-                    $weight,
-                    $waistcircumference,
-                    $glicemy,
-                    $title
+                    $title,
+                    $variablesArray,
+                    $chartDataArrays
                 )
             );
         }
     }
+
+
+
+
 
     /**
      * This function takes in three arrays - $arraypeso, $arrayvita, and $arrayglicemia -
@@ -267,23 +238,24 @@ class Utility
      * @param array $arrayglicemia The array of blood glucose levels.
      * @return array               The merged array containing all the fields needed for each record.
      *
-     * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($arraypeso, $arrayvita, $arrayglicemia)
+    public function createmergedarray($variablesArray)
     {
         // Create an empty array to hold the merged data.
         $mergedarray = array();
 
         // Get the length of any of the arrays (assuming they all have the same length).
-        $length = count($arraypeso[0]);
+        $length = count($variablesArray);
 
         // Iterate through all arrays at once.
         for ($j = 0; $j < $length; $j++) {
-            // Create a new array containing the current elements from all three input arrays.
-            // The second element of $arraypeso is the creation date, which is always the same
-            // for all three parameters.
-            $elementarray = array($arraypeso[1][$j], $arraypeso[0][$j], $arrayvita[0][$j], $arrayglicemia[0][$j]);
+            // Create a new array containing the current elements from all arrays.
+            $elementarray = array();
+
+            foreach ($variablesArray as $variableArray) {
+                $elementarray[] = $variableArray[$j];
+            }
 
             // Add the new array to the merged array.
             array_push($mergedarray, $elementarray);
@@ -292,6 +264,7 @@ class Utility
         // Return the merged array.
         return $mergedarray;
     }
+
 
     /**
      * This function writes data to a CSV file.
@@ -307,8 +280,13 @@ class Utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingfile($date, $weight, $waistcircumference, $glicemy, $filename, $delimiter, $mergedarray)
-    {
+    public function writingfile(
+        $datestring,
+        $variablesArray,
+        $filename,
+        $delimiter,
+        $mergedarray
+    ) {
         global $CFG;
 
         // Open the file for writing.
@@ -320,27 +298,32 @@ class Utility
         // Check if the file was opened successfully.
         if ($filehandler) {
             // Create an array of the header row.
-            $csv = array(
-                array($date, $weight, $waistcircumference, $glicemy)
-            );
+            $header = array($datestring);
 
-            // Loop through the merged array and create a new array for each row of data.
+            // Aggiungi i nomi delle colonne al header.
+            $header = array_merge($header, $variablesArray);
+
+            // Scrivi l'header nel file CSV.
+            fputcsv($filehandler, $header, $delimiter);
+
+            // Loop attraverso il mergedarray e scrivi ogni riga nel file CSV.
             foreach ($mergedarray as $elementarray) {
-                $newelement = array(
-                    $date => $elementarray[0], $weight => $elementarray[1],
-                    $waistcircumference => $elementarray[2],
-                    $glicemy => $elementarray[3]
-                );
-                array_push($csv, $newelement);
+                // Creare una nuova riga di dati usando i nomi delle colonne specificati in $variablesArray.
+                $rowData = array($elementarray[0]); // Aggiungi la colonna della data.
+
+                // Aggiungi i valori delle colonne specificate in $variablesArray.
+                foreach ($variablesArray as $variable) {
+                    $rowData[] = $elementarray[$variable];
+                }
+
+                // Scrivi la riga nel file CSV.
+                fputcsv($filehandler, $rowData, $delimiter);
             }
 
-            // Loop through the data and write each row to the CSV file.
-            foreach ($csv as $row) {
-                fputcsv($filehandler, $row, $delimiter);
-            }
             fclose($filehandler);
         }
     }
+
 
 
     /**
@@ -354,7 +337,7 @@ class Utility
         // Controlla se il valore è presente nelle variabili GET
         $courseid = optional_param('courseid', 0, PARAM_INT);
         if ($courseid == 0) {
-            $courseid = required_param('context_id', PARAM_INT);
+            $courseid = optional_param('context_id', 0, PARAM_INT);
         }
 
         return $courseid;
@@ -374,7 +357,7 @@ class Utility
      *
      * @return string il nome del file generato.
      */
-    public function generateFilename($username, $csv, $datestring, $weight, $waistcircumference, $glicemy, $mergedarray)
+    public function generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray)
     {
         global $CFG;
 
@@ -389,9 +372,7 @@ class Utility
             // Chiama la funzione writingfile() per scrivere il file CSV (il codice sorgente di writingfile() non è incluso in questa descrizione).
             $this->writingfile(
                 $datestring,
-                $weight,
-                $waistcircumference,
-                $glicemy,
+                $variablesArray,
                 $filename,
                 $delimiter,
                 $mergedarray
@@ -400,4 +381,95 @@ class Utility
 
         return $filename; // Restituisce il nome del file generato.
     }
+    /*
+    public function traduci($testo, $dest)
+    {
+        // Aggiungi i tag al testo
+        $tag = 'JHIKE';
+        $testo = urlencode($tag . $testo . $tag);
+    
+        // Costruisci i parametri per la richiesta POST
+        $params = "langpair=|{$dest}&text={$testo}";
+        echo "params: " . $params;
+    
+        // Esegui la richiesta di traduzione
+        $data = $this->postURL('http://translate.google.com/translate_t', $params);
+        
+        echo $data;
+        die;
+
+        // Estrai il risultato dalla risposta
+        preg_match_all("/<div[^>]*class=\"result-container\"[^>]*>(.*?)<\/div>/si", $data, $result, PREG_SET_ORDER);
+    
+        // Restituisci il risultato della traduzione
+        return strip_tags($result[0][1]); // Rimuovi eventuali tag HTML dalla risposta
+    }
+    
+    
+
+
+
+    private function postURL($url, $postData)
+    {
+        // Inizializza una sessione cURL
+        $ch = curl_init();
+
+        // Imposta le opzioni di cURL
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // Esegui la richiesta cURL e ottieni la risposta
+        $response = curl_exec($ch);
+
+        // Gestisci eventuali errori
+        if (curl_errno($ch)) {
+            // Puoi gestire gli errori qui o restituire un messaggio di errore
+            return "Errore cURL: " . curl_error($ch);
+        }
+
+        // Chiudi la sessione cURL
+        curl_close($ch);
+
+        // Restituisci la risposta
+        return $response;
+    }*/
+
+
+
+    /*
+
+    function traduciOnlineSenzaAPIKey($testo, $linguaDestinazione)
+    {
+        $url = "https://api.mymemory.translated.net/get?q=" . urlencode($testo) . "&langpair=auto|" . $linguaDestinazione;
+
+        $response = file_get_contents($url);
+
+        if ($response === FALSE) {
+            echo "Errore nella richiesta di traduzione: ";
+            var_dump(error_get_last()); // Visualizza informazioni sull'errore
+            return "Errore nella richiesta di traduzione.";
+        }
+
+        $data = json_decode($response, true);
+
+        // Estrai la traduzione dalla risposta
+        if (isset($data['responseData']['translatedText'])) {
+            return $data['responseData']['translatedText'];
+        } else {
+            return "Errore nella risposta di traduzione.";
+        }
+    }*/
+
+
+    // Funzione per gestire la conversione di $selectedFields o $selectedFieldsSearch in un array
+    function handleSelectedFields($fields)
+    {
+        if (!empty($fields)) {
+            return is_array($fields) ? $fields : explode(',', $fields);
+        }
+        return [];
+    }
+
 }

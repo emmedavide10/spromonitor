@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/form.css">
+</head>
+<body>
+<div id="questionContainer">
+    <h3 id="myCustomTitle">Selezionare i campi da voler graficare:</h3>
+
+{{#questions}}
+    {{#isNumeric}}
+        <label class="custom-checkbox">
+            <input type="checkbox" name="question_ids[]" value="{{id}}">
+            <span style="font-weight: normal;">{{{questionContent}}}</span>
+            <span class="checkmark"></span>
+        </label><br>
+    {{/isNumeric}}
+{{/questions}}
+
+<form id="surveyForm" style="margin-top: 10px;" method="post" action="index.php">
+    <input type="hidden" name="courseid" value="{{courseid}}">
+    <input type="hidden" name="sproid" value="{{sproid}}">
+    <input type="hidden" name="selectedFields" id="selectedFieldsInput" value="">
+    <input type="button" value="Submit" onclick="validateAndSubmit()">
+    <!-- Aggiungi il div per il messaggio di errore -->
+    <div id="errorContainer" style="color: red; margin-top: 5px;"></div>
+</form>
+
+</div>
+<script src='script/form.js'></script>
+</body>
+</html>

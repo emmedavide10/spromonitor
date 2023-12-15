@@ -30,12 +30,68 @@ defined('MOODLE_INTERNAL') || die();
 
 $utility = new utility();
 
+/*
+// Stampa le variabili GET
+echo "Contenuto della variabile \$_GET:\n";
+print_r($_GET);
+
+// Stampa le variabili POST
+echo "Contenuto della variabile \$_POST:\n";
+print_r($_POST);
+
+
+// Stampa le variabili SESSION
+echo "Contenuto della variabile \$_SESSION:\n";
+print_r($_SESSION);
+*/
+
+
+
 // If you search by username in the search bar.
 $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 
-$courseid = $utility->getCourseId();
+
+// Ottenere i parametri POST in modo sicuro
+$courseid = optional_param('courseid', 0, PARAM_INT);
+$sproid = optional_param('sproid', 0, PARAM_INT);
+$selectedFields = optional_param('selectedFields', '', PARAM_TEXT);
+$selectedFieldsSearch = optional_param('selectedFieldsSearch', '', PARAM_TEXT);
+/*
+echo "selectedFieldsSearch";
+print_r($selectedFieldsSearch);
+
+echo "selectedFields";
+print_r($selectedFields);
+
+die;*/
+
+
+if (isset($selectedFields)) {
+    $selectedFieldsArray = $utility->handleSelectedFields($selectedFields);
+} else if(isset($selectedFieldsSearch)){
+    $selectedFieldsArray = $utility->handleSelectedFields($selectedFieldsSearch);
+}
+
+print_r($selectedFieldsArray);
+die;
+
+$variablesArray = [];
+foreach ($selectedFieldsArray as $field) {
+    // Esegui la query per ottenere le variabili associate agli itemid noti
+    $sql = "SELECT variable FROM {surveyprofield_numeric} WHERE itemid = :field";
+    $params = ['field' => $field];
+    $result = $DB->get_record_sql($sql, $params);
+    // Verifica se ci sono risultati prima di accedere alla proprietà variable
+    if (!empty($result) && isset($result->variable)) {
+        // Aggiungi il valore della variabile alla fine dell'array
+        array_push($variablesArray, $result->variable);
+    } else {
+        // Se non ci sono risultati, aggiungi un valore vuoto all'array (o un valore di default, a seconda delle tue esigenze)
+        $variablesArray[] = null; // Puoi cambiare questo con il valore di default desiderato
+    }
+}
 
 $context = \context_course::instance($courseid);
 
@@ -43,11 +99,16 @@ if (!isset($username)) {
     $username = $singlecsv;
 }
 
+
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
-$param = ['courseid' => $courseid];
+
+$paramsurl['courseid'] = $courseid;
+$paramsurl['sproid'] = $sproid;
+$paramsurl['selectedFields'] = $selectedFields;
+//$paramsurl['selectedFieldsSearch'] = $selectedFieldsSearch;
 
 $PAGE->set_context($context);
-$PAGE->set_url('/admin/tool/monitoring/index.php', $param);
+$PAGE->set_url('/admin/tool/monitoring/index.php', $paramsurl);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_heading($pagetitle);
 $PAGE->requires->js_call_amd(
@@ -60,6 +121,7 @@ $PAGE->requires->js_call_amd(
 
 echo $OUTPUT->header();
 
+
 $sqlusers = 'SELECT u.id, u.username
                FROM {role_assignments} ra
                    JOIN {user} u on u.id = ra.userid
@@ -68,19 +130,24 @@ $sqlusers = 'SELECT u.id, u.username
 $idcourse = ['courseid' => $courseid];
 $queryusers = $DB->get_records_sql($sqlusers, $idcourse);
 
+
 $querycountusers = 'SELECT count(*) as num
                       FROM {role_assignments} ra
-                          JOIN {user} u on u.id = ra.userid';
-$resultcountuser = $DB->get_record_sql($querycountusers);
+                          JOIN {user} u on u.id = ra.userid
+                          JOIN {context} ctx ON ctx.id = ra.contextid
+                   WHERE ctx.instanceid = :courseid';
+$idcourse = ['courseid' => $courseid];
+$resultcountuser = $DB->get_record_sql($querycountusers, $idcourse);
 $numuser = $resultcountuser->num;
+
 
 $calendarparam['view'] = 'month';
 $calendarurl = new moodle_url('/calendar/view.php', $calendarparam);
 
 $datestring = get_string('date', 'tool_monitoring');
-$weight = get_string('weight', 'tool_monitoring');
-$waistcircumference = get_string('waistcircumference', 'tool_monitoring');
-$glicemy = get_string('glicemy', 'tool_monitoring');
+/*$weight = get_string('weight', 'tool_monitoring');
+    $waistcircumference = get_string('waistcircumference', 'tool_monitoring');
+    $glicemy = get_string('glicemy', 'tool_monitoring');*/
 $clinicaldata = get_string('clinicaldata', 'tool_monitoring');
 $insusername = get_string('insusername', 'tool_monitoring');
 $searchusername = get_string('searchusername', 'tool_monitoring');
@@ -95,46 +162,58 @@ $canaccessallcharts = has_capability('tool/monitoring:accessallcharts', $context
 $filenamearray = array();
 
 if (!$canaccessallcharts) {
-    $utility->singleuserchart(
-        $courseid,
-        $messageemptychart,
-        $titlechart,
-        $weight,
-        $waistcircumference,
-        $glicemy,
-        null
-    );
+    // Utilizza i valori nell'array per la tua funzione
+    $utility->singleuserchart($messageemptychart, $titlechart, $variablesArray, $selectedFieldsArray, null);
 } else {
 
+    $selectedFieldsSearch = json_encode($selectedFields);
+    $selectedFieldsSearch = str_replace('"', '', $selectedFieldsSearch);
+
+    //print_r($selectedFieldsSearch); die;
     $data = array(
         'searchusername' => $searchusername,
         'formAction' => '',
         'insusername' => $insusername,
         'search' => $search,
         'courseid' => $courseid,
+        'selectedFieldsSearch' => $selectedFieldsSearch,
     );
+
+
+    //TODO passare nel mustache della searchar i selectedfields perchè sennò non me li ritrovo quando clicco sul search
+
+
 
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
     $sqlusers = 'SELECT u.id, u.username
-            FROM {role_assignments} ra
-                JOIN {user} u on u.id = ra.userid
-                WHERE u.username LIKE :username';
-    $paramsquery = ['username' => '%' . $username . '%'];
-    $usersearched = $DB->get_records_sql($sqlusers, $paramsquery);
+    FROM {role_assignments} ra
+        JOIN {user} u ON u.id = ra.userid
+        JOIN {context} ctx ON ctx.id = ra.contextid
+    WHERE ctx.instanceid = :courseid
+      AND u.username LIKE :username';
 
-    if ($username && count($usersearched) <= 1) {
+    $idcourse = ['courseid' => $courseid];
+    $usernameParam = ['username' => '%' . $username . '%'];
+
+    $usersearched = $DB->get_records_sql($sqlusers, array_merge($idcourse, $usernameParam));
+
+    //var_dump($usersearched); die;
+
+
+    if ($username) {
+        echo "search";
 
         foreach ($usersearched as $user) {
             $userid = $user->id;
             $username = $user->username;
         }
         // Dopo aver ottenuto i risultati dalla query
+        $utility->singleuserchart($messageemptychart, $titlechart, $variablesArray, $selectedFieldsArray, $userid);
 
-        if (count($usersearched) == 1) {
+        if (count($usersearched) === 1) {
 
             $utility->singleuserchart(
-                $courseid,
                 '',
                 $clinicaldata . $username,
                 $weight,
@@ -143,7 +222,7 @@ if (!$canaccessallcharts) {
                 $userid
             );
 
-            $results = $utility->executequeries($courseid, $userid);
+            $results = $utility->executequeries($userid, $selectedFieldsArray);
 
             // CHART WEIGHT.
             $arraypeso = $utility->preparearray($results[0]);
@@ -154,8 +233,15 @@ if (!$canaccessallcharts) {
 
             $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
 
-            $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
-            $glicemy, $mergedarray);
+            $filename = $utility->generateFilename(
+                $username,
+                $csv,
+                $datestring,
+                $weight,
+                $waistcircumference,
+                $glicemy,
+                $mergedarray
+            );
 
             array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
 
@@ -167,7 +253,7 @@ if (!$canaccessallcharts) {
             );
 
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
-        } elseif (count($usersearched) == 0) {
+        } elseif (count($usersearched) === 0) {
 
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
@@ -176,48 +262,54 @@ if (!$canaccessallcharts) {
                 $messagenotfound . $username . '</h5>');
         }
     } else {
-
+        echo "no search";
         if ($usersearched) {
             $queryusers = $usersearched;
         }
+
+        //var_dump($queryusers); die;
 
         foreach ($queryusers as $user) {
 
             $username = $user->username;
             $userid = $user->id;
+            //var_dump($selectedFieldsArray); die;
 
-            $results = $utility->executequeries($courseid, $userid);
+            $results = $utility->executequeries($userid, $selectedFieldsArray);
+            //var_dump($results); die;
 
-            // CHART WEIGHT.
-            $arraypeso = $utility->preparearray($results[0]);
+            $chartDataArrays = [];
+            foreach ($results as $result) {
+                $preparedData = $utility->preparearray($result);
 
-            // CHART WAIST CIRCUMFERENCE.
-            $arrayvita = $utility->preparearray($results[1]);
-            // CHART GLICEMY.
-            $arrayglicemia = $utility->preparearray($results[2]);
+                if (!empty($preparedData['content']) && !empty($preparedData['timecreated'])) {
+                    $chartDataArrays[] = $preparedData;
+                }
+            }
 
             // If partecipant into for loop haven't compiled the surveypro.
-            if (!empty($arraypeso[0])) {
+            if (!empty($chartDataArrays)) {
+
+                //var_dump($chartDataArrays); die;
 
                 $title = $clinicaldata . $username;
-
                 echo \html_writer::tag(
                     'div class="padding-top-bottom"',
                     $utility->generatechart(
-                        $arraypeso,
-                        $arrayvita,
-                        $arrayglicemia,
-                        $weight,
-                        $waistcircumference,
-                        $glicemy,
-                        $title
+                        $title,
+                        $variablesArray,
+                        $chartDataArrays
                     )
                 );
+                $mergedarray = $utility->createmergedarray($variablesArray);
 
-                $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
-
-                $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
-                $glicemy, $mergedarray);
+                $filename = $utility->generateFilename(
+                    $username,
+                    $csv,
+                    $datestring,
+                    $variablesArray,
+                    $mergedarray
+                );
 
                 array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
             }
@@ -240,5 +332,8 @@ $data = array(
 );
 // Redirect calendar.
 $utility->rendermustachefile('templates/templatecalendar.mustache', $data);
+/*
+// back button
+$utility->rendermustachefile('templates/templatebackbutton.mustache', $data);*/
 
 echo $OUTPUT->footer();
