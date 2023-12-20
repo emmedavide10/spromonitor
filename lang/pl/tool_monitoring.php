@@ -16,6 +16,11 @@ $string['waistcircumference'] = 'Obwód talii (cm)';
 $string['glicemy'] = 'Poziom glukozy we krwi na czczo (mg/dl)';
 $string['csvgen'] = 'Wygeneruj plik CSV';
 $string['gocalendar'] = 'Przejdź do kalendarza';
+$string['title Formspro'] = 'Wybierz SurveyPro';
+$string['title form params'] = 'Wybierz pola, które chcesz wyświetlić na wykresie';
+$string['buttonsubmit'] = 'Prześlij';
+$string['powrót'] = 'Powrót';
+
 $string['monitoring:accessallcharts'] = 'Access all charts';
 
 

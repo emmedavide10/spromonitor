@@ -1,16 +1,16 @@
-function validateAndSubmit() {
+function validateAndSubmitQuestion() {
     // Utilizza la funzione per ottenere i parametri dall'URL corrente
     var allParams = getAllUrlParams();
     console.log(allParams);
 
     var selectedFields = document.querySelectorAll('input[name="question_ids[]"]:checked');
-    var errorContainer = document.getElementById('errorContainer');
+    var errorQuestion = document.getElementById('errorQuestion');
     var selectedFieldsInput = document.getElementById('selectedFieldsInput');
 
     if (selectedFields.length === 0) {
-        errorContainer.textContent = 'Seleziona almeno un campo';
+        errorQuestion.textContent = 'Seleziona almeno un campo';
     } else {
-        errorContainer.textContent = '';
+        errorQuestion.textContent = '';
         var selectedFieldValues = Array.from(selectedFields).map(field => field.value);
         var selectedFieldsString = selectedFieldValues.join(',');
 
@@ -21,6 +21,37 @@ function validateAndSubmit() {
         selectedFieldsInput.value = selectedFieldsString;
 
         console.log(allParams);
+        // Invia il form
+        document.getElementById('questionForm').submit();
+    }
+}
+
+
+function validateAndSubmitSurvey() {
+    var allParams = getAllUrlParams();
+    console.log(allParams);
+
+    var selectedSurvey = document.querySelectorAll('input[name="spro_ids[]"]:checked');
+    var errorSurvey = document.getElementById('errorSurvey');
+    var sproid = document.getElementById('sproid');
+
+    if (selectedSurvey.length === 0) {
+        errorSurvey.textContent = 'Seleziona il SurveyPro prima di procedere';
+    } else if(selectedSurvey.length > 1){
+        errorSurvey.textContent = 'Seleziona SOLO un SurveyPro';
+    } else {
+        errorSurvey.textContent = '';
+
+        // Ottieni il valore del survey selezionato
+        var selectedSurveyValue = selectedSurvey[0].value;
+
+        // Aggiungi il valore del survey ai parametri dell'URL
+        allParams.selectedSurvey = selectedSurveyValue;
+
+        // Imposta il valore dell'input nascosto
+        sproid.value = selectedSurveyValue;
+
+        console.log(allParams);
 
         // Invia il form
         document.getElementById('surveyForm').submit();
@@ -28,8 +59,10 @@ function validateAndSubmit() {
 }
 
 
-function getAllUrlParams(url) {
-    var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+
+
+function getAllUrlParams() {
+    var queryString = window.location.search.slice(1);
     var obj = {};
 
     if (queryString) {
@@ -58,6 +91,5 @@ function getAllUrlParams(url) {
 
     return obj;
 }
-
 
 

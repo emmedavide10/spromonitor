@@ -91,6 +91,8 @@ class Utility
             $chartSeries[] = new \core\chart_series($variable, $contentArray);
         }
 
+        //var_dump($chartSeries); die;
+
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
@@ -198,17 +200,22 @@ class Utility
         // Execute the queries to retrieve the chart data.
         $results = $this->executequeries($userid, $selectedFieldsArray);
 
+        $empty = true;
+        foreach($results as $subArr) {
+          if(count($subArr) != 0) {
+            $empty = false;
+          }  
+        }
+
         // Prepara gli array dei dati del grafico.
         $chartDataArrays = [];
         foreach ($results as $result) {
             $chartDataArrays[] = $this->preparearray($result);
         }
         // Stampa e termina per vedere i risultati.
-        /*print_r($chartDataArrays);
-        die;*/
-
+        //print_r($chartDataArrays);
         // If the user has not completed the survey, display a message.
-        if (empty($chartDataArrays)) {
+        if($empty) {
             echo \html_writer::tag('h5', $message);
         } else {
             // Combine the selected fields into an array
@@ -345,6 +352,17 @@ class Utility
 
 
 
+    // Funzione per gestire la conversione di $selectedFields in un array separando i valori in base alle virgole
+    public function handleSelectedFields($fields)
+    {
+        if (!empty($fields)) {
+            return is_array($fields) ? $fields : explode(',', $fields);
+        }
+        return [];
+    }
+
+
+   
     /**
      * Genera il nome del file.
      *
@@ -380,96 +398,6 @@ class Utility
         }
 
         return $filename; // Restituisce il nome del file generato.
-    }
-    /*
-    public function traduci($testo, $dest)
-    {
-        // Aggiungi i tag al testo
-        $tag = 'JHIKE';
-        $testo = urlencode($tag . $testo . $tag);
-    
-        // Costruisci i parametri per la richiesta POST
-        $params = "langpair=|{$dest}&text={$testo}";
-        echo "params: " . $params;
-    
-        // Esegui la richiesta di traduzione
-        $data = $this->postURL('http://translate.google.com/translate_t', $params);
-        
-        echo $data;
-        die;
-
-        // Estrai il risultato dalla risposta
-        preg_match_all("/<div[^>]*class=\"result-container\"[^>]*>(.*?)<\/div>/si", $data, $result, PREG_SET_ORDER);
-    
-        // Restituisci il risultato della traduzione
-        return strip_tags($result[0][1]); // Rimuovi eventuali tag HTML dalla risposta
-    }
-    
-    
-
-
-
-    private function postURL($url, $postData)
-    {
-        // Inizializza una sessione cURL
-        $ch = curl_init();
-
-        // Imposta le opzioni di cURL
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // Esegui la richiesta cURL e ottieni la risposta
-        $response = curl_exec($ch);
-
-        // Gestisci eventuali errori
-        if (curl_errno($ch)) {
-            // Puoi gestire gli errori qui o restituire un messaggio di errore
-            return "Errore cURL: " . curl_error($ch);
-        }
-
-        // Chiudi la sessione cURL
-        curl_close($ch);
-
-        // Restituisci la risposta
-        return $response;
-    }*/
-
-
-
-    /*
-
-    function traduciOnlineSenzaAPIKey($testo, $linguaDestinazione)
-    {
-        $url = "https://api.mymemory.translated.net/get?q=" . urlencode($testo) . "&langpair=auto|" . $linguaDestinazione;
-
-        $response = file_get_contents($url);
-
-        if ($response === FALSE) {
-            echo "Errore nella richiesta di traduzione: ";
-            var_dump(error_get_last()); // Visualizza informazioni sull'errore
-            return "Errore nella richiesta di traduzione.";
-        }
-
-        $data = json_decode($response, true);
-
-        // Estrai la traduzione dalla risposta
-        if (isset($data['responseData']['translatedText'])) {
-            return $data['responseData']['translatedText'];
-        } else {
-            return "Errore nella risposta di traduzione.";
-        }
-    }*/
-
-
-    // Funzione per gestire la conversione di $selectedFields o $selectedFieldsSearch in un array
-    function handleSelectedFields($fields)
-    {
-        if (!empty($fields)) {
-            return is_array($fields) ? $fields : explode(',', $fields);
-        }
-        return [];
     }
 
 }

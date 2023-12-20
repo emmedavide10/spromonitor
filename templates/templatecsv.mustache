@@ -1,41 +1,47 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <style>
-    #downloadSection {
-      display: none; /* Imposta il display su "none" per nascondere inizialmente l'elemento */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
+
 <body>
-<div>
-    <div class="float-right" style="margin-top: 20px;">
-        <form action="" method="post" id="myForm">
-            <input type="hidden" value="csv" name="1" id="ok">
-            <input type="hidden" value="{{singlecsv}}" name="singlecsv">
-            <input type="hidden" name="courseid" value="{{courseid}}">
-            <input type="submit" value="{{csvgen}}" name="csv" id="csv" class="btn btn-primary">
-        </form>
+
+ <div id="csvbutton">
+        <div class="float-right" style="margin-top: 20px;">
+            <form action="" method="post" id="myForm">
+                <input type="hidden" value="csv" name="1" id="ok">
+                <input type="hidden" value="{{singlecsv}}" name="singlecsv">
+                <input type="hidden" name="courseid" value="{{courseid}}">
+                <button type="submit" name="csv" id="csv" class="btn btn-primary">
+                    <i class="fas fa-link"></i> {{csvgen}}
+                </button>
+            </form>
+        </div>
     </div>
-</div>
 
-<div class="padding-top-bottom" id="downloadSection">
-    <h5>Download CSV</h5>
-    <ul id='link'>
-        {{#filenamearray}}
-        <li>
-          <i class='fa fa-download'></i>
-          <a href='export.php?f={{.}}'>Download {{.}}</a>
-        </li>
-        {{/filenamearray}}
-    </ul>
-</div>
+    <div class="visible-box padding-top-bottom" id="downloadSection">
+        <h5>Download CSV</h5>
+        <ul id='link'>
+            {{#filenamearray}}
+                <li class="download-success">
+                    <i class='fas fa-check-circle'></i> <!-- Font Awesome "check-circle" icon -->
+                    <a href='export.php?f={{.}}'>Download {{.}}</a>
+                </li>
+            {{/filenamearray}}
+        </ul>
+    </div>
 
-<script>
-document.getElementById('myForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
-    document.getElementById('downloadSection').style.display = 'inline'; // Show the download section
-});
-</script>
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            document.getElementById('csvbutton').style.display = 'none'; // Hide the csv generate button 
+            document.getElementById('downloadSection').style.display = 'block'; // Show the download section
+        });
+    </script>
 </body>
+
 </html>

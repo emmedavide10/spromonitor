@@ -16,4 +16,9 @@ $string['waistcircumference'] = 'Waist Circumference (cm)';
 $string['glicemy'] = 'Fasting glucose (mg/dl)';
 $string['csvgen'] = 'Generate CSV';
 $string['gocalendar'] = 'Go to calendar';
+$string['titleformspro'] = 'Select SurveyPro';
+$string['titleformparams'] = 'Select the fields you want to graph';
+$string['buttonsubmit'] = 'Submit';
+$string['goback'] = 'Previous';
+
 $string['monitoring:accessallcharts'] = 'Access all charts';

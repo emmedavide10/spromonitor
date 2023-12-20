@@ -16,6 +16,11 @@ $string['waistcircumference'] = 'Obikolka na taliyata (cm)';
 $string['glicemy'] = 'Krŭvna zakhar na gladno (mg/dl)';
 $string['csvgen'] = 'Generirane na CSV';
 $string['gocalendar'] = 'Otidete do kalendara';
+$string['titleformspro'] = 'Izberete SurveyPro';
+$string['titleformparams'] = 'Izberete poletata, koito iskate da izobrazite v grafika';
+$string['buttonsubmit'] = 'Izprashtane';
+$string['goback'] = 'Vrŭshtane nazad';
+
 $string['monitoring:accessallcharts'] = 'Access all charts';
 
 

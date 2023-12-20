@@ -16,4 +16,9 @@ $string['waistcircumference'] = 'Circonferenza della vita (cm)';
 $string['glicemy'] = 'Glicemia a digiuno (mg/dl)';
 $string['csvgen'] = 'Genera CSV';
 $string['gocalendar'] = 'Vai al calendario';
-$string['monitoring:accessallcharts'] = 'Accedi a tutti gli andamenti';
+$string['titleformspro'] = 'Selezionare il SurveyPro';
+$string['titleformparams'] = 'Selezionare i campi da voler graficare';
+$string['buttonsubmit'] = 'Invia';
+$string['goback'] = 'Indietro';
+
+$string['monitoring:accessallcharts'] = 'Access all charts';

@@ -16,5 +16,10 @@ $string['waistcircumference'] = 'Circunferencia de la cintura (cm)';
 $string['glicemy'] = 'Glucosa en ayunas (mg/dl)';
 $string['csvgen'] = 'Generar CSV';
 $string['gocalendar'] = 'Ir al calendario';
+$string['titleformspro'] = 'Seleccionar SurveyPro';
+$string['titleformparams'] = 'Seleccione los campos que desea graficar';
+$string['buttonsubmit'] = 'Enviar';
+$string['goback'] = 'Regresar';
+
 $string['monitoring:accessallcharts'] = 'Access all charts';
 

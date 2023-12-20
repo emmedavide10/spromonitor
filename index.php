@@ -28,7 +28,7 @@ require_once __DIR__ . '/../../../config.php';
 
 defined('MOODLE_INTERNAL') || die();
 
-$utility = new utility();
+$utility = new Utility();
 
 // If you search by username in the search bar.
 $username = optional_param('username', null, PARAM_TEXT);
@@ -39,26 +39,21 @@ $csv = optional_param('csv', 0, PARAM_INT);
 // Ottenere i parametri POST in modo sicuro
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $sproid = optional_param('sproid', 0, PARAM_INT);
-$selectedFields = optional_param('selectedFields', '', PARAM_TEXT);
-$selectedFieldsSearch = optional_param('selectedFieldsSearch', '', PARAM_TEXT);
-/*
-echo "selectedFieldsSearch";
-print_r($selectedFieldsSearch);
+// Ottieni il valore ricevuto nella request
+// Ottieni il valore dalla request
+$selectedFieldsValue = optional_param('selectedFields', '', PARAM_TEXT);
 
-echo "selectedFields";
-print_r($selectedFields);
+// Imposta o aggiorna direttamente la variabile di sessione
+$_SESSION['selectedFields'] = $selectedFieldsValue; 
 
-die;*/
+// Usa la variabile di sessione
+$selectedFields = $_SESSION['selectedFields'];
 
 
+$selectedFieldsArray = [];
 if (isset($selectedFields)) {
     $selectedFieldsArray = $utility->handleSelectedFields($selectedFields);
-} else if(isset($selectedFieldsSearch)){
-    $selectedFieldsArray = $utility->handleSelectedFields($selectedFieldsSearch);
 }
-
-print_r($selectedFieldsArray);
-die;
 
 $variablesArray = [];
 foreach ($selectedFieldsArray as $field) {
@@ -88,7 +83,6 @@ $pagetitle = get_string('pagetitle', 'tool_monitoring');
 $paramsurl['courseid'] = $courseid;
 $paramsurl['sproid'] = $sproid;
 $paramsurl['selectedFields'] = $selectedFields;
-$paramsurl['selectedFieldsSearch'] = $selectedFieldsSearch;
 
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php', $paramsurl);
@@ -128,9 +122,7 @@ $calendarparam['view'] = 'month';
 $calendarurl = new moodle_url('/calendar/view.php', $calendarparam);
 
 $datestring = get_string('date', 'tool_monitoring');
-/*$weight = get_string('weight', 'tool_monitoring');
-    $waistcircumference = get_string('waistcircumference', 'tool_monitoring');
-    $glicemy = get_string('glicemy', 'tool_monitoring');*/
+
 $clinicaldata = get_string('clinicaldata', 'tool_monitoring');
 $insusername = get_string('insusername', 'tool_monitoring');
 $searchusername = get_string('searchusername', 'tool_monitoring');
@@ -139,6 +131,7 @@ $titlechart = get_string('titlechart', 'tool_monitoring');
 $messageemptychart = get_string('messageemptychart', 'tool_monitoring');
 $gocalendar = get_string('gocalendar', 'tool_monitoring');
 $csvgen = get_string('csvgen', 'tool_monitoring');
+$goback = get_string('goback', 'tool_monitoring');
 
 $canaccessallcharts = has_capability('tool/monitoring:accessallcharts', $context);
 
@@ -149,17 +142,14 @@ if (!$canaccessallcharts) {
     $utility->singleuserchart($messageemptychart, $titlechart, $variablesArray, $selectedFieldsArray, null);
 } else {
 
-    $selectedFieldsSearch = json_encode($selectedFields);
-    $selectedFieldsSearch = str_replace('"', '', $selectedFieldsSearch);
 
-    //print_r($selectedFieldsSearch); die;
     $data = array(
         'searchusername' => $searchusername,
         'formAction' => '',
         'insusername' => $insusername,
         'search' => $search,
         'courseid' => $courseid,
-        'selectedFieldsSearch' => $selectedFieldsSearch,
+        'selectedFields' => $selectedFields
     );
 
 
@@ -182,40 +172,30 @@ if (!$canaccessallcharts) {
             $userid = $user->id;
             $username = $user->username;
         }
-        // Dopo aver ottenuto i risultati dalla query
-        $utility->singleuserchart($messageemptychart, $titlechart, $variablesArray, $selectedFieldsArray, $userid);
 
+        // Dopo aver ottenuto i risultati dalla query
         if (count($usersearched) === 1) {
 
             $utility->singleuserchart(
                 '',
                 $clinicaldata . $username,
-                $weight,
-                $waistcircumference,
-                $glicemy,
+                $variablesArray,
+                $selectedFieldsArray,
                 $userid
             );
 
             $results = $utility->executequeries($userid, $selectedFieldsArray);
 
-            // CHART WEIGHT.
-            $arraypeso = $utility->preparearray($results[0]);
-            // CHART WAIST CIRCUMFERENCE.
-            $arrayvita = $utility->preparearray($results[1]);
-            // CHART GLICEMY.
-            $arrayglicemia = $utility->preparearray($results[2]);
+            foreach ($results as $result) {
+                $preparedData = $utility->preparearray($result);
 
-            $mergedarray = $utility->createmergedarray($arraypeso, $arrayvita, $arrayglicemia);
+                if (!empty($preparedData['content']) && !empty($preparedData['timecreated'])) {
+                    $chartDataArrays[] = $preparedData;
+                }
+            }
+            $mergedarray = $utility->createmergedarray($variablesArray);
 
-            $filename = $utility->generateFilename(
-                $username,
-                $csv,
-                $datestring,
-                $weight,
-                $waistcircumference,
-                $glicemy,
-                $mergedarray
-            );
+            $filename = $utility->generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray);
 
             array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
 
@@ -236,7 +216,7 @@ if (!$canaccessallcharts) {
                 $messagenotfound . $username . '</h5>');
         }
     } else {
-        echo "no search";
+        //var_dump($usersearched); die;
         if ($usersearched) {
             $queryusers = $usersearched;
         }
@@ -261,10 +241,11 @@ if (!$canaccessallcharts) {
                 }
             }
 
+            //var_dump($chartDataArrays); die;
+
             // If partecipant into for loop haven't compiled the surveypro.
             if (!empty($chartDataArrays)) {
 
-                //var_dump($chartDataArrays); die;
 
                 $title = $clinicaldata . $username;
                 echo \html_writer::tag(
@@ -275,10 +256,11 @@ if (!$canaccessallcharts) {
                         $chartDataArrays
                     )
                 );
-                $mergedarray = $utility->createmergedarray($variablesArray);
 
-                $filename = $utility->generateFilename($username, $csv, $datestring, $weight, $waistcircumference,
-                $glicemy, $mergedarray);
+                $mergedarray = $utility->createmergedarray($variablesArray);
+                //var_dump($mergedarray); die;
+
+                $filename = $utility->generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray);
 
                 array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
             }
@@ -297,12 +279,9 @@ if (!$canaccessallcharts) {
 $data = array(
     'calendarurl' => $calendarurl,
     'gocalendar' => $gocalendar,
-
+    'goback' => $goback
 );
 // Redirect calendar.
-$utility->rendermustachefile('templates/templatecalendar.mustache', $data);
-/*
-// back button
-$utility->rendermustachefile('templates/templatebackbutton.mustache', $data);*/
+$utility->rendermustachefile('templates/templatecalendarandbb.mustache', $data);
 
 echo $OUTPUT->footer();
