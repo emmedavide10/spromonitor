@@ -10,38 +10,33 @@
 
 <body>
 
- <div id="csvbutton">
-        <div class="float-right" style="margin-top: 20px;">
-            <form action="" method="post" id="myForm">
-                <input type="hidden" value="csv" name="1" id="ok">
-                <input type="hidden" value="{{singlecsv}}" name="singlecsv">
-                <input type="hidden" name="courseid" value="{{courseid}}">
-                <button type="submit" name="csv" id="csv" class="btn btn-primary">
-                    <i class="fas fa-link"></i> {{csvgen}}
-                </button>
-            </form>
-        </div>
+<div id="csvbutton">
+    <div class="float-right" style="margin-top: 20px;">
+        <form action="" method="post" id="myForm">
+            <input type="hidden" value="csv" name="1" id="ok">
+            <input type="hidden" value="{{singlecsv}}" name="singlecsv">
+            <input type="hidden" name="courseid" value="{{courseid}}">
+            <button type="submit" name="csv" id="csv" class="btn btn-primary">
+                <i class="fas fa-file-csv" style="margin-right: 7px;"></i>{{csvgen}}
+            </button>
+        </form>
     </div>
+</div>
 
-    <div class="visible-box padding-top-bottom" id="downloadSection">
-        <h5>Download CSV</h5>
-        <ul id='link'>
-            {{#filenamearray}}
-                <li class="download-success">
-                    <i class='fas fa-check-circle'></i> <!-- Font Awesome "check-circle" icon -->
-                    <a href='export.php?f={{.}}'>Download {{.}}</a>
-                </li>
-            {{/filenamearray}}
-        </ul>
-    </div>
+<div class="visible-box padding-top-bottom" id="downloadSection">
+    <h5>Download CSV</h5>
+    <ul id='link'>
+        {{#filenamearray}}
+            <li class="download-success">
+                <i class='fas fa-check-circle'></i>
+                <a href='export.php?f={{.}}'>Download {{.}}</a>
+            </li>
+        {{/filenamearray}}
+    </ul>
+</div>
 
-    <script>
-        document.getElementById('myForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission behavior
-            document.getElementById('csvbutton').style.display = 'none'; // Hide the csv generate button 
-            document.getElementById('downloadSection').style.display = 'block'; // Show the download section
-        });
-    </script>
+<script src="script/csv.js"></script>
+
 </body>
 
 </html>

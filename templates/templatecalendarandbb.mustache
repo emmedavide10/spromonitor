@@ -5,32 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
 </head>
 <body>
+    <button class='btn btn-light' style='color: #8b7676; border: none; margin-top: 20px;' id="calendarButton">
+        <i class='fa fa-calendar' style="margin-right: 4px;"></i>{{gocalendar}}
+    </button>
 
-  <button class='btn btn-light' style='color: #8b7676; border: none; margin-top: 20px;' onclick="redirectToCalendar()">
-    <i class='fa fa-calendar'></i>
-    {{gocalendar}}
-  </button>
-  
-<br><br><br>
-
-    <a href="#" class="custom-previous-button" onclick="goBack()">
+    <a href="#" class="custom-previous-button" id="goBackButton" style="display: block; margin-top: 30px;">
         <i class="fas fa-chevron-left"></i> {{goback}}
     </a>
 
-  <script>
-    // Funzione per tornare indietro di una pagina
-    function goBack() {
-      window.history.back();
-    }
+    <script>
+        // Function to go back one page
+        function goBack() {
+            window.history.back();
+        }
 
-    // Funzione per il reindirizzamento al calendario
-    function redirectToCalendar() {
-      var calendarurl = '{{calendarurl}}';
-      window.location.href = calendarurl;
-    }
-  </script>
+        // Function for redirecting to the calendar
+        function redirectToCalendar() {
+            var calendarurl = '{{calendarurl}}';
+            window.location.href = calendarurl;
+        }
+
+        // Add event listeners
+        document.getElementById('calendarButton').addEventListener('click', redirectToCalendar);
+        document.getElementById('goBackButton').addEventListener('click', goBack);
+    </script>
 </body>
 </html>

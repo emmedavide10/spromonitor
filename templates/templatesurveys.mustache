@@ -3,27 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/style.css">            
 </head>
 <body>
 
 <div id="sproContainer">
     <h3 id="titlesurvey">{{titleformspro}}</h3>
-{{#namesurveys}}
-        <label class="custom-checkbox">
-            <input type="checkbox" name="spro_ids[]" value="{{id}}">
-            <span style="font-weight: bold;">{{{name}}}</span>
-            <span class="checkmark"></span>
-        </label><br>
-{{/namesurveys}}
-
-<form id="surveyForm" style="margin-top: 10px;" method="post" action="">
-    <input type="hidden" name="courseid" value="{{courseid}}">
-    <input type="hidden" name="sproid" id="sproid" value="">
-    <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitSurvey()">
-    <!-- Aggiungi il div per il messaggio di errore -->
-    <div id="errorSurvey" style="color: red; margin-top: 5px;"></div>
-</form>
+    <form id="surveyForm" style="margin-top: 10px;" method="post" action="">
+        <input type="hidden" name="courseid" value="{{courseid}}">
+        <select id="sproid" name="sproid">
+            {{#namesurveys}}
+                <option value="{{id}}">{{{name}}}</option>
+            {{/namesurveys}}
+        </select>
+        <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitSurvey()">
+        <!-- Aggiungi il div per il messaggio di errore -->
+        <div id="errorSurvey" style="color: red; margin-top: 5px;"></div>
+    </form>
 </div>
 
 <script src='script/form.js'></script>
