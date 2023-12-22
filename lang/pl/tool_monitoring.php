@@ -1,7 +1,7 @@
 <?php
 defined('MOODLE_INTERNAL') || die();
 
-$string['pagetitle'] = 'Tygodniowe dane monitorujące: gromadzenie i trendy';
+$string['pagetitle'] = 'Narzędzie do monitorowania danych';
 $string['pluginname'] = 'Monitoring';
 $string['messageemptychart'] = 'Twoja kolekcja danych śledzenia jest pusta';
 $string['titlechart'] = 'Twoje dane śledzenia';
@@ -11,25 +11,13 @@ $string['search'] = 'W pobliżu';
 $string['clinicaldata'] = 'Dane śledzenia: ';
 $string['messagenotfound'] = 'Nie ma uczestnika o tej nazwie użytkownika: ';
 $string['date'] = 'Data';
-$string['weight'] = 'Waga (kg)';
-$string['waistcircumference'] = 'Obwód talii (cm)';
-$string['glicemy'] = 'Poziom glukozy we krwi na czczo (mg/dl)';
 $string['csvgen'] = 'Wygeneruj plik CSV';
 $string['gocalendar'] = 'Przejdź do kalendarza';
 $string['title Formspro'] = 'Wybierz SurveyPro';
 $string['title form params'] = 'Wybierz pola, które chcesz wyświetlić na wykresie';
 $string['buttonsubmit'] = 'Prześlij';
 $string['powrót'] = 'Powrót';
+$string['errorquestion'] = 'Wybierz przynajmniej jedno pole';
+$string['errorspro'] = 'Nie ma programu SurveyPro. Utwórz co najmniej jeden, aby kontynuować';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';
-
-
-
-
-
-
-
-
-
-
-

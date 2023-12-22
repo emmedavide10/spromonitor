@@ -11,7 +11,7 @@
 <body>
 
 <div id="csvbutton">
-    <div class="float-right" style="margin-top: 20px;">
+    <div class="float-right" style="margin-top: 50px;">
         <form action="" method="post" id="myForm">
             <input type="hidden" value="csv" name="1" id="ok">
             <input type="hidden" value="{{singlecsv}}" name="singlecsv">
@@ -23,8 +23,8 @@
     </div>
 </div>
 
-<div class="visible-box padding-top-bottom" id="downloadSection">
-    <h5>Download CSV</h5>
+<div class="visible-box" id="downloadSection">
+    <h5 id="downloadcsv">Download CSV</h5>
     <ul id='link'>
         {{#filenamearray}}
             <li class="download-success">

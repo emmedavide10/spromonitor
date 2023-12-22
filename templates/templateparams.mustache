@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
 
-<div id="questionContainer">
+<div id="questionContainer" style:"margin-bottom: 60px">
     <h3 id="titleparams">{{titleformparams}}</h3>
 {{#questions}}
     {{#isNumeric}}
         <label class="custom-checkbox">
+            <i class="fa fa-exclamation-circle" style="font-size:20px;color:red;margin-right:5px; display:none"></i>
             <input type="checkbox" name="question_ids[]" value="{{id}}">
             <span style="font-weight: bold;">{{{questionContent}}}</span>
             <span class="checkmark"></span>
@@ -19,15 +21,20 @@
     {{/isNumeric}}
 {{/questions}}
 
+
 <form id="questionForm" style="margin-top: 10px;" method="post" action="index.php">
     <input type="hidden" name="courseid" value="{{courseid}}">
     <input type="hidden" name="sproid" value="{{sproid}}">
     <input type="hidden" name="selectedFields" id="selectedFieldsInput" value="">
-    <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitQuestion()">
-    <div id="errorQuestion" style="color: red; margin-top: 5px;"></div>
+    <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitQuestion(event)">
 </form>
 </div>
-
+<div id="error-popup">
+    <p>
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>{{errorquestion}}</span>
+    </p>
+</div>
 <script src='script/form.js'></script>
 </body>
 </html>

@@ -1,62 +1,114 @@
-function validateAndSubmitQuestion() {
-    // Utilizza la funzione per ottenere i parametri dall'URL corrente
+
+/*
+function validateForm(event) {
+
+    // Verifica se almeno una checkbox è selezionata
+    var checkboxes = 
+
+    checkboxes.forEach(function(checkbox) {
+        if (checkbox.checked) {
+            atLeastOneChecked = true;
+        }
+    });
+
+    // Mostra il popup di errore se nessuna checkbox è selezionata
+    if (!atLeastOneChecked) {
+        document.getElementById('error-popup').style.display = 'block';
+    } else {
+        // Altrimenti, invia il form
+        document.getElementById('myForm').submit();
+    }
+}*/
+
+function validateAndSubmitQuestion(event) {
+    event.preventDefault(); // Previeni il normale comportamento del submit
+
+    // Use the function to get parameters from the current URL
     var allParams = getAllUrlParams();
     console.log(allParams);
 
-    var selectedFields = document.querySelectorAll('input[name="question_ids[]"]:checked');
-    var errorQuestion = document.getElementById('errorQuestion');
+    var checkboxes = document.querySelectorAll('input[name="question_ids[]"]');
+    var errorPopup = document.getElementById("error-popup");
     var selectedFieldsInput = document.getElementById('selectedFieldsInput');
+    var exclamationIcons = document.querySelectorAll('.fa-exclamation-circle');
 
-    if (selectedFields.length === 0) {
-        errorQuestion.textContent = 'Seleziona almeno un campo';
+
+
+    // Verifica se nessun checkbox è stato selezionato
+    var noCheckboxSelected = true;
+    var selectedFieldValues = [];
+
+    checkboxes.forEach(function (checkbox) {
+        if (checkbox.checked) {
+            noCheckboxSelected = false;
+            selectedFieldValues.push(checkbox.value);
+        }
+    });
+
+
+    if (noCheckboxSelected) {
+        fadeIn(errorPopup, 0.25);
+        exclamationIcons.forEach(function (icon) {
+            icon.style.display = 'inline';
+        });
+
+        // Imposta un timeout di 7 secondi prima di nascondere il popup
+        setTimeout(function () {
+            fadeOut(errorPopup, 1); // Velocità di dissolvenza più veloce allo svanire
+        }, 3000);
     } else {
-        errorQuestion.textContent = '';
-        var selectedFieldValues = Array.from(selectedFields).map(field => field.value);
+        fadeOut(errorPopup, 1);
         var selectedFieldsString = selectedFieldValues.join(',');
-
-        // Aggiungi i campi selezionati ai parametri dell'URL
+        // Add the selected fields to the URL parameters
         allParams.selectedFields = selectedFieldsString;
-
-        // Imposta il valore dell'input nascosto
+        // Set the value of the hidden input
         selectedFieldsInput.value = selectedFieldsString;
-
         console.log(allParams);
-        // Invia il form
+        // Submit the form
         document.getElementById('questionForm').submit();
     }
 }
+
+
+
 
 
 function validateAndSubmitSurvey() {
     var allParams = getAllUrlParams();
     console.log(allParams);
 
-    var selectedSurvey = document.querySelectorAll('input[name="spro_ids[]"]:checked');
-    var errorSurvey = document.getElementById('errorSurvey');
-    var sproid = document.getElementById('sproid');
+    var selectedSurvey = document.getElementById("sproid").value;
+    console.log(selectedSurvey);
+    var errorPopup = document.getElementById("error-popup");
 
-    if (selectedSurvey.length === 0) {
-        errorSurvey.textContent = 'Seleziona il SurveyPro prima di procedere';
-    } else if(selectedSurvey.length > 1){
-        errorSurvey.textContent = 'Seleziona SOLO un SurveyPro';
+    // Verifica se non ci sono opzioni disponibili nel menu a tendina
+    if (document.getElementById("sproid").options.length === 0) {
+        fadeIn(errorPopup, 0.25);
+        // Imposta un timeout di 7 secondi prima di nascondere il popup
+        setTimeout(function () {
+            fadeOut(errorPopup, 1); // Velocità di dissolvenza più veloce allo svanire
+        }, 5000);
     } else {
-        errorSurvey.textContent = '';
+        // Verifica se l'opzione selezionata ha un valore vuoto
+        if (selectedSurvey === "") {
+            fadeIn(errorPopup, 0.25);
+            // Imposta un timeout di 7 secondi prima di nascondere il popup
+            setTimeout(function () {
+                fadeOut(errorPopup, 1); // Velocità di dissolvenza più veloce allo svanire
+            }, 5000);
+        } else {
+            fadeOut(errorPopup, 1);
+            // Add the value of the selected survey to the URL parameters
+            allParams.selectedSurvey = selectedSurvey;
 
-        // Ottieni il valore del survey selezionato
-        var selectedSurveyValue = selectedSurvey[0].value;
+            console.log(allParams);
 
-        // Aggiungi il valore del survey ai parametri dell'URL
-        allParams.selectedSurvey = selectedSurveyValue;
-
-        // Imposta il valore dell'input nascosto
-        sproid.value = selectedSurveyValue;
-
-        console.log(allParams);
-
-        // Invia il form
-        document.getElementById('surveyForm').submit();
+            // Submit the form
+            document.getElementById('surveyForm').submit();
+        }
     }
 }
+
 
 
 
@@ -93,3 +145,30 @@ function getAllUrlParams() {
 }
 
 
+
+function fadeIn(element, speed) {
+    element.style.opacity = 0;
+    element.style.display = 'block';
+    var tick = function () {
+        element.style.opacity = +element.style.opacity + speed;
+
+        if (+element.style.opacity < 1) {
+            (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
+        }
+    };
+    tick();
+}
+
+function fadeOut(element, speed) {
+    element.style.opacity = 1;
+    var tick = function () {
+        element.style.opacity = +element.style.opacity - speed;
+
+        if (+element.style.opacity > 0) {
+            (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
+        } else {
+            element.style.display = 'none';
+        }
+    };
+    tick();
+}

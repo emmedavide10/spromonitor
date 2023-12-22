@@ -18,7 +18,7 @@
  * Monitoring utility class.
  *
  * @package   tool_monitoring
- * @copyright 2013 onwards kordan <kordan@mclink.it>
+ * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,6 +32,8 @@ namespace tool_monitoring;
  */
 class Utility
 {
+
+
     /**
      * Returns an array containing two elements: the content and timecreated of all chart parameters
      * in the input recordset.
@@ -42,103 +44,108 @@ class Utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function preparearray($result)
+    public function prepareArray($result)
     {
         $content = array();
         $timecreated = array();
 
-        // Itera su ogni riga nel recordset ed estrai i valori di content e timecreated.
+        // Iterate over each row in the recordset and extract the values of content and timecreated.
         foreach ($result as $row) {
             $content[] = $row->content;
             $timecreated[] = date('d/m/Y', $row->timecreated);
         }
 
-        // Restituisci gli array content e timecreated come un singolo array associativo.
+        // Return the content and timecreated arrays as a single associative array.
         return array('content' => $content, 'timecreated' => $timecreated);
     }
 
 
+
     /**
-     * Returns the chart generated from the input data arrays.
+     * Generates a line chart based on input data arrays.
      *
-     * @param array $arraypeso An array containing weight values.
-     * @param array $arrayvita An array containing waist values.
-     * @param array $arrayglicemia An array containing blood glucose values.
      * @param string $title Optional; The chart title.
-     * @return string HTML containing the chart.
+     * @param array $variablesArray An array containing variable names.
+     * @param array $chartDataArrays An array containing chart data arrays with 'content' and 'timecreated' keys.
+     *
+     * @return string HTML containing the generated chart.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function generatechart(
+    public function generateChart(
         $title = '',
         $variablesArray,
         $chartDataArrays
     ): string {
         global $OUTPUT;
-
-        // Rimuovi o commenta l'inversione dell'ordine delle variabili.
-        //$variablesArray = array_reverse($variablesArray);
-
+    
+    
         // Create chart series for each data array.
         $chartSeries = [];
-
+    
         foreach ($variablesArray as $index => $variable) {
             $contentArray = $chartDataArrays[$index]['content'];
             $timecreatedArray = $chartDataArrays[$index]['timecreated'];
-
+    
             // Create a new chart series for each variable.
             $chartSeries[] = new \core\chart_series($variable, $contentArray);
         }
-
-        //var_dump($chartSeries); die;
-
+    
+        // Uncomment the line below for debugging purposes.
+    
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
         $chart->set_legend_options(['position' => 'bottom', 'margin-bottom' => 30]);
-
-        // Aggiungi le serie al grafico nell'ordine normale.
+    
+        // Add series to the chart in the normal order.
         foreach ($chartSeries as $series) {
             $chart->add_series($series);
         }
-
+    
         // Set the x-axis labels to the date values in the input arrays.
         $chart->set_labels($timecreatedArray);
-
-        // Render the chart using the Moodle output renderer.
-        return $OUTPUT->render($chart);
+    
+        // Add spacing between charts (adjust the margin as needed).
+        $chartHtml = '<div style="margin-bottom: 70px;">' . $OUTPUT->render($chart) . '</div>';
+    
+        return $chartHtml;
     }
+    
 
 
 
     /**
-     * Returns the final result of all executed queries.
+     * Executes queries to retrieve data for generating charts.
      *
-     * @param int $userid The ID of the user to retrieve data for. If not provided, the current user is used.
-     * @return array $results An array containing the query results.
+     * @param int|null $userid The ID of the user to retrieve data for. If not provided, the current user is used.
+     * @param array $selectedFieldsArray An array containing selected field IDs.
+     *
+     * @return array An array containing the query results.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($userid = null, $selectedFieldsArray)
+    public function executeQueries($userid = null, $selectedFieldsArray): array
     {
         global $DB, $USER;
+
         // If $userid argument is not provided, use the current user.
         if (!isset($userid)) {
             $userid = $USER->id;
         }
 
         // Initialize the results array.
-        $results = array();
+        $results = [];
 
         // Query to select SurveyPro module submissions based on user and specific module item.
         $query = 'SELECT s.timecreated, a.content
-                  FROM {surveypro_submission} s
-                      JOIN {surveypro_answer} a ON a.submissionid = s.id
-                  WHERE s.status = :status
-                  AND s.userid = :userid
-                  AND a.itemid = :itemid';
+              FROM {surveypro_submission} s
+                  JOIN {surveypro_answer} a ON a.submissionid = s.id
+              WHERE s.status = :status
+              AND s.userid = :userid
+              AND a.itemid = :itemid';
 
         foreach ($selectedFieldsArray as $itemid) {
             // Execute the query for each item ID in the array.
@@ -146,6 +153,7 @@ class Utility
             $result = $DB->get_records_sql($query, $queryparam);
             array_push($results, $result);
         }
+
         // Return the results array.
         return $results;
     }
@@ -175,19 +183,23 @@ class Utility
         }
     }
 
+
+
     /**
      * Renders HTML output for a single user's chart.
      *
-     * @param object $utility The chart utility object.
      * @param string $message The message to display if the user has not completed the survey.
      * @param string $title The chart title.
+     * @param array $variablesArray An array containing variable names.
+     * @param array $selectedFieldsArray An array containing selected field IDs.
      * @param int $userid Optional; The ID of the user to generate the chart for. Defaults to the current user.
-     * @return echo html render The HTML output for the user's chart and mergedarray
+     *
+     * @return echo html render The HTML output for the user's chart and mergedarray.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($message, $title, $variablesArray, $selectedFieldsArray, $userid = null)
+    public function singleUserChart($message, $title, $variablesArray, $selectedFieldsArray, $userid = null)
     {
 
         global $USER;
@@ -198,24 +210,23 @@ class Utility
         }
 
         // Execute the queries to retrieve the chart data.
-        $results = $this->executequeries($userid, $selectedFieldsArray);
+        $results = $this->executeQueries($userid, $selectedFieldsArray);
 
         $empty = true;
-        foreach($results as $subArr) {
-          if(count($subArr) != 0) {
-            $empty = false;
-          }  
+        foreach ($results as $subArr) {
+            if (count($subArr) != 0) {
+                $empty = false;
+            }
         }
 
-        // Prepara gli array dei dati del grafico.
+        // Prepare the chart data arrays.
         $chartDataArrays = [];
         foreach ($results as $result) {
-            $chartDataArrays[] = $this->preparearray($result);
+            $chartDataArrays[] = $this->prepareArray($result);
         }
-        // Stampa e termina per vedere i risultati.
-        //print_r($chartDataArrays);
+
         // If the user has not completed the survey, display a message.
-        if($empty) {
+        if ($empty) {
             echo \html_writer::tag('h5', $message);
         } else {
             // Combine the selected fields into an array
@@ -223,7 +234,7 @@ class Utility
             // Otherwise, generate the chart with the specified title.
             echo \html_writer::tag(
                 'div class="padding-top-bottom"',
-                $this->generatechart(
+                $this->generateChart(
                     $title,
                     $variablesArray,
                     $chartDataArrays
@@ -234,23 +245,20 @@ class Utility
 
 
 
-
-
     /**
-     * This function takes in three arrays - $arraypeso, $arrayvita, and $arrayglicemia -
-     * and creates a merged array that contains all the fields needed in an Excel sheet for each record.
+     * Creates a merged array from multiple arrays.
      *
-     * @param array $arraypeso     The array of weights.
-     * @param array $arrayvita     The array of vital signs.
-     * @param array $arrayglicemia The array of blood glucose levels.
-     * @return array               The merged array containing all the fields needed for each record.
+     * @param array $variablesArray An array containing variable names.
      *
+     * @return array The merged array containing all the fields needed for each record.
+     *
+     * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($variablesArray)
+    public function createMergedArray($variablesArray)
     {
         // Create an empty array to hold the merged data.
-        $mergedarray = array();
+        $mergedArray = array();
 
         // Get the length of any of the arrays (assuming they all have the same length).
         $length = count($variablesArray);
@@ -258,90 +266,90 @@ class Utility
         // Iterate through all arrays at once.
         for ($j = 0; $j < $length; $j++) {
             // Create a new array containing the current elements from all arrays.
-            $elementarray = array();
+            $elementArray = array();
 
             foreach ($variablesArray as $variableArray) {
-                $elementarray[] = $variableArray[$j];
+                $elementArray[] = $variableArray[$j];
             }
 
             // Add the new array to the merged array.
-            array_push($mergedarray, $elementarray);
+            array_push($mergedArray, $elementArray);
         }
 
         // Return the merged array.
-        return $mergedarray;
+        return $mergedArray;
     }
 
 
+
     /**
-     * This function writes data to a CSV file.
+     * Writes data to a CSV file.
      *
-     * @param string $date              The date of the measurement.
-     * @param string $weight            The weight of the patient.
-     * @param string $waistcircumference The waist circumference of the patient.
-     * @param string $glicemy           The blood glucose level of the patient.
-     * @param string $filename          The name of the file to write to.
-     * @param string $delimiter         The delimiter to use in the CSV file.
-     * @param array  $mergedarray       The merged array of data to write to the CSV file.
+     * @param string $dateString The date of the measurement.
+     * @param array $variablesArray An array containing variable names.
+     * @param string $filename The name of the file to write to.
+     * @param string $delimiter The delimiter to use in the CSV file.
+     * @param array $mergedArray The merged array of data to write to the CSV file.
+     *
+     * @return void
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingfile(
-        $datestring,
+    public function writingFile(
+        $dateString,
         $variablesArray,
         $filename,
         $delimiter,
-        $mergedarray
+        $mergedArray
     ) {
         global $CFG;
 
         // Open the file for writing.
-        $exportsubdir = 'tool_monitoring/csv';
-        make_temp_directory($exportsubdir);
-        $filewithpath = $CFG->tempdir . '/' . $exportsubdir . '/' . $filename;
-        $filehandler = fopen($filewithpath, 'w');
+        $exportSubdir = 'tool_monitoring/csv';
+        make_temp_directory($exportSubdir);
+        $fileWithPath = $CFG->tempdir . '/' . $exportSubdir . '/' . $filename;
+        $fileHandler = fopen($fileWithPath, 'w');
 
         // Check if the file was opened successfully.
-        if ($filehandler) {
+        if ($fileHandler) {
             // Create an array of the header row.
-            $header = array($datestring);
+            $header = array($dateString);
 
-            // Aggiungi i nomi delle colonne al header.
+            // Add the column names to the header.
             $header = array_merge($header, $variablesArray);
 
-            // Scrivi l'header nel file CSV.
-            fputcsv($filehandler, $header, $delimiter);
+            // Write the header to the CSV file.
+            fputcsv($fileHandler, $header, $delimiter);
 
-            // Loop attraverso il mergedarray e scrivi ogni riga nel file CSV.
-            foreach ($mergedarray as $elementarray) {
-                // Creare una nuova riga di dati usando i nomi delle colonne specificati in $variablesArray.
-                $rowData = array($elementarray[0]); // Aggiungi la colonna della data.
+            // Loop through the mergedArray and write each row to the CSV file.
+            foreach ($mergedArray as $elementArray) {
+                // Create a new data row using the column names specified in $variablesArray.
+                $rowData = array($elementArray[0]); // Add the date column.
 
-                // Aggiungi i valori delle colonne specificate in $variablesArray.
+                // Add the values of the specified columns in $variablesArray.
                 foreach ($variablesArray as $variable) {
-                    $rowData[] = $elementarray[$variable];
+                    $rowData[] = $elementArray[$variable];
                 }
 
-                // Scrivi la riga nel file CSV.
-                fputcsv($filehandler, $rowData, $delimiter);
+                // Write the row to the CSV file.
+                fputcsv($fileHandler, $rowData, $delimiter);
             }
 
-            fclose($filehandler);
+            fclose($fileHandler);
         }
     }
 
 
-
     /**
-     * Assegna il valore di $courseid basato sulle variabili GET, POST e di sessione.
+     * Assigns the value of $courseid based on the GET, POST, and session variables.
      *
-     * @return int Il valore di $courseid assegnato basato sulle variabili GET, POST e di sessione.
+     * @return int The value of $courseid assigned based on the GET, POST, and session variables.
      */
     public function getCourseId()
     {
 
-        // Controlla se il valore è presente nelle variabili GET
+        // Check if the value is present in the GET variables
         $courseid = optional_param('courseid', 0, PARAM_INT);
         if ($courseid == 0) {
             $courseid = optional_param('context_id', 0, PARAM_INT);
@@ -352,7 +360,13 @@ class Utility
 
 
 
-    // Funzione per gestire la conversione di $selectedFields in un array separando i valori in base alle virgole
+    /**
+     * Function to handle the conversion of $selectedFields into an array by splitting values based on commas.
+     *
+     * @param mixed $fields The fields to handle.
+     *
+     * @return array The array resulting from handling the fields.
+     */
     public function handleSelectedFields($fields)
     {
         if (!empty($fields)) {
@@ -361,43 +375,39 @@ class Utility
         return [];
     }
 
-
-   
     /**
-     * Genera il nome del file.
+     * Generates the file name.
      *
-     * @param string $username Il nome utente da utilizzare nel nome del file.
-     * @param bool $csv Un flag che indica se è richiesto un file CSV.
-     * @param string $datestring Una stringa di data da utilizzare nel nome del file.
-     * @param string $weight Una stringa che rappresenta il peso nel file CSV.
-     * @param string $waistcircumference Una stringa che rappresenta la circonferenza della vita nel file CSV.
-     * @param string $glicemy Una stringa che rappresenta la glicemia nel file CSV.
+     * @param string $username The username to use in the file name.
+     * @param bool $csv A flag indicating whether a CSV file is requested.
+     * @param string $datestring A date string to use in the file name.
+     * @param array $variablesArray An array containing variable names.
+     * @param array $mergedArray A merged array containing all the fields needed for each record.
      *
-     * @return string il nome del file generato.
+     * @return string The generated file name.
      */
-    public function generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray)
+    public function generateFilename($username, $csv, $datestring, $variablesArray, $mergedArray)
     {
         global $CFG;
 
         $delimiter = ';';
 
-        $date = userdate(time(), '%d%m%Y', 99, false, false); // Ottiene una data formattata come stringa.
-        $filename = 'file_' . $date . '_' . $username . '.csv'; // Crea il nome del file.
-        $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Crea il percorso completo del file.
+        $date = userdate(time(), '%d%m%Y', 99, false, false); // Gets a formatted date as a string.
+        $filename = 'file_' . $date . '_' . $username . '.csv'; // Creates the file name.
+        $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Creates the full file path.
 
-        if (isset($csv)) { // Verifica se è richiesto un file CSV.
+        if (isset($csv)) { // Checks if a CSV file is requested.
 
-            // Chiama la funzione writingfile() per scrivere il file CSV (il codice sorgente di writingfile() non è incluso in questa descrizione).
-            $this->writingfile(
+            // Calls the writingFile() function to write the CSV file (the source code for writingFile() is not included in this description).
+            $this->writingFile(
                 $datestring,
                 $variablesArray,
                 $filename,
                 $delimiter,
-                $mergedarray
+                $mergedArray
             );
         }
 
-        return $filename; // Restituisce il nome del file generato.
+        return $filename; // Returns the generated file name.
     }
-
 }

@@ -8,81 +8,44 @@
     max-width: 600px;
 }
 
+
 /* Stile personalizzato per l'intestazione h3 */
 #questionContainer h3 {
-    color: #ff6600;
-    /* Colore del testo arancione */
-    font-size: 2em;
-    /* Dimensione del carattere 2em */
-    margin-top: 10px;
-    /* Margine superiore 20px */
-    padding-bottom: 25px;
+    font-size: 1.7em;
     text-align: center;
-    /* Allineamento al centro */
-    text-decoration: underline;
     /* Sottolinea il testo */
+    color: #333;
+    margin-bottom: 8%;
 }
-
-
-
-/* Stile per #questionContainer */
-#sproContainer {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    max-width: 600px;
-}
-
-/* Stile personalizzato per l'intestazione h3 */
-#sproContainer h3 {
-    color: #ff6600;
-    /* Colore del testo arancione */
-    font-size: 2em;
-    /* Dimensione del carattere 2em */
-    margin-top: 10px;
-    /* Margine superiore 20px */
-    padding-bottom: 25px;
-    text-align: center;
-    /* Allineamento al centro */
-    text-decoration: underline;
-    /* Sottolinea il testo */
-}
-
-
-
 
 
 .custom-checkbox {
-    position: relative;
+    position: relative; /* Aggiunto */
     padding-left: 30px;
-    /* Adjust as needed */
     cursor: pointer;
     display: block;
-    margin-bottom: 10px;
-    /* Adjust as needed */
+    margin-bottom: 1px;
 }
 
 .custom-checkbox input {
     position: absolute;
+    top: 50%; /* Aggiunto */
+    transform: translateY(-50%); /* Aggiunto */
     opacity: 0;
     cursor: pointer;
 }
 
 .checkmark {
     position: absolute;
-    top: 0;
+    top: 50%; /* Aggiunto */
+    transform: translateY(-50%); /* Aggiunto */
     left: 0;
     height: 20px;
-    /* Adjust as needed */
     width: 20px;
-    /* Adjust as needed */
     background-color: #eee;
-    /* Background color for the checkbox */
     border: 1px solid #ccc;
-    /* Border color for the checkbox */
 }
+
 
 .custom-checkbox:hover input~.checkmark {
     background-color: #ddd;
@@ -90,7 +53,7 @@
 }
 
 .custom-checkbox input:checked~.checkmark {
-    background-color: #2196F3;
+    background-color: #4CAF50;
     /* Change background color when checked */
 }
 
@@ -130,7 +93,6 @@
     display: block;
     width: 100%;
     padding: 10px;
-    margin-bottom: 10px;
     border: none;
     /* Remove border for hidden input and button */
     box-sizing: border-box;
@@ -138,7 +100,7 @@
 }
 
 #questionForm input[type="button"] {
-    background-color: #4caf50;
+    background-color: #2196F3;
     /* Submit button background color */
     color: #fff;
     /* Submit button text color */
@@ -149,56 +111,12 @@
 }
 
 #questionForm input[type="button"]:hover {
-    background-color: #45a049;
+    background-color: #0b7dda;
     /* Change background color on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Add shadow on hover */
 }
+
 
 #questionForm input[type="button"]:focus {
-    outline: none;
-}
-
-
-
-#surveyForm {
-    max-width: 300px;
-    /* Adjust as needed */
-    margin: 0 auto;
-    padding: 10px;
-}
-
-#surveyForm input[type="hidden"],
-#surveyForm input[type="button"] {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: none;
-    /* Remove border for hidden input and button */
-    box-sizing: border-box;
-    /* Include padding in the width and height */
-}
-
-#surveyForm input[type="button"] {
-    background-color: #4caf50;
-    /* Submit button background color */
-    color: #fff;
-    /* Submit button text color */
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    /* Smooth transition for background color */
-}
-
-#surveyForm input[type="button"]:hover {
-    background-color: #45a049;
-    /* Change background color on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Add shadow on hover */
-}
-
-#surveyForm input[type="button"]:focus {
     outline: none;
 }
 
@@ -216,22 +134,156 @@
 
 /* Add custom styles for the button if needed */
 .custom-previous-button {
-    color: #0f6cbf;
+    color: #2196F3;
     font-size: 24px;
     text-decoration: none;
 
 }
 
-
 .visible-box {
-    border: 2px solid #474947; /* Bordo verde */
-    background-color: #f2f2f2; /* Colore di sfondo grigio chiaro */
-    padding: 15px; /* Spaziatura interna ridotta */
-    margin-top: 10px; /* Margine superiore aumentato */
-    margin-bottom: 20px; /* Margine superiore aumentato */
-    max-width: 500px; /* Larghezza massima del riquadro aumentata */
+    border: 2px solid #474947;
+    background-color: #f2f2f2;
+    padding: 15px;
+    padding-bottom: 5px;
+    margin-top: 50px;
+    max-width: 500px;
     margin-left: auto;
     margin-right: auto;
-    box-shadow: 0 4px 8px rgba(145, 34, 34, 0.1); /* Ombra leggera */
-    border-radius: 8px; /* Bordi arrotondati */
+    box-shadow: 0 4px 8px rgba(145, 34, 34, 0.1);
+    border-radius: 8px;
 }
+
+
+
+/* Container styles */
+#sproContainer {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px; /* Adjust as needed */
+    padding: 20px;
+    margin: 20px auto;
+    text-align: center;
+    position: absolute;
+    top: 33.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+
+/* Title styles */
+#titlesurvey {
+    font-size: 1.7em;
+    text-align: center;
+    /* Sottolinea il testo */
+    color: #333;
+    margin-bottom: 8%;
+}
+
+
+/* Select styles */
+#sproid {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#sproid:hover {
+    border-color: #aaa;
+}
+
+#sproid:focus {
+    outline: none;
+    border-color: #2196F3; /* Adjust as needed */
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5); /* Adjust as needed */
+}
+
+/* Submit button styles */
+#surveyForm input[type="button"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+#surveyForm input[type="button"]:hover {
+    background-color: #0b7dda;
+}
+
+#surveyForm input[type="button"]:focus {
+    outline: none;
+}
+
+/* Error message styles */
+#errorSurvey {
+    margin-top: 5px;
+    color: red;
+}
+
+/* Hide the default dropdown arrow */
+#sproid::-ms-expand {
+    display: none;
+}
+
+#sproid::after {
+    content: '\25BC'; /* Unicode for down arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Adjust as needed */
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #555;
+}
+
+#sproid:hover::after {
+    color: #333;
+}
+
+
+#searchbar {
+    margin-bottom: 70px;
+}
+
+
+#error-popup {
+    display: none;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(255, 153, 153, 0.9);
+    border: 1px solid #cc0000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    max-width: 45%;
+}
+
+
+
+#error-popup p {
+    margin: 0;
+    text-align: center; /* Centra il testo */
+}
+
+#error-popup i {
+    margin-right: 5px;
+}
+
+
+     /* Aggiungi stili CSS per lo spazio vuoto */
+     #emptySpace {
+        height: 33.5vh; /* 10% dell'altezza della finestra del browser */
+    }
