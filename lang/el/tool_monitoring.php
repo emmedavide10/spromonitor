@@ -19,5 +19,6 @@ $string['buttonsubmit'] = 'Steílete';
 $string['goback'] = 'Pros ta píso';
 $string['errorquestion'] = 'Epiléxte touláchiston éna pedío';
 $string['errorspro'] = 'Den ypárchei SurveyPro. Dimiourgíste touláchiston éna gia na synechísete';
+$string['selectoptions'] = 'Epiléxte mia epilogí';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

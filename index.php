@@ -44,11 +44,10 @@ $sproid = optional_param('sproid', 0, PARAM_INT);
 $selectedFieldsValue = optional_param('selectedFields', '', PARAM_TEXT);
 
 // Imposta o aggiorna direttamente la variabile di sessione
-$_SESSION['selectedFields'] = $selectedFieldsValue; 
+$_SESSION['selectedFields'] = $selectedFieldsValue;
 
 // Usa la variabile di sessione
 $selectedFields = $_SESSION['selectedFields'];
-
 
 $selectedFieldsArray = [];
 if (isset($selectedFields)) {
@@ -97,7 +96,6 @@ $PAGE->requires->js_call_amd(
 );
 
 echo $OUTPUT->header();
-
 
 $sqlusers = 'SELECT u.id, u.username
                FROM {role_assignments} ra
@@ -216,21 +214,17 @@ if (!$canaccessallcharts) {
                 $messagenotfound . $username . '</h5>');
         }
     } else {
-        //var_dump($usersearched); die;
         if ($usersearched) {
             $queryusers = $usersearched;
         }
 
-        //var_dump($queryusers); die;
 
         foreach ($queryusers as $user) {
 
             $username = $user->username;
             $userid = $user->id;
-            //var_dump($selectedFieldsArray); die;
 
             $results = $utility->executequeries($userid, $selectedFieldsArray);
-            //var_dump($results); die;
 
             $chartDataArrays = [];
             foreach ($results as $result) {
@@ -241,7 +235,6 @@ if (!$canaccessallcharts) {
                 }
             }
 
-            //var_dump($chartDataArrays); die;
 
             // If partecipant into for loop haven't compiled the surveypro.
             if (!empty($chartDataArrays)) {
@@ -258,7 +251,6 @@ if (!$canaccessallcharts) {
                 );
 
                 $mergedarray = $utility->createmergedarray($variablesArray);
-                //var_dump($mergedarray); die;
 
                 $filename = $utility->generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray);
 
@@ -276,6 +268,7 @@ if (!$canaccessallcharts) {
         $utility->rendermustachefile('templates/templatecsv.mustache', $data);
     }
 }
+
 $data = array(
     'calendarurl' => $calendarurl,
     'gocalendar' => $gocalendar,

@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<div id="questionContainer" style:"margin-bottom: 60px">
+<div id="questionContainer" >
     <h3 id="titleparams">{{titleformparams}}</h3>
 {{#questions}}
     {{#isNumeric}}
@@ -22,13 +22,16 @@
 {{/questions}}
 
 
-<form id="questionForm" style="margin-top: 10px;" method="post" action="index.php">
+<form id="questionForm" method="post" action="index.php">
     <input type="hidden" name="courseid" value="{{courseid}}">
     <input type="hidden" name="sproid" value="{{sproid}}">
     <input type="hidden" name="selectedFields" id="selectedFieldsInput" value="">
     <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitQuestion(event)">
 </form>
 </div>
+
+    <div id="emptySpace"></div>
+
 <div id="error-popup">
     <p>
         <i class="fas fa-exclamation-triangle"></i>

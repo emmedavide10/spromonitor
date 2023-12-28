@@ -19,5 +19,6 @@ $string['buttonsubmit'] = 'Izprashtane';
 $string['goback'] = 'Vrŭshtane nazad';
 $string['errorquestion'] = 'Izberete pone edno pole';
 $string['errorspro'] = 'Nyama nalichen SurveyPro. Sŭzdaĭte pone edin, za da prodŭlzhite';
+$string['selectoptions'] = 'Izberete optsiya';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

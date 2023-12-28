@@ -20,7 +20,8 @@
 
 
 .custom-checkbox {
-    position: relative; /* Aggiunto */
+    position: relative;
+    /* Aggiunto */
     padding-left: 30px;
     cursor: pointer;
     display: block;
@@ -29,16 +30,20 @@
 
 .custom-checkbox input {
     position: absolute;
-    top: 50%; /* Aggiunto */
-    transform: translateY(-50%); /* Aggiunto */
+    top: 50%;
+    /* Aggiunto */
+    transform: translateY(-50%);
+    /* Aggiunto */
     opacity: 0;
     cursor: pointer;
 }
 
 .checkmark {
     position: absolute;
-    top: 50%; /* Aggiunto */
-    transform: translateY(-50%); /* Aggiunto */
+    top: 50%;
+    /* Aggiunto */
+    transform: translateY(-50%);
+    /* Aggiunto */
     left: 0;
     height: 20px;
     width: 20px;
@@ -160,15 +165,23 @@
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px; /* Adjust as needed */
+    max-width: 400px;
+    /* Adjust as needed */
     padding: 20px;
     margin: 20px auto;
-    text-align: center;
-    position: absolute;
-    top: 33.5%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
+
+
+/* Stile per #questionContainer */
+#questionContainer {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 600px;
+}
+
 
 
 
@@ -199,8 +212,10 @@
 
 #sproid:focus {
     outline: none;
-    border-color: #2196F3; /* Adjust as needed */
-    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5); /* Adjust as needed */
+    border-color: #2196F3;
+    /* Adjust as needed */
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+    /* Adjust as needed */
 }
 
 /* Submit button styles */
@@ -236,10 +251,12 @@
 }
 
 #sproid::after {
-    content: '\25BC'; /* Unicode for down arrow */
+    content: '\25BC';
+    /* Unicode for down arrow */
     position: absolute;
     top: 50%;
-    right: 10px; /* Adjust as needed */
+    right: 10px;
+    /* Adjust as needed */
     transform: translateY(-50%);
     pointer-events: none;
     color: #555;
@@ -251,7 +268,9 @@
 
 
 #searchbar {
-    margin-bottom: 70px;
+    margin-bottom: 10%;
+    margin-top: 4%;
+
 }
 
 
@@ -275,7 +294,8 @@
 
 #error-popup p {
     margin: 0;
-    text-align: center; /* Centra il testo */
+    text-align: center;
+    /* Centra il testo */
 }
 
 #error-popup i {
@@ -283,7 +303,8 @@
 }
 
 
-     /* Aggiungi stili CSS per lo spazio vuoto */
-     #emptySpace {
-        height: 33.5vh; /* 10% dell'altezza della finestra del browser */
-    }
+/* Aggiungi stili CSS per lo spazio vuoto */
+#emptySpace {
+    margin-top: 7%;
+    /* 10% dell'altezza della finestra del browser */
+}

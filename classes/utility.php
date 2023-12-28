@@ -97,7 +97,7 @@ class Utility
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
-        $chart->set_legend_options(['position' => 'bottom', 'margin-bottom' => 30]);
+        $chart->set_legend_options(['position' => 'right']);
     
         // Add series to the chart in the normal order.
         foreach ($chartSeries as $series) {
@@ -108,7 +108,7 @@ class Utility
         $chart->set_labels($timecreatedArray);
     
         // Add spacing between charts (adjust the margin as needed).
-        $chartHtml = '<div style="margin-bottom: 70px;">' . $OUTPUT->render($chart) . '</div>';
+        $chartHtml = '<div style="margin-bottom: 7%">' . $OUTPUT->render($chart) . '</div>';
     
         return $chartHtml;
     }

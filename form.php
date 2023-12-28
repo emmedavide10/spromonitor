@@ -64,6 +64,7 @@ $titleformparams = get_string('titleformparams', 'tool_monitoring');
 $buttonsubmit = get_string('buttonsubmit', 'tool_monitoring');
 $errorquestion = get_string('errorquestion', 'tool_monitoring');
 $errorspro = get_string('errorspro', 'tool_monitoring');
+$selectoptions = get_string('selectoptions', 'tool_monitoring');
 
 // Initialize variables
 $data = [];
@@ -109,7 +110,8 @@ if (strpos($currentUrl, '/moodle/mod/lti/') !== false) {
         'namesurveys' => $transformedSurveysName,
         'buttonsubmit' => $buttonsubmit,
         'titleformspro' => $titleformspro,
-        'errorspro' => $errorspro
+        'errorspro' => $errorspro,
+        'selectoptions' => $selectoptions
     ];
     $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
 

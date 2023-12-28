@@ -19,5 +19,6 @@ $string['buttonsubmit'] = 'Enviar';
 $string['goback'] = 'Voltar';
 $string['errorquestion'] = 'Selecione pelo menos um campo';
 $string['errorspro'] = 'Não há nenhum SurveyPro presente. Crie pelo menos um para prosseguir';
+$string['selectoptions'] = 'Selecione uma opção';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

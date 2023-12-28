@@ -8,12 +8,12 @@
 </head>
 <body>
 
-<div id="sproContainer" style:" margin-bottom: 50px;">
+<div id="sproContainer">
     <h3 id="titlesurvey">{{titleformspro}}</h3>
-    <form id="surveyForm" style="margin-top: 10px;" method="post" action="">
+    <form id="surveyForm" style="margin-top: 3%;" method="post" action="">
         <input type="hidden" name="courseid" value="{{courseid}}">
         <select id="sproid" name="sproid">
-            <option value="" selected disabled>Seleziona un'opzione</option>
+            <option value="" selected disabled>{{selectoptions}}</option>
             {{#namesurveys}}
                 <option value="{{id}}">{{{name}}}</option>
             {{/namesurveys}}
