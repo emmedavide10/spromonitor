@@ -86,7 +86,6 @@ $paramsurl['selectedFields'] = $selectedFields;
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php', $paramsurl);
 $PAGE->set_pagelayout('standard');
-$PAGE->set_heading($pagetitle);
 $PAGE->requires->js_call_amd(
     'core/first',
     'require',
@@ -96,6 +95,19 @@ $PAGE->requires->js_call_amd(
 );
 
 echo $OUTPUT->header();
+
+echo "<h2 align='center'>".$pagetitle."</h2>";
+
+// URL della dashboard del corso
+$paramurl['id'] = $courseid;
+$paramurl['section'] = 0;
+$urldashboard = new moodle_url('/course/view.php', $paramurl);
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+// Ora $course contiene tutte le informazioni del corso, incluso il nome
+$courseName = $course->fullname;
+
+// Creazione del link sottolineato
+echo '<div><a href="' . $urldashboard . '" style="font-size: larger; text-decoration: underline;">' . $courseName . '</a></div>';
 
 $sqlusers = 'SELECT u.id, u.username
                FROM {role_assignments} ra
@@ -206,7 +218,6 @@ if (!$canaccessallcharts) {
 
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
         } elseif (count($usersearched) === 0) {
-
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
 

@@ -227,7 +227,8 @@ class Utility
 
         // If the user has not completed the survey, display a message.
         if ($empty) {
-            echo \html_writer::tag('h5', $message);
+            echo "<br><br>";
+            echo \html_writer::tag('h5 class="padding-top-bottom"', $message);
         } else {
             // Combine the selected fields into an array
 

@@ -44,7 +44,6 @@ $paramsurl['sproid'] = $sproid;
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/form.php', $paramsurl);
 $PAGE->set_pagelayout('standard');
-$PAGE->set_heading($pagetitle);
 
 // Include necessary JavaScript resources
 $PAGE->requires->js_call_amd(
@@ -57,6 +56,8 @@ $PAGE->requires->js_call_amd(
 
 // Output the HTML header
 echo $OUTPUT->header();
+
+echo "<h2 align='center'>".$pagetitle."</h2>";
 
 // Get localized strings for display
 $titleformspro = get_string('titleformspro', 'tool_monitoring');

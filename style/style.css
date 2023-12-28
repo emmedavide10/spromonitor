@@ -4,7 +4,7 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
+    margin :8% auto;
     max-width: 600px;
 }
 
@@ -168,18 +168,7 @@
     max-width: 400px;
     /* Adjust as needed */
     padding: 20px;
-    margin: 20px auto;
-}
-
-
-/* Stile per #questionContainer */
-#questionContainer {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    max-width: 600px;
+    margin :8% auto;
 }
 
 
@@ -307,4 +296,10 @@
 #emptySpace {
     margin-top: 7%;
     /* 10% dell'altezza della finestra del browser */
+}
+
+
+
+.padding-top-bottom{
+    margin-bottom: 5%;
 }
