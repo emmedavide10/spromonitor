@@ -18,7 +18,7 @@ $string['titleformparams'] = 'Epiléxte ta pedía pou thélete na schimatísete 
 $string['buttonsubmit'] = 'Steílete';
 $string['goback'] = 'Pros ta píso';
 $string['errorquestion'] = 'Epiléxte pedía. Eláchisto: 1 - Mégisto: 5';
-$string['errorspro'] = 'Den ypárchei SurveyPro. Dimiourgíste touláchiston éna gia na synechísete';
+$string['errorspro'] = 'Den epiléchthike SurveyPro. Epiléxte í dimiourgíste touláchiston éna gia na synechísete';
 $string['selectoptions'] = 'Epiléxte mia epilogí';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

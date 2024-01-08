@@ -18,7 +18,7 @@ $string['titleformparams'] = 'Selezionare i campi da voler graficare';
 $string['buttonsubmit'] = 'Invia';
 $string['goback'] = 'Indietro';
 $string['errorquestion'] = 'Seleziona i campi. Minimo: 1 - Massimo: 5';
-$string['errorspro'] = 'Non è presente alcun SurveyPro. Creane almeno uno per procedere';
+$string['errorspro'] = 'Non è stato selezionato alcun SurveyPro. Selezionane o creane almeno uno per procedere';
 $string['selectoptions'] = 'Seleziona un\' opzione';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

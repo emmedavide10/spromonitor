@@ -26,10 +26,10 @@ function validateAndSubmitQuestion(event) {
             icon.style.display = 'inline';
         });
 
-        // Set a 7-second timeout before hiding the popup
+        // Set a 4-second timeout before hiding the popup
         setTimeout(function () {
             fadeOut(errorPopup, 1); // Faster fade-out speed
-        }, 3000);
+        }, 4000);
     } else {
         fadeOut(errorPopup, 1);
         var selectedFieldsString = selectedFieldValues.join(',');
@@ -54,7 +54,7 @@ function validateAndSubmitSurvey() {
     // Check if no options are available in the dropdown menu
     if (document.getElementById("sproid").options.length === 0) {
         fadeIn(errorPopup, 0.25);
-        // Set a 7-second timeout before hiding the popup
+        // Set a 5-second timeout before hiding the popup
         setTimeout(function () {
             fadeOut(errorPopup, 1); // Faster fade-out speed
         }, 5000);
@@ -62,7 +62,7 @@ function validateAndSubmitSurvey() {
         // Check if the selected option has an empty value
         if (selectedSurvey === "") {
             fadeIn(errorPopup, 0.25);
-            // Set a 7-second timeout before hiding the popup
+            // Set a 5-second timeout before hiding the popup
             setTimeout(function () {
                 fadeOut(errorPopup, 1); // Faster fade-out speed
             }, 5000);

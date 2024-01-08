@@ -18,7 +18,7 @@ $string['titleformparams'] = 'Izberete poletata, koito iskate da izobrazite v gr
 $string['buttonsubmit'] = 'Izprashtane';
 $string['goback'] = 'Vrŭshtane nazad';
 $string['errorquestion'] = 'Izbor na poleta. Minimum: 1 - Maksimum: 5';
-$string['errorspro'] = 'Nyama nalichen SurveyPro. Sŭzdaĭte pone edin, za da prodŭlzhite';
+$string['errorspro'] = 'Ne e izbran SurveyPro. Izberete ili sŭzdaĭte pone edin, za da prodŭlzhite';
 $string['selectoptions'] = 'Izberete optsiya';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';
