@@ -1,27 +1,5 @@
-
-/*
-function validateForm(event) {
-
-    // Verifica se almeno una checkbox è selezionata
-    var checkboxes = 
-
-    checkboxes.forEach(function(checkbox) {
-        if (checkbox.checked) {
-            atLeastOneChecked = true;
-        }
-    });
-
-    // Mostra il popup di errore se nessuna checkbox è selezionata
-    if (!atLeastOneChecked) {
-        document.getElementById('error-popup').style.display = 'block';
-    } else {
-        // Altrimenti, invia il form
-        document.getElementById('myForm').submit();
-    }
-}*/
-
 function validateAndSubmitQuestion(event) {
-    event.preventDefault(); // Previeni il normale comportamento del submit
+    event.preventDefault(); // Prevent the normal submit behavior
 
     // Use the function to get parameters from the current URL
     var allParams = getAllUrlParams();
@@ -32,29 +10,25 @@ function validateAndSubmitQuestion(event) {
     var selectedFieldsInput = document.getElementById('selectedFieldsInput');
     var exclamationIcons = document.querySelectorAll('.fa-exclamation-circle');
 
-
-
-    // Verifica se nessun checkbox è stato selezionato
-    var noCheckboxSelected = true;
+    // Check if no checkbox is selected
     var selectedFieldValues = [];
 
     checkboxes.forEach(function (checkbox) {
         if (checkbox.checked) {
-            noCheckboxSelected = false;
             selectedFieldValues.push(checkbox.value);
         }
     });
 
-
-    if (noCheckboxSelected) {
+    // Show error popup if no checkbox is selected or more than 5 parameters are selected
+    if (selectedFieldValues.length === 0 || selectedFieldValues.length > 5) {
         fadeIn(errorPopup, 0.25);
         exclamationIcons.forEach(function (icon) {
             icon.style.display = 'inline';
         });
 
-        // Imposta un timeout di 7 secondi prima di nascondere il popup
+        // Set a 7-second timeout before hiding the popup
         setTimeout(function () {
-            fadeOut(errorPopup, 1); // Velocità di dissolvenza più veloce allo svanire
+            fadeOut(errorPopup, 1); // Faster fade-out speed
         }, 3000);
     } else {
         fadeOut(errorPopup, 1);
@@ -69,10 +43,6 @@ function validateAndSubmitQuestion(event) {
     }
 }
 
-
-
-
-
 function validateAndSubmitSurvey() {
     var allParams = getAllUrlParams();
     console.log(allParams);
@@ -81,20 +51,20 @@ function validateAndSubmitSurvey() {
     console.log(selectedSurvey);
     var errorPopup = document.getElementById("error-popup");
 
-    // Verifica se non ci sono opzioni disponibili nel menu a tendina
+    // Check if no options are available in the dropdown menu
     if (document.getElementById("sproid").options.length === 0) {
         fadeIn(errorPopup, 0.25);
-        // Imposta un timeout di 7 secondi prima di nascondere il popup
+        // Set a 7-second timeout before hiding the popup
         setTimeout(function () {
-            fadeOut(errorPopup, 1); // Velocità di dissolvenza più veloce allo svanire
+            fadeOut(errorPopup, 1); // Faster fade-out speed
         }, 5000);
     } else {
-        // Verifica se l'opzione selezionata ha un valore vuoto
+        // Check if the selected option has an empty value
         if (selectedSurvey === "") {
             fadeIn(errorPopup, 0.25);
-            // Imposta un timeout di 7 secondi prima di nascondere il popup
+            // Set a 7-second timeout before hiding the popup
             setTimeout(function () {
-                fadeOut(errorPopup, 1); // Velocità di dissolvenza più veloce allo svanire
+                fadeOut(errorPopup, 1); // Faster fade-out speed
             }, 5000);
         } else {
             fadeOut(errorPopup, 1);
@@ -108,10 +78,6 @@ function validateAndSubmitSurvey() {
         }
     }
 }
-
-
-
-
 
 function getAllUrlParams() {
     var queryString = window.location.search.slice(1);
@@ -143,8 +109,6 @@ function getAllUrlParams() {
 
     return obj;
 }
-
-
 
 function fadeIn(element, speed) {
     element.style.opacity = 0;

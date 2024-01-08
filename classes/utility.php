@@ -97,7 +97,7 @@ class Utility
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
-        $chart->set_legend_options(['position' => 'right']);
+        $chart->set_legend_options(['position' => 'bottom']);
     
         // Add series to the chart in the normal order.
         foreach ($chartSeries as $series) {

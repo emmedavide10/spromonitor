@@ -17,7 +17,7 @@ $string['titleformspro'] = 'Epiléxte SurveyPro';
 $string['titleformparams'] = 'Epiléxte ta pedía pou thélete na schimatísete grafiká';
 $string['buttonsubmit'] = 'Steílete';
 $string['goback'] = 'Pros ta píso';
-$string['errorquestion'] = 'Epiléxte touláchiston éna pedío';
+$string['errorquestion'] = 'Epiléxte pedía. Eláchisto: 1 - Mégisto: 5';
 $string['errorspro'] = 'Den ypárchei SurveyPro. Dimiourgíste touláchiston éna gia na synechísete';
 $string['selectoptions'] = 'Epiléxte mia epilogí';
 

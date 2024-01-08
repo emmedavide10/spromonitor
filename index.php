@@ -35,18 +35,17 @@ $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 
-
-// Ottenere i parametri POST in modo sicuro
+// Get POST parameters safely
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $sproid = optional_param('sproid', 0, PARAM_INT);
-// Ottieni il valore ricevuto nella request
-// Ottieni il valore dalla request
+// Get the value received in the request
+// Get the value from the request
 $selectedFieldsValue = optional_param('selectedFields', '', PARAM_TEXT);
 
-// Imposta o aggiorna direttamente la variabile di sessione
+// Set or update the session variable directly
 $_SESSION['selectedFields'] = $selectedFieldsValue;
 
-// Usa la variabile di sessione
+// Use the session variable
 $selectedFields = $_SESSION['selectedFields'];
 
 $selectedFieldsArray = [];
@@ -56,17 +55,17 @@ if (isset($selectedFields)) {
 
 $variablesArray = [];
 foreach ($selectedFieldsArray as $field) {
-    // Esegui la query per ottenere le variabili associate agli itemid noti
+    // Execute the query to get the variables associated with known itemids
     $sql = "SELECT variable FROM {surveyprofield_numeric} WHERE itemid = :field";
     $params = ['field' => $field];
     $result = $DB->get_record_sql($sql, $params);
-    // Verifica se ci sono risultati prima di accedere alla proprietà variable
+    // Check if there are results before accessing the variable property
     if (!empty($result) && isset($result->variable)) {
-        // Aggiungi il valore della variabile alla fine dell'array
+        // Add the variable value to the end of the array
         array_push($variablesArray, $result->variable);
     } else {
-        // Se non ci sono risultati, aggiungi un valore vuoto all'array (o un valore di default, a seconda delle tue esigenze)
-        $variablesArray[] = null; // Puoi cambiare questo con il valore di default desiderato
+        // If there are no results, add an empty value to the array (or a default value, depending on your needs)
+        $variablesArray[] = null; // You can change this to the desired default value
     }
 }
 
@@ -75,7 +74,6 @@ $context = \context_course::instance($courseid);
 if (!isset($username)) {
     $username = $singlecsv;
 }
-
 
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
 
@@ -96,18 +94,24 @@ $PAGE->requires->js_call_amd(
 
 echo $OUTPUT->header();
 
-echo "<h2 align='center'>".$pagetitle."</h2>";
 
-// URL della dashboard del corso
+// URL of the course dashboard
 $paramurl['id'] = $courseid;
 $paramurl['section'] = 0;
 $urldashboard = new moodle_url('/course/view.php', $paramurl);
 $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-// Ora $course contiene tutte le informazioni del corso, incluso il nome
+// Now $course contains all course information, including the name
 $courseName = $course->fullname;
 
-// Creazione del link sottolineato
-echo '<div><a href="' . $urldashboard . '" style="font-size: larger; text-decoration: underline;">' . $courseName . '</a></div>';
+
+$dataHeader = array(
+    'pagetitle' => $pagetitle,
+    'urldashboard' => $urldashboard,
+    'courseName' => $courseName
+);
+
+$utility->rendermustachefile('templates/templateheader.mustache', $dataHeader);
+
 
 $sqlusers = 'SELECT u.id, u.username
                FROM {role_assignments} ra
@@ -117,7 +121,6 @@ $sqlusers = 'SELECT u.id, u.username
 $idcourse = ['courseid' => $courseid];
 $queryusers = $DB->get_records_sql($sqlusers, $idcourse);
 
-
 $querycountusers = 'SELECT count(*) as num
                       FROM {role_assignments} ra
                           JOIN {user} u on u.id = ra.userid
@@ -126,7 +129,6 @@ $querycountusers = 'SELECT count(*) as num
 $idcourse = ['courseid' => $courseid];
 $resultcountuser = $DB->get_record_sql($querycountusers, $idcourse);
 $numuser = $resultcountuser->num;
-
 
 $calendarparam['view'] = 'month';
 $calendarurl = new moodle_url('/calendar/view.php', $calendarparam);
@@ -148,11 +150,9 @@ $canaccessallcharts = has_capability('tool/monitoring:accessallcharts', $context
 $filenamearray = array();
 
 if (!$canaccessallcharts) {
-    // Utilizza i valori nell'array per la tua funzione
+    // Use the values in the array for your function
     $utility->singleuserchart($messageemptychart, $titlechart, $variablesArray, $selectedFieldsArray, null);
 } else {
-
-
     $data = array(
         'searchusername' => $searchusername,
         'formAction' => '',
@@ -162,10 +162,7 @@ if (!$canaccessallcharts) {
         'selectedFields' => $selectedFields
     );
 
-
-    //TODO passare nel mustache della searchar i selectedfields perchè sennò non me li ritrovo quando clicco sul search
-
-
+    // TODO pass the selected fields to the searchbar's mustache because otherwise I won't find them when I click on search
 
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
@@ -183,7 +180,7 @@ if (!$canaccessallcharts) {
             $username = $user->username;
         }
 
-        // Dopo aver ottenuto i risultati dalla query
+        // After getting results from the query
         if (count($usersearched) === 1) {
 
             $utility->singleuserchart(
@@ -207,7 +204,7 @@ if (!$canaccessallcharts) {
 
             $filename = $utility->generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray);
 
-            array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
+            array_push($filenamearray, $filename); // Add the file name to the array.
 
             $data = array(
                 'filenamearray' => $filenamearray,
@@ -220,15 +217,12 @@ if (!$canaccessallcharts) {
         } elseif (count($usersearched) === 0) {
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' .
-
-
                 $messagenotfound . $username . '</h5>');
         }
     } else {
         if ($usersearched) {
             $queryusers = $usersearched;
         }
-
 
         foreach ($queryusers as $user) {
 
@@ -246,11 +240,8 @@ if (!$canaccessallcharts) {
                 }
             }
 
-
-            // If partecipant into for loop haven't compiled the surveypro.
+            // If participant into for loop haven't compiled the surveypro.
             if (!empty($chartDataArrays)) {
-
-
                 $title = $clinicaldata . $username;
                 echo \html_writer::tag(
                     'div class="padding-top-bottom"',
@@ -265,7 +256,7 @@ if (!$canaccessallcharts) {
 
                 $filename = $utility->generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray);
 
-                array_push($filenamearray, $filename); // Aggiungi il nome del file all'array.
+                array_push($filenamearray, $filename); // Add the file name to the array.
             }
         }
 

@@ -17,7 +17,7 @@ $string['titleformspro'] = 'Select SurveyPro';
 $string['titleformparams'] = 'Select the fields you want to graph';
 $string['buttonsubmit'] = 'Submit';
 $string['goback'] = 'Previous';
-$string['errorquestion'] = 'Select at least one field';
+$string['errorquestion'] = 'Select fields. Minimum: 1 - Maximum: 5';
 $string['errorspro'] = 'No SurveyPro is present. Create at least one to proceed';
 $string['selectoptions'] = 'Select an option';
 

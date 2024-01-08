@@ -1,27 +1,25 @@
-/* Stile per #questionContainer */
+/* Style for #questionContainer */
 #questionContainer {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin :8% auto;
+    margin: 8% auto;
     max-width: 600px;
 }
 
-
-/* Stile personalizzato per l'intestazione h3 */
+/* Custom style for h3 heading */
 #questionContainer h3 {
     font-size: 1.7em;
     text-align: center;
-    /* Sottolinea il testo */
+    /* Underline text */
     color: #333;
     margin-bottom: 8%;
 }
 
-
 .custom-checkbox {
     position: relative;
-    /* Aggiunto */
+    /* Added */
     padding-left: 30px;
     cursor: pointer;
     display: block;
@@ -31,9 +29,9 @@
 .custom-checkbox input {
     position: absolute;
     top: 50%;
-    /* Aggiunto */
+    /* Added */
     transform: translateY(-50%);
-    /* Aggiunto */
+    /* Added */
     opacity: 0;
     cursor: pointer;
 }
@@ -41,16 +39,15 @@
 .checkmark {
     position: absolute;
     top: 50%;
-    /* Aggiunto */
+    /* Added */
     transform: translateY(-50%);
-    /* Aggiunto */
+    /* Added */
     left: 0;
     height: 20px;
     width: 20px;
     background-color: #eee;
     border: 1px solid #ccc;
 }
-
 
 .custom-checkbox:hover input~.checkmark {
     background-color: #ddd;
@@ -120,29 +117,25 @@
     /* Change background color on hover */
 }
 
-
 #questionForm input[type="button"]:focus {
     outline: none;
 }
 
-
 #downloadSection {
     display: none;
-    /* Imposta il display su "none" per nascondere inizialmente l'elemento */
+    /* Set display to "none" to initially hide the element */
 }
 
 .download-success {
     color: #4CAF50;
-    /* Colore verde */
+    /* Green color */
 }
-
 
 /* Add custom styles for the button if needed */
 .custom-previous-button {
     color: #2196F3;
     font-size: 24px;
     text-decoration: none;
-
 }
 
 .visible-box {
@@ -150,15 +143,14 @@
     background-color: #f2f2f2;
     padding: 15px;
     padding-bottom: 5px;
-    margin-top: 50px;
+    margin-top: 7%;
+    margin-bottom: 7%;
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 4px 8px rgba(145, 34, 34, 0.1);
     border-radius: 8px;
 }
-
-
 
 /* Container styles */
 #sproContainer {
@@ -168,21 +160,17 @@
     max-width: 400px;
     /* Adjust as needed */
     padding: 20px;
-    margin :8% auto;
+    margin: 8% auto;
 }
-
-
-
 
 /* Title styles */
 #titlesurvey {
     font-size: 1.7em;
     text-align: center;
-    /* Sottolinea il testo */
+    /* Underline text */
     color: #333;
     margin-bottom: 8%;
 }
-
 
 /* Select styles */
 #sproid {
@@ -255,13 +243,10 @@
     color: #333;
 }
 
-
 #searchbar {
     margin-bottom: 10%;
-    margin-top: 4%;
-
+    margin-top: 2%;
 }
-
 
 #error-popup {
     display: none;
@@ -279,27 +264,22 @@
     max-width: 45%;
 }
 
-
-
 #error-popup p {
     margin: 0;
     text-align: center;
-    /* Centra il testo */
+    /* Center text */
 }
 
 #error-popup i {
     margin-right: 5px;
 }
 
-
-/* Aggiungi stili CSS per lo spazio vuoto */
+/* Add CSS styles for empty space */
 #emptySpace {
     margin-top: 7%;
-    /* 10% dell'altezza della finestra del browser */
+    /* 10% of the browser window height */
 }
 
-
-
-.padding-top-bottom{
+.padding-top-bottom {
     margin-bottom: 5%;
 }

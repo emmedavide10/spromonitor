@@ -17,7 +17,7 @@ $string['title Formspro'] = 'Wybierz SurveyPro';
 $string['title form params'] = 'Wybierz pola, które chcesz wyświetlić na wykresie';
 $string['buttonsubmit'] = 'Prześlij';
 $string['powrót'] = 'Powrót';
-$string['errorquestion'] = 'Wybierz przynajmniej jedno pole';
+$string['errorquestion'] = 'Wybierz pola. Minimum: 1 - Maksimum: 5';
 $string['errorspro'] = 'Nie ma programu SurveyPro. Utwórz co najmniej jeden, aby kontynuować';
 $string['selectoptions'] = 'Wybierz opcję';
 
