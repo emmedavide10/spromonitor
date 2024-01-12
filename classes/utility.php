@@ -23,6 +23,8 @@
  */
 
 namespace tool_monitoring;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
  * Utility class.
@@ -79,40 +81,40 @@ class Utility
         $chartDataArrays
     ): string {
         global $OUTPUT;
-    
-    
+
+
         // Create chart series for each data array.
         $chartSeries = [];
-    
+
         foreach ($variablesArray as $index => $variable) {
             $contentArray = $chartDataArrays[$index]['content'];
             $timecreatedArray = $chartDataArrays[$index]['timecreated'];
-    
+
             // Create a new chart series for each variable.
             $chartSeries[] = new \core\chart_series($variable, $contentArray);
         }
-    
+
         // Uncomment the line below for debugging purposes.
-    
+
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
         $chart->set_legend_options(['position' => 'bottom']);
-    
+
         // Add series to the chart in the normal order.
         foreach ($chartSeries as $series) {
             $chart->add_series($series);
         }
-    
+
         // Set the x-axis labels to the date values in the input arrays.
         $chart->set_labels($timecreatedArray);
-    
+
         // Add spacing between charts (adjust the margin as needed).
         $chartHtml = '<div style="margin-bottom: 7%">' . $OUTPUT->render($chart) . '</div>';
-    
+
         return $chartHtml;
     }
-    
+
 
 
 
@@ -245,41 +247,46 @@ class Utility
     }
 
 
-
     /**
-     * Creates a merged array from multiple arrays.
+     * This function takes an array of arrays ($chartDataArrays) and creates a merged array
+     * that contains all the fields needed for each record.
      *
-     * @param array $variablesArray An array containing variable names.
-     *
+     * @param array $chartDataArrays An array of arrays containing data for different variables.
      * @return array The merged array containing all the fields needed for each record.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createMergedArray($variablesArray)
+    public function createmergedarray($variablesArray, $chartDataArrays)
     {
         // Create an empty array to hold the merged data.
-        $mergedArray = array();
-
+        $mergedarray = array();
+    
         // Get the length of any of the arrays (assuming they all have the same length).
-        $length = count($variablesArray);
-
+        $lengthdata = count($chartDataArrays[0]['content']);
+        $lengthvar = count($variablesArray);
+    
         // Iterate through all arrays at once.
-        for ($j = 0; $j < $length; $j++) {
-            // Create a new array containing the current elements from all arrays.
-            $elementArray = array();
-
-            foreach ($variablesArray as $variableArray) {
-                $elementArray[] = $variableArray[$j];
+        for ($k = 0; $k < $lengthdata; $k++) {
+            // Create a new array containing the current elements from all arrays in $chartDataArrays.
+            $elementarray = array();
+    
+            // Add the current timecreated element to the new array.
+            $elementarray[] = $chartDataArrays[0]['timecreated'][$k];
+    
+            for ($j = 0; $j < $lengthvar; $j++) {
+                // Add the current content element for each variable to the new array.
+                $elementarray[] = $chartDataArrays[$j]['content'][$k];
             }
+    
 
             // Add the new array to the merged array.
-            array_push($mergedArray, $elementArray);
+            array_push($mergedarray, $elementarray);
         }
-
         // Return the merged array.
-        return $mergedArray;
+        return $mergedarray;
     }
+    
 
 
 
@@ -297,49 +304,70 @@ class Utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingFile(
-        $dateString,
-        $variablesArray,
-        $filename,
-        $delimiter,
-        $mergedArray
-    ) {
+    public function writingfile($date, $filename, $delimiter, $variablesArray, $mergedarray)
+    {
         global $CFG;
-
+    
         // Open the file for writing.
-        $exportSubdir = 'tool_monitoring/csv';
-        make_temp_directory($exportSubdir);
-        $fileWithPath = $CFG->tempdir . '/' . $exportSubdir . '/' . $filename;
-        $fileHandler = fopen($fileWithPath, 'w');
-
+        $exportsubdir = 'tool_monitoring/csv';
+        make_temp_directory($exportsubdir);
+        $filewithpath = $CFG->tempdir . '/' . $exportsubdir . '/' . $filename;
+        $filehandler = fopen($filewithpath, 'w');
+    
         // Check if the file was opened successfully.
-        if ($fileHandler) {
+        if ($filehandler) {
+            // Initialize an array to store the maximum width of each column.
+            $columnWidths = array();
+    
             // Create an array of the header row.
-            $header = array($dateString);
-
-            // Add the column names to the header.
-            $header = array_merge($header, $variablesArray);
-
-            // Write the header to the CSV file.
-            fputcsv($fileHandler, $header, $delimiter);
-
-            // Loop through the mergedArray and write each row to the CSV file.
-            foreach ($mergedArray as $elementArray) {
-                // Create a new data row using the column names specified in $variablesArray.
-                $rowData = array($elementArray[0]); // Add the date column.
-
-                // Add the values of the specified columns in $variablesArray.
-                foreach ($variablesArray as $variable) {
-                    $rowData[] = $elementArray[$variable];
-                }
-
-                // Write the row to the CSV file.
-                fputcsv($fileHandler, $rowData, $delimiter);
+            $headerRow = array($date);
+    
+            // Add variable names to the header row and initialize column widths.
+            foreach ($variablesArray as $variable) {
+                $headerRow[] = $variable;
+                $columnWidths[$variable] = strlen($variable);
             }
-
-            fclose($fileHandler);
+    
+            $csv = array($headerRow);
+    
+            // Loop through the merged array and create a new array for each row of data.
+            foreach ($mergedarray as $elementarray) {
+                $newelement = array(
+                    $date => $elementarray[0]
+                );
+    
+                // Add content values to the new array and update column widths.
+                foreach ($elementarray as $index => $content) {
+                    // Skip the first element, as it represents the timecreated.
+                    if ($index !== 0) {
+                        $variable = $variablesArray[$index - 1];
+                        $newelement[$variable] = $content;
+                        
+                        // Update column width if needed.
+                        $columnWidths[$variable] = max($columnWidths[$variable], strlen($content));
+                    }
+                }
+    
+                array_push($csv, $newelement);
+            }
+    
+            // Loop through the data and write each row to the CSV file.
+            foreach ($csv as $row) {
+                // Pad each column value to match the maximum width of the column.
+                foreach ($row as $variable => $content) {
+                    $row[$variable] = str_pad($content, $columnWidths[$variable]);
+                }
+    
+                fputcsv($filehandler, $row, $delimiter);
+            }
+            fclose($filehandler);
         }
     }
+    
+    
+    
+    
+    
 
 
     /**
@@ -401,11 +429,7 @@ class Utility
 
             // Calls the writingFile() function to write the CSV file (the source code for writingFile() is not included in this description).
             $this->writingFile(
-                $datestring,
-                $variablesArray,
-                $filename,
-                $delimiter,
-                $mergedArray
+                $datestring, $filename, $delimiter, $variablesArray, $mergedArray
             );
         }
 

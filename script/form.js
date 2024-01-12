@@ -1,7 +1,8 @@
+// Prevents the normal form submission behavior and initiates validation and submission of the question form
 function validateAndSubmitQuestion(event) {
-    event.preventDefault(); // Prevent the normal submit behavior
+    event.preventDefault();
 
-    // Use the function to get parameters from the current URL
+    // Retrieve parameters from the current URL
     var allParams = getAllUrlParams();
     console.log(allParams);
 
@@ -43,6 +44,7 @@ function validateAndSubmitQuestion(event) {
     }
 }
 
+// Validates and submits the survey form
 function validateAndSubmitSurvey() {
     var allParams = getAllUrlParams();
     console.log(allParams);
@@ -79,6 +81,7 @@ function validateAndSubmitSurvey() {
     }
 }
 
+// Retrieves all parameters from the URL
 function getAllUrlParams() {
     var queryString = window.location.search.slice(1);
     var obj = {};
@@ -110,6 +113,7 @@ function getAllUrlParams() {
     return obj;
 }
 
+// Fades in an HTML element
 function fadeIn(element, speed) {
     element.style.opacity = 0;
     element.style.display = 'block';
@@ -123,6 +127,7 @@ function fadeIn(element, speed) {
     tick();
 }
 
+// Fades out an HTML element
 function fadeOut(element, speed) {
     element.style.opacity = 1;
     var tick = function () {

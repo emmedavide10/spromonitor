@@ -24,8 +24,10 @@
 
 use tool_monitoring\Utility;
 
+// Include necessary Moodle files
 require_once __DIR__ . '/../../../config.php';
 
+// Ensure the script is only accessed within Moodle
 defined('MOODLE_INTERNAL') || die();
 
 // Instantiate the Utility class
@@ -57,7 +59,7 @@ $PAGE->requires->js_call_amd(
 // Output the HTML header
 echo $OUTPUT->header();
 
-echo "<h2 align='center'>".$pagetitle."</h2>";
+echo "<h2 align='center'>" . $pagetitle . "</h2>";
 
 // Get localized strings for display
 $titleformspro = get_string('titleformspro', 'tool_monitoring');
@@ -115,26 +117,25 @@ if (strpos($currentUrl, '/moodle/mod/lti/') !== false) {
         'selectoptions' => $selectoptions
     ];
     $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
-
 } else {
     // Retrieve questions
     $questions = $DB->get_records('surveypro_item', array('surveyproid' => $sproid));
 
     // Transform the $questions array to match the expected structure
     $transformedQuestions = [];
-    
+
     foreach ($questions as $question) {
         // Assuming $question->plugin is available and represents the question type
         $isNumeric = ($question->plugin === 'numeric');
         $fieldDetails = $DB->get_record('surveyprofield_numeric', array('itemid' => $question->id));
-    
+
         if ($question->plugin === 'numeric') {
             // If it is of type numeric, retrieve details from the surveyprofield_numeric table
             $questionContent = $fieldDetails->variable;
-            if(!isset($questionContent)){
+            if (!isset($questionContent)) {
                 $questionContent = $fieldDetails->content;
             }
-    
+
             $transformedQuestions[] = [
                 'id' => $question->id,
                 'questionContent' => $questionContent, // Adjust accordingly

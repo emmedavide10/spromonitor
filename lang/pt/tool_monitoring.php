@@ -20,5 +20,6 @@ $string['goback'] = 'Voltar';
 $string['errorquestion'] = 'Selecione os campos. Mínimo: 1 - Máximo: 5';
 $string['errorspro'] = 'Nenhum SurveyPro foi selecionado. Selecione ou crie pelo menos um para continuar';
 $string['selectoptions'] = 'Selecione uma opção';
+$string['filenotexist'] = 'O arquivo solicitado não existe';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

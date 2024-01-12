@@ -20,5 +20,6 @@ $string['goback'] = 'Vrŭshtane nazad';
 $string['errorquestion'] = 'Izbor na poleta. Minimum: 1 - Maksimum: 5';
 $string['errorspro'] = 'Ne e izbran SurveyPro. Izberete ili sŭzdaĭte pone edin, za da prodŭlzhite';
 $string['selectoptions'] = 'Izberete optsiya';
+$string['filenotexist'] = 'Iskaniyat faĭl ne sŭshtestvuva';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

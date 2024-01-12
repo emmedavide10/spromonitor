@@ -15,35 +15,56 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Export data chart.
+ * Generate Chart.js charts.
  *
+ * @package    tool_monitoring
  * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 namespace tool_monitoring;
+
 use Config;
 
+// Include necessary Moodle files
 require_once __DIR__ . '/../../../config.php';
 
+// Ensure the script is only accessed within Moodle
 defined('MOODLE_INTERNAL') || die();
+
+// Define constant for the CSV path within the tool_monitoring directory
 define('MONITORING_CSV_PATH', '/tool_monitoring/csv/');
 
+// Instantiate the Utility class
+$utility = new Utility();
+
+// Require user login to access this script
 require_login();
 
+// Get the requested file name from parameters
 $filename = required_param('f', PARAM_TEXT);
 
-if (file_exists($CFG->tempdir.MONITORING_CSV_PATH.$filename)) {
+$filenotexist = get_string('filenotexist', 'tool_monitoring');
+
+// Check if the requested file exists
+if (file_exists($CFG->tempdir . MONITORING_CSV_PATH . $filename)) {
+    // Set HTTP headers for file download
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"$filename\"");
     header('Expires: 0');
     header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
     header('Pragma: public');
 
-    $exportfilehandler = fopen($CFG->tempdir.MONITORING_CSV_PATH.$filename, 'rb');
-    print fread($exportfilehandler, filesize($CFG->tempdir.MONITORING_CSV_PATH.$filename));
+    // Open and output the file content
+    $exportfilehandler = fopen($CFG->tempdir . MONITORING_CSV_PATH . $filename, 'rb');
+    print fread($exportfilehandler, filesize($CFG->tempdir . MONITORING_CSV_PATH . $filename));
     fclose($exportfilehandler);
 } else {
-      echo 'The requested file does\'t exist';
+
+    $data = array(
+        'filenotexist' => $filenotexist
+    );
+    // Download csv files.
+    $utility->rendermustachefile('templates/templateerrorfile.mustache', $data);
 }

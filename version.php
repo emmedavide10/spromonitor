@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details.
+ * Generate Chart.js charts.
  *
- * @subpackage langimport
- * @copyright  2011 Petr Skoda
+ * @package    tool_monitoring
+ * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 defined('MOODLE_INTERNAL') || die();
 

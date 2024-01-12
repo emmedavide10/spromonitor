@@ -1,36 +1,50 @@
+<!-- HTML document declaration -->
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Metadata for character set and viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- External stylesheets for font awesome and custom styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="style/style.css">            
 </head>
 <body>
+    <!-- Container for the survey form -->
+    <div id="sproContainer">
+        <!-- Heading for the survey form -->
+        <h3 id="titlesurvey">{{titleformspro}}</h3>
+        <!-- Form for survey submission -->
+        <form id="surveyForm" style="margin-top: 3%;" method="post" action="">
+            <!-- Hidden input for course ID -->
+            <input type="hidden" name="courseid" value="{{courseid}}">
+            <!-- Dropdown menu for selecting surveys -->
+            <select id="sproid" name="sproid">
+                <!-- Default option with placeholder text -->
+                <option value="" selected disabled>{{selectoptions}}</option>
+                <!-- Iterating through survey names and creating options -->
+                {{#namesurveys}}
+                    <option value="{{id}}">{{{name}}}</option>
+                {{/namesurveys}}
+            </select>
+            <!-- Button for submitting the survey form -->
+            <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitSurvey()">
+        </form>
+    </div>
 
-<div id="sproContainer">
-    <h3 id="titlesurvey">{{titleformspro}}</h3>
-    <form id="surveyForm" style="margin-top: 3%;" method="post" action="">
-        <input type="hidden" name="courseid" value="{{courseid}}">
-        <select id="sproid" name="sproid">
-            <option value="" selected disabled>{{selectoptions}}</option>
-            {{#namesurveys}}
-                <option value="{{id}}">{{{name}}}</option>
-            {{/namesurveys}}
-        </select>
-        <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitSurvey()">
-    </form>
-</div>
-
+    <!-- Empty space container -->
     <div id="emptySpace"></div>
 
+    <!-- Error popup container -->
     <div id="error-popup">
-    <p>
-        <i class="fas fa-exclamation-triangle"></i>
-        <span>{{errorspro}}</span>
-    </p>
-</div>
+        <!-- Error message with exclamation triangle icon -->
+        <p>
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{errorspro}}</span>
+        </p>
+    </div>
 
-<script src='script/form.js'></script>
+    <!-- Script inclusion for form validation -->
+    <script src='script/form.js'></script>
 </body>
 </html>

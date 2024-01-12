@@ -20,5 +20,6 @@ $string['goback'] = 'Pros ta píso';
 $string['errorquestion'] = 'Epiléxte pedía. Eláchisto: 1 - Mégisto: 5';
 $string['errorspro'] = 'Den epiléchthike SurveyPro. Epiléxte í dimiourgíste touláchiston éna gia na synechísete';
 $string['selectoptions'] = 'Epiléxte mia epilogí';
+$string['filenotexist'] = 'To archeío pou zitíthike den ypárchei';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

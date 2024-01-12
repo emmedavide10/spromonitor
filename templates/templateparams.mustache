@@ -1,43 +1,67 @@
+<!-- HTML document declaration -->
 <!DOCTYPE html>
 <html>
+
 <head>
+    <!-- Character set and viewport configuration -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- External stylesheets for font awesome and custom styles -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="style/style.css">
 </head>
+
 <body>
+    <!-- Container for displaying questions -->
+    <div id="questionContainer">
+        <!-- Heading for the form -->
+        <h3 id="titleparams">{{titleformparams}}</h3>
+        <!-- Loop through questions -->
+        {{#questions}}
+            <!-- Check if the question is numeric -->
+            {{#isNumeric}}
+                <!-- Checkbox for numeric questions -->
+                <label class="custom-checkbox">
+                    <!-- Exclamation circle icon for errors (initially hidden) -->
+                    <i class="fa fa-exclamation-circle" style="font-size:20px;color:red;margin-right:5px; display:none"></i>
+                    <!-- Checkbox input -->
+                    <input type="checkbox" name="question_ids[]" value="{{id}}">
+                    <!-- Question content -->
+                    <span style="font-weight: bold;">{{{questionContent}}}</span>
+                    <!-- Checkmark for checkbox -->
+                    <span class="checkmark"></span>
+                </label><br>
+            {{/isNumeric}}
+        {{/questions}}
 
-<div id="questionContainer" >
-    <h3 id="titleparams">{{titleformparams}}</h3>
-{{#questions}}
-    {{#isNumeric}}
-        <label class="custom-checkbox">
-            <i class="fa fa-exclamation-circle" style="font-size:20px;color:red;margin-right:5px; display:none"></i>
-            <input type="checkbox" name="question_ids[]" value="{{id}}">
-            <span style="font-weight: bold;">{{{questionContent}}}</span>
-            <span class="checkmark"></span>
-        </label><br>
-    {{/isNumeric}}
-{{/questions}}
+        <!-- Form for submitting questions -->
+        <form id="questionForm" method="post" action="index.php">
+            <!-- Hidden input for course ID -->
+            <input type="hidden" name="courseid" value="{{courseid}}">
+            <!-- Hidden input for survey ID -->
+            <input type="hidden" name="sproid" value="{{sproid}}">
+            <!-- Hidden input for selected fields -->
+            <input type="hidden" name="selectedFields" id="selectedFieldsInput" value="">
+            <!-- Button to submit the form with validation -->
+            <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitQuestion(event)">
+        </form>
+    </div>
 
-
-<form id="questionForm" method="post" action="index.php">
-    <input type="hidden" name="courseid" value="{{courseid}}">
-    <input type="hidden" name="sproid" value="{{sproid}}">
-    <input type="hidden" name="selectedFields" id="selectedFieldsInput" value="">
-    <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitQuestion(event)">
-</form>
-</div>
-
+    <!-- Empty space for styling -->
     <div id="emptySpace"></div>
 
-<div id="error-popup">
-    <p>
-        <i class="fas fa-exclamation-triangle"></i>
-        <span>{{errorquestion}}</span>
-    </p>
-</div>
-<script src='script/form.js'></script>
+    <!-- Error popup for displaying validation errors -->
+    <div id="error-popup">
+        <p>
+            <!-- Exclamation triangle icon for errors -->
+            <i class="fas fa-exclamation-triangle"></i>
+            <!-- Error message -->
+            <span>{{errorquestion}}</span>
+        </p>
+    </div>
+
+    <!-- Script for form validation -->
+    <script src='script/form.js'></script>
 </body>
+
 </html>
