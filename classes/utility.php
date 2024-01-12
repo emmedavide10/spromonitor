@@ -23,8 +23,6 @@
  */
 
 namespace tool_monitoring;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
  * Utility class.

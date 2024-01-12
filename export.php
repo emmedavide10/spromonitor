@@ -25,8 +25,6 @@
 
 namespace tool_monitoring;
 
-use Config;
-
 // Include necessary Moodle files
 require_once __DIR__ . '/../../../config.php';
 
