@@ -1,0 +1,27 @@
+# README
+
+La plugin `moodle/admin/tool/monitoring` è stata sviluppata da Davide Mirra ed è necessaria per il progetto C4D di Claudia Giacomozzi.
+
+## Informazioni sul Progetto
+- **Nome del Progetto:** C4D
+- **Sviluppatore:** Davide Mirra
+- **Responsabile del Progetto:** Claudia Giacomozzi
+- **Collegamento:** [tcms.iss.it](https://tcms.iss.it)
+
+## Descrizione
+Questa plugin è stata creata per fornire funzionalità di monitoraggio nell'ambiente Moodle generando grafici di linea sulla base di determinati parametri di ingresso. È un componente essenziale per il progetto C4D e contribuisce al corretto funzionamento del sistema. 
+
+## Installazione
+Per installare la plugin, seguire i seguenti passi:
+1. Assicurarsi di avere un'istanza Moodle funzionante.
+2. Copiare il contenuto di questo repository nella directory corrispondente di Moodle (`moodle/admin/tool/`).
+3. Seguire le istruzioni specifiche per l'installazione della plugin nel sistema Moodle.
+
+## Contributi
+I contributi a questo progetto sono i benvenuti. In caso di problemi o suggerimenti, si prega di aprire una segnalazione nel sistema di gestione delle problematiche del progetto o di contattare direttamente lo sviluppatore Davide Mirra.
+
+## Licenza
+Questo progetto è distribuito secondo i termini della GNU General Public License versione 3 o successiva. Per ulteriori dettagli, consultare il file LICENSE incluso in questo repository.
+
+---
+© 2024 Davide Mirra. Tutti i diritti riservati.
