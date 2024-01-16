@@ -1,27 +1,27 @@
-# README
+README
+Plugin Monitoring for Moodle
 
-La plugin `moodle/admin/tool/monitoring` è stata sviluppata da Davide Mirra ed è necessaria per il progetto C4D di Claudia Giacomozzi.
+Developer: Davide Mirra
+Project Manager: Claudia Giacomozzi
+Project Name: C4D
+Project Link: https://github.com/emmedavide10/monitoring.git
 
-## Informazioni sul Progetto
-- **Nome del Progetto:** C4D
-- **Sviluppatore:** Davide Mirra
-- **Responsabile del Progetto:** Claudia Giacomozzi
-- **Collegamento:** [tcms.iss.it](https://tcms.iss.it)
+Project Overview
+The Monitoring plugin, developed by Davide Mirra, is a crucial component for Claudia Giacomozzi's C4D project. This plugin provides advanced monitoring features within the Moodle environment, generating insightful line graphs based on specific input parameters.
 
-## Descrizione
-Questa plugin è stata creata per fornire funzionalità di monitoraggio nell'ambiente Moodle generando grafici di linea sulla base di determinati parametri di ingresso. È un componente essenziale per il progetto C4D e contribuisce al corretto funzionamento del sistema. 
+Description
+Designed to enhance the functionality of Moodle, this plugin plays a pivotal role in the C4D project, contributing to the overall system's smooth operation. The monitoring capabilities include graph generation, offering valuable visualizations for key project metrics.
 
-## Installazione
-Per installare la plugin, seguire i seguenti passi:
-1. Assicurarsi di avere un'istanza Moodle funzionante.
-2. Copiare il contenuto di questo repository nella directory corrispondente di Moodle (`moodle/admin/tool/`).
-3. Seguire le istruzioni specifiche per l'installazione della plugin nel sistema Moodle.
+Installation
+To seamlessly integrate the plugin into your Moodle instance, follow these steps:
 
-## Contributi
-I contributi a questo progetto sono i benvenuti. In caso di problemi o suggerimenti, si prega di aprire una segnalazione nel sistema di gestione delle problematiche del progetto o di contattare direttamente lo sviluppatore Davide Mirra.
+Ensure you have a functional Moodle instance.
+Copy the contents of this repository to the corresponding Moodle directory (moodle/admin/tool/).
+Follow the installation instructions specified for the Moodle system.
+Contributions
+We welcome contributions to this project. If you encounter issues or have suggestions, please open an issue in the project's issue tracking system or directly contact the developer, Davide Mirra.
 
-## Licenza
-Questo progetto è distribuito secondo i termini della GNU General Public License versione 3 o successiva. Per ulteriori dettagli, consultare il file LICENSE incluso in questo repository.
+License
+This project is distributed under the terms of the GNU General Public License version 3 or later. For detailed information, refer to the included LICENSE file in this repository.
 
----
-© 2024 Davide Mirra. Tutti i diritti riservati.
+© 2024 Davide Mirra. All rights reserved.
