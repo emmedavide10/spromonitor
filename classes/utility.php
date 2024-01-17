@@ -249,6 +249,7 @@ class Utility
      * This function takes an array of arrays ($chartDataArrays) and creates a merged array
      * that contains all the fields needed for each record.
      *
+     * @param array $variablesArray An array of arrays containing names of different variables.
      * @param array $chartDataArrays An array of arrays containing data for different variables.
      * @return array The merged array containing all the fields needed for each record.
      *
@@ -291,10 +292,10 @@ class Utility
     /**
      * Writes data to a CSV file.
      *
-     * @param string $dateString The date of the measurement.
-     * @param array $variablesArray An array containing variable names.
+     * @param string $date The date of the measurement.
      * @param string $filename The name of the file to write to.
      * @param string $delimiter The delimiter to use in the CSV file.
+     * @param array $variablesArray An array containing variable names.
      * @param array $mergedArray The merged array of data to write to the CSV file.
      *
      * @return void
