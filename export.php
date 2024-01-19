@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 namespace tool_monitoring;
 
 // Include necessary Moodle files
@@ -59,10 +58,9 @@ if (file_exists($CFG->tempdir . MONITORING_CSV_PATH . $filename)) {
     print fread($exportfilehandler, filesize($CFG->tempdir . MONITORING_CSV_PATH . $filename));
     fclose($exportfilehandler);
 } else {
-
+    // If the file does not exist, display an error message
     $data = array(
         'filenotexist' => $filenotexist
     );
-    // Download csv files.
     $utility->rendermustachefile('templates/templateerrorfile.mustache', $data);
 }

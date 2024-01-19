@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for the surveypro module
+ * Capability definitions for tool_monitoring
  *
  * The capabilities are loaded into the database table when the module is
  * installed or updated. Whenever the capability definitions are updated,
@@ -30,15 +30,15 @@
  *
  * component_name should be the same as the directory name of the mod or block.
  *
- * Core moodle capabilities are defined thus:
+ * Core Moodle capabilities are defined thus:
  *    moodle/<capabilityclass>:<capabilityname>
  *
  * Examples: mod/forum:viewpost
  *           block/recent_activity:view
  *           moodle/site:deleteuser
  *
- * The variable name for the capability definitions array is $capabilities
- *
+ * This capability determines who can or cannot access and view all graphs
+ * 
  * @package   tool_monitoring
  * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
