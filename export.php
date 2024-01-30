@@ -22,45 +22,44 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_monitoring;
 
-// Include necessary Moodle files
-require_once __DIR__ . '/../../../config.php';
+// Include necessary Moodle files.
+require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 
-// Ensure the script is only accessed within Moodle
-defined('MOODLE_INTERNAL') || die();
-
-// Define constant for the CSV path within the tool_monitoring directory
-define('MONITORING_CSV_PATH', '/tool_monitoring/csv/');
-
-// Instantiate the Utility class
-$utility = new Utility();
-
-// Require user login to access this script
+// Check user access or require_course_login(), require_admin(), depending on the requirements..
 require_login();
 
-// Get the requested file name from parameters
+// Ensure the script is only accessed within Moodle.
+defined('MOODLE_INTERNAL') || die();
+
+// Define constant for the CSV path within the tool_monitoring directory.
+define('MONITORING_CSV_PATH', '/tool_monitoring/csv/');
+
+// Instantiate the utility class.
+$utility = new \tool_monitoring\utility();
+
+// Get the requested file name from parameters.
 $filename = required_param('f', PARAM_TEXT);
 
 $filenotexist = get_string('filenotexist', 'tool_monitoring');
 
-// Check if the requested file exists
+// Check if the requested file exists.
 if (file_exists($CFG->tempdir . MONITORING_CSV_PATH . $filename)) {
-    // Set HTTP headers for file download
+    // Set HTTP headers for file download.
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"$filename\"");
     header('Expires: 0');
     header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
     header('Pragma: public');
 
-    // Open and output the file content
+    // Open and output the file content.
     $exportfilehandler = fopen($CFG->tempdir . MONITORING_CSV_PATH . $filename, 'rb');
     print fread($exportfilehandler, filesize($CFG->tempdir . MONITORING_CSV_PATH . $filename));
     fclose($exportfilehandler);
 } else {
-    // If the file does not exist, display an error message
-    $data = array(
-        'filenotexist' => $filenotexist
-    );
+    // If the file does not exist, display an error message.
+    $data = [
+        'filenotexist' => $filenotexist,
+    ];
     $utility->rendermustachefile('templates/templateerrorfile.mustache', $data);
 }

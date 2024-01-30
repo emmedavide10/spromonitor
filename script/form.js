@@ -1,88 +1,88 @@
 // Prevents the normal form submission behavior and initiates validation and submission of the question form
-function validateAndSubmitQuestion(event) {
+function validateandsubmitquestion(event) {
     event.preventDefault();
 
     // Retrieve parameters from the current URL
-    var allParams = getAllUrlParams();
-    console.log(allParams);
+    var allparams = getallurlparams();
+    console.log(allparams);
 
     var checkboxes = document.querySelectorAll('input[name="question_ids[]"]');
-    var errorPopup = document.getElementById("error-popup");
-    var selectedFieldsInput = document.getElementById('selectedFieldsInput');
-    var exclamationIcons = document.querySelectorAll('.fa-exclamation-circle');
+    var errorpopup = document.getElementById("error-popup");
+    var selectedfieldsinput = document.getElementById('selectedfieldsinput');
+    var exclamationicons = document.querySelectorAll('.fa-exclamation-circle');
 
     // Check if no checkbox is selected
-    var selectedFieldValues = [];
+    var selectedfieldvalues = [];
 
     checkboxes.forEach(function (checkbox) {
         if (checkbox.checked) {
-            selectedFieldValues.push(checkbox.value);
+            selectedfieldvalues.push(checkbox.value);
         }
     });
 
     // Show error popup if no checkbox is selected or more than 5 parameters are selected
-    if (selectedFieldValues.length === 0 || selectedFieldValues.length > 5) {
-        fadeIn(errorPopup, 0.25);
-        exclamationIcons.forEach(function (icon) {
+    if (selectedfieldvalues.length === 0 || selectedfieldvalues.length > 5) {
+        fadein(errorpopup, 0.25);
+        exclamationicons.forEach(function (icon) {
             icon.style.display = 'inline';
         });
 
         // Set a 4-second timeout before hiding the popup
         setTimeout(function () {
-            fadeOut(errorPopup, 1); // Faster fade-out speed
+            fadeout(errorpopup, 1); // Faster fade-out speed
         }, 4000);
     } else {
-        fadeOut(errorPopup, 1);
-        var selectedFieldsString = selectedFieldValues.join(',');
+        fadeout(errorpopup, 1);
+        var selectedfieldsstring = selectedfieldvalues.join(',');
         // Add the selected fields to the URL parameters
-        allParams.selectedFields = selectedFieldsString;
+        allparams.selectedfields = selectedfieldsstring;
         // Set the value of the hidden input
-        selectedFieldsInput.value = selectedFieldsString;
-        console.log(allParams);
+        selectedfieldsinput.value = selectedfieldsstring;
+        console.log(allparams);
         // Submit the form
-        document.getElementById('questionForm').submit();
+        document.getElementById('questionform').submit();
     }
 }
 
 // Validates and submits the survey form
-function validateAndSubmitSurvey() {
-    var allParams = getAllUrlParams();
-    console.log(allParams);
+function validateandsubmitsurvey() {
+    var allparams = getallurlparams();
+    console.log(allparams);
 
-    var selectedSurvey = document.getElementById("sproid").value;
-    console.log(selectedSurvey);
-    var errorPopup = document.getElementById("error-popup");
+    var selectedsurvey = document.getElementById("sproid").value;
+    console.log(selectedsurvey);
+    var errorpopup = document.getElementById("error-popup");
 
     // Check if no options are available in the dropdown menu
     if (document.getElementById("sproid").options.length === 0) {
-        fadeIn(errorPopup, 0.25);
+        fadein(errorpopup, 0.25);
         // Set a 5-second timeout before hiding the popup
         setTimeout(function () {
-            fadeOut(errorPopup, 1); // Faster fade-out speed
+            fadeout(errorpopup, 1); // Faster fade-out speed
         }, 5000);
     } else {
         // Check if the selected option has an empty value
-        if (selectedSurvey === "") {
-            fadeIn(errorPopup, 0.25);
+        if (selectedsurvey === "") {
+            fadein(errorpopup, 0.25);
             // Set a 5-second timeout before hiding the popup
             setTimeout(function () {
-                fadeOut(errorPopup, 1); // Faster fade-out speed
+                fadeout(errorpopup, 1); // Faster fade-out speed
             }, 5000);
         } else {
-            fadeOut(errorPopup, 1);
+            fadeout(errorpopup, 1);
             // Add the value of the selected survey to the URL parameters
-            allParams.selectedSurvey = selectedSurvey;
+            allparams.selectedsurvey = selectedsurvey;
 
-            console.log(allParams);
+            console.log(allparams);
 
             // Submit the form
-            document.getElementById('surveyForm').submit();
+            document.getElementById('surveyform').submit();
         }
     }
 }
 
 // Retrieves all parameters from the URL
-function getAllUrlParams() {
+function getallurlparams() {
     var queryString = window.location.search.slice(1);
     var obj = {};
 
@@ -93,20 +93,20 @@ function getAllUrlParams() {
         for (var i = 0; i < arr.length; i++) {
             var a = arr[i].split('=');
 
-            var paramName = a[0];
-            var paramValue = typeof a[1] === 'undefined' ? true : a[1];
+            var paramname = a[0];
+            var paramvalue = typeof a[1] === 'undefined' ? true : a[1];
 
-            paramName = paramName.replace(/\+/g, ' ');
-            paramValue = paramValue.replace(/\+/g, ' ');
+            paramname = paramname.replace(/\+/g, ' ');
+            paramvalue = paramvalue.replace(/\+/g, ' ');
 
-            paramName = decodeURIComponent(paramName);
-            paramValue = decodeURIComponent(paramValue);
+            paramname = decodeURIComponent(paramname);
+            paramvalue = decodeURIComponent(paramvalue);
 
-            if (paramValue === 'true' || paramValue === 'false') {
-                paramValue = JSON.parse(paramValue);
+            if (paramvalue === 'true' || paramvalue === 'false') {
+                paramvalue = JSON.parse(paramvalue);
             }
 
-            obj[paramName] = paramValue;
+            obj[paramname] = paramvalue;
         }
     }
 
@@ -114,7 +114,7 @@ function getAllUrlParams() {
 }
 
 // Fades in an HTML element
-function fadeIn(element, speed) {
+function fadein(element, speed) {
     element.style.opacity = 0;
     element.style.display = 'block';
     var tick = function () {
@@ -128,7 +128,7 @@ function fadeIn(element, speed) {
 }
 
 // Fades out an HTML element
-function fadeOut(element, speed) {
+function fadeout(element, speed) {
     element.style.opacity = 1;
     var tick = function () {
         element.style.opacity = +element.style.opacity - speed;

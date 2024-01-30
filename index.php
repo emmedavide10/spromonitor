@@ -22,30 +22,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Required Moodle files and configuration.
-use tool_monitoring\utility;
 
-require_once __DIR__ . '/../../../config.php';
+// Include necessary Moodle files.
+require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 
-// Ensure script is accessed within Moodle
+// Check user access or require_course_login(), require_admin(), depending on the requirements..
+require_login();
+
+// Ensure script is accessed within Moodle.
 defined('MOODLE_INTERNAL') || die();
 
 // Instantiate the utility class.
-$utility = new utility();
+$utility = new \tool_monitoring\utility();
 
-// Retrieve parameters safely
+// Retrieve parameters safely.
 $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $sproid = optional_param('sproid', 0, PARAM_INT);
-$selectedfieldsvalue = optional_param('selectedFields', '', PARAM_TEXT);
+$selectedfieldsvalue = optional_param('selectedfields', '', PARAM_TEXT);
 
 // Set or update the session variable directly.
-$_SESSION['selectedFields'] = $selectedfieldsvalue;
+$_SESSION['selectedfields'] = $selectedfieldsvalue;
 
-// Use the session variable
-$selectedfields = $_SESSION['selectedFields'];
+// Use the session variable.
+$selectedfields = $_SESSION['selectedfields'];
 
 $selectedfieldsarray = [];
 if (isset($selectedfields)) {
@@ -78,7 +80,7 @@ $pagetitle = get_string('pagetitle', 'tool_monitoring');
 
 $paramsurl['courseid'] = $courseid;
 $paramsurl['sproid'] = $sproid;
-$paramsurl['selectedFields'] = $selectedfields;
+$paramsurl['selectedfields'] = $selectedfields;
 
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php', $paramsurl);
@@ -93,7 +95,7 @@ $PAGE->requires->js_call_amd(
 
 echo $OUTPUT->header();
 
-// URL of the course dashboard
+// URL of the course dashboard.
 $paramurl['id'] = $courseid;
 $paramurl['section'] = 0;
 $urldashboard = new moodle_url('/course/view.php', $paramurl);
@@ -109,7 +111,7 @@ $dataheader = [
 
 $utility->rendermustachefile('templates/templateheader.mustache', $dataheader);
 
-// SQL queries for users and user count
+// SQL queries for users and user count.
 $sqlusers = 'SELECT u.id, u.username
                FROM {role_assignments} ra
                    JOIN {user} u on u.id = ra.userid
@@ -148,17 +150,17 @@ $filenamearray = [];
 
 // Check user's capability to access all charts.
 if (!$canaccessallcharts) {
-    // If not, display a single user chart
+    // If not, display a single user chart.
     $utility->singleuserchart($messageemptychart, $titlechart, $variablesarray, $selectedfieldsarray, null);
 } else {
-    // Prepare data for the search bar template
+    // Prepare data for the search bar template.
     $data = [
         'searchusername' => $searchusername,
         'formAction' => '',
         'insusername' => $insusername,
         'search' => $search,
         'courseid' => $courseid,
-        'selectedFields' => $selectedfields,
+        'selectedfields' => $selectedfields,
     ];
 
     // Render the search bar template.
@@ -173,7 +175,7 @@ if (!$canaccessallcharts) {
     $usersearched = $DB->get_records_sql($sqlusers, $paramsquery);
 
     if ($username && count($usersearched) <= 1) {
-        // If a single user is found, display their chart
+        // If a single user is found, display their chart.
         foreach ($usersearched as $user) {
             $userid = $user->id;
             $username = $user->username;
@@ -189,7 +191,7 @@ if (!$canaccessallcharts) {
             );
 
             // Execute queries and prepare data for the user.
-            $results = $utility->executequeries($userid, $selectedfieldsarray);
+            $results = $utility->executequeries($selectedfieldsarray, $userid);
 
             foreach ($results as $result) {
                 $prepareddata = $utility->preparearray($result);
@@ -216,7 +218,7 @@ if (!$canaccessallcharts) {
             // Render the CSV template.
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
         } else if (count($usersearched) === 0) {
-            // If no user is found, display a message
+            // If no user is found, display a message.
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' . $messagenotfound . $username . '</h5>');
         }
@@ -231,7 +233,7 @@ if (!$canaccessallcharts) {
             $userid = $user->id;
 
             // Execute queries and prepare data for the user.
-            $results = $utility->executequeries($userid, $selectedfieldsarray);
+            $results = $utility->executequeries($selectedfieldsarray, $userid);
 
             $chartdataarrays = [];
             foreach ($results as $result) {
@@ -244,14 +246,14 @@ if (!$canaccessallcharts) {
 
             // If the participant hasn't completed the surveypro, skip.
             if (!empty($chartdataarrays)) {
-                // Display the chart for the user
+                // Display the chart for the user.
                 $title = $clinicaldata . $username;
                 echo \html_writer::tag(
                     'div class="padding-top-bottom"',
                     $utility->generatechart(
-                        $title,
                         $variablesarray,
-                        $chartdataarrays
+                        $chartdataarrays,
+                        $title,
                     )
                 );
 
@@ -269,7 +271,7 @@ if (!$canaccessallcharts) {
             'courseid' => $courseid,
         ];
 
-        // Render the CSV template
+        // Render the CSV template.
         $utility->rendermustachefile('templates/templatecsv.mustache', $data);
     }
 }

@@ -1,5 +1,5 @@
 /* Styles for the question container */
-#questionContainer {
+#questioncontainer {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -9,7 +9,7 @@
 }
 
 /* Custom style for h3 heading */
-#questionContainer h3 {
+#questioncontainer h3 {
     font-size: 1.7em;
     text-align: center;
     color: #333;
@@ -73,14 +73,14 @@
 }
 
 /* Styles for the question form */
-#questionForm {
+#questionform {
     max-width: 300px;
     margin: 0 auto;
     padding: 10px;
 }
 
-#questionForm input[type="hidden"],
-#questionForm input[type="button"] {
+#questionform input[type="hidden"],
+#questionform input[type="button"] {
     display: block;
     width: 100%;
     padding: 10px;
@@ -88,7 +88,7 @@
     box-sizing: border-box;
 }
 
-#questionForm input[type="button"] {
+#questionform input[type="button"] {
     background-color: #2196F3;
     color: #fff;
     border-radius: 4px;
@@ -96,16 +96,16 @@
     transition: background-color 0.3s ease;
 }
 
-#questionForm input[type="button"]:hover {
+#questionform input[type="button"]:hover {
     background-color: #0b7dda;
 }
 
-#questionForm input[type="button"]:focus {
+#questionform input[type="button"]:focus {
     outline: none;
 }
 
 /* Styles for download section */
-#downloadSection {
+#downloadsection {
     display: none;
 }
 
@@ -129,7 +129,7 @@
 }
 
 /* Styles for the survey container */
-#sproContainer {
+#sprocontainer {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -168,7 +168,7 @@
 }
 
 /* Styles for the survey submit button */
-#surveyForm input[type="button"] {
+#surveyform input[type="button"] {
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -180,16 +180,16 @@
     margin-top: 10px;
 }
 
-#surveyForm input[type="button"]:hover {
+#surveyform input[type="button"]:hover {
     background-color: #0b7dda;
 }
 
-#surveyForm input[type="button"]:focus {
+#surveyform input[type="button"]:focus {
     outline: none;
 }
 
 /* Styles for the survey error message */
-#errorSurvey {
+#errorsurvey {
     margin-top: 5px;
     color: red;
 }
@@ -245,7 +245,7 @@
 }
 
 /* Styles for empty space */
-#emptySpace {
+#emptyspace {
     margin-top: 7%;
 }
 

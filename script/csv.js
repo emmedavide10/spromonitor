@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Hide the message after 2 seconds (2000 milliseconds)
     setTimeout(hideErrorMessage, 2000);
     var csvButton = document.getElementById('csv');
-    var downloadSection = document.getElementById('downloadSection');
+    var downloadsection = document.getElementById('downloadsection');
 
     // Event listener for the CSV button
     csvButton.addEventListener('click', function (event) {
         event.preventDefault(); // Prevent the default form submission behavior
         document.getElementById('csvbutton').style.display = 'none'; // Hide the CSV generate button 
-        downloadSection.style.display = 'block'; // Show the download section
+        downloadsection.style.display = 'block'; // Show the download section
     });
 });

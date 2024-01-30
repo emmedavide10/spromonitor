@@ -13,13 +13,13 @@
 
 <body>
     <!-- Container for displaying questions -->
-    <div id="questionContainer">
+    <div id="questioncontainer">
         <!-- Heading for the form -->
         <h3 id="titleparams">{{titleformparams}}</h3>
         <!-- Loop through questions -->
         {{#questions}}
             <!-- Check if the question is numeric -->
-            {{#isNumeric}}
+            {{#isnumeric}}
                 <!-- Checkbox for numeric questions -->
                 <label class="custom-checkbox">
                     <!-- Exclamation circle icon for errors (initially hidden) -->
@@ -27,28 +27,28 @@
                     <!-- Checkbox input -->
                     <input type="checkbox" name="question_ids[]" value="{{id}}">
                     <!-- Question content -->
-                    <span style="font-weight: bold;">{{{questionContent}}}</span>
+                    <span style="font-weight: bold;">{{{questioncontent}}}</span>
                     <!-- Checkmark for checkbox -->
                     <span class="checkmark"></span>
                 </label><br>
-            {{/isNumeric}}
+            {{/isnumeric}}
         {{/questions}}
 
         <!-- Form for submitting questions -->
-        <form id="questionForm" method="post" action="index.php">
+        <form id="questionform" method="post" action="index.php">
             <!-- Hidden input for course ID -->
             <input type="hidden" name="courseid" value="{{courseid}}">
             <!-- Hidden input for survey ID -->
             <input type="hidden" name="sproid" value="{{sproid}}">
             <!-- Hidden input for selected fields -->
-            <input type="hidden" name="selectedFields" id="selectedFieldsInput" value="">
+            <input type="hidden" name="selectedfields" id="selectedfieldsinput" value="">
             <!-- Button to submit the form with validation -->
-            <input type="button" value="{{buttonsubmit}}" onclick="validateAndSubmitQuestion(event)">
+            <input type="button" value="{{buttonsubmit}}" onclick="validateandsubmitquestion(event)">
         </form>
     </div>
 
     <!-- Empty space for styling -->
-    <div id="emptySpace"></div>
+    <div id="emptyspace"></div>
 
     <!-- Error popup for displaying validation errors -->
     <div id="error-popup">
