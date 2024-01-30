@@ -25,12 +25,12 @@
 namespace tool_monitoring;
 
 /**
- * Utility class.
+ * utility class.
  * @package    tool_monitoring
  * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class Utility
+class utility
 {
 
 
@@ -44,7 +44,7 @@ class Utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function prepareArray($result)
+    public function preparearray($result)
     {
         $content = array();
         $timecreated = array();
@@ -65,8 +65,8 @@ class Utility
      * Generates a line chart based on input data arrays.
      *
      * @param string $title Optional; The chart title.
-     * @param array $variablesArray An array containing variable names.
-     * @param array $chartDataArrays An array containing chart data arrays with 'content' and 'timecreated' keys.
+     * @param array $variablesarray An array containing variable names.
+     * @param array $chartdataarrays An array containing chart data arrays with 'content' and 'timecreated' keys.
      *
      * @return string HTML containing the generated chart.
      *
@@ -75,8 +75,8 @@ class Utility
      */
     public function generateChart(
         $title = '',
-        $variablesArray,
-        $chartDataArrays
+        $variablesarray,
+        $chartdataarrays
     ): string {
         global $OUTPUT;
 
@@ -84,9 +84,9 @@ class Utility
         // Create chart series for each data array.
         $chartSeries = [];
 
-        foreach ($variablesArray as $index => $variable) {
-            $contentArray = $chartDataArrays[$index]['content'];
-            $timecreatedArray = $chartDataArrays[$index]['timecreated'];
+        foreach ($variablesarray as $index => $variable) {
+            $contentArray = $chartdataarrays[$index]['content'];
+            $timecreatedArray = $chartdataarrays[$index]['timecreated'];
 
             // Create a new chart series for each variable.
             $chartSeries[] = new \core\chart_series($variable, $contentArray);
@@ -120,14 +120,14 @@ class Utility
      * Executes queries to retrieve data for generating charts.
      *
      * @param int|null $userid The ID of the user to retrieve data for. If not provided, the current user is used.
-     * @param array $selectedFieldsArray An array containing selected field IDs.
+     * @param array $selectedfieldsarray An array containing selected field IDs.
      *
      * @return array An array containing the query results.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executeQueries($userid = null, $selectedFieldsArray): array
+    public function executeQueries($userid = null, $selectedfieldsarray): array
     {
         global $DB, $USER;
 
@@ -147,7 +147,7 @@ class Utility
               AND s.userid = :userid
               AND a.itemid = :itemid';
 
-        foreach ($selectedFieldsArray as $itemid) {
+        foreach ($selectedfieldsarray as $itemid) {
             // Execute the query for each item ID in the array.
             $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
             $result = $DB->get_records_sql($query, $queryparam);
@@ -190,8 +190,8 @@ class Utility
      *
      * @param string $message The message to display if the user has not completed the survey.
      * @param string $title The chart title.
-     * @param array $variablesArray An array containing variable names.
-     * @param array $selectedFieldsArray An array containing selected field IDs.
+     * @param array $variablesarray An array containing variable names.
+     * @param array $selectedfieldsarray An array containing selected field IDs.
      * @param int $userid Optional; The ID of the user to generate the chart for. Defaults to the current user.
      *
      * @return echo html render The HTML output for the user's chart and mergedarray.
@@ -199,7 +199,7 @@ class Utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleUserChart($message, $title, $variablesArray, $selectedFieldsArray, $userid = null)
+    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $userid = null)
     {
 
         global $USER;
@@ -210,7 +210,7 @@ class Utility
         }
 
         // Execute the queries to retrieve the chart data.
-        $results = $this->executeQueries($userid, $selectedFieldsArray);
+        $results = $this->executeQueries($userid, $selectedfieldsarray);
 
         $empty = true;
         foreach ($results as $subArr) {
@@ -220,9 +220,9 @@ class Utility
         }
 
         // Prepare the chart data arrays.
-        $chartDataArrays = [];
+        $chartdataarrays = [];
         foreach ($results as $result) {
-            $chartDataArrays[] = $this->prepareArray($result);
+            $chartdataarrays[] = $this->preparearray($result);
         }
 
         // If the user has not completed the survey, display a message.
@@ -237,8 +237,8 @@ class Utility
                 'div class="padding-top-bottom"',
                 $this->generateChart(
                     $title,
-                    $variablesArray,
-                    $chartDataArrays
+                    $variablesarray,
+                    $chartdataarrays
                 )
             );
         }
@@ -246,36 +246,36 @@ class Utility
 
 
     /**
-     * This function takes an array of arrays ($chartDataArrays) and creates a merged array
+     * This function takes an array of arrays ($chartdataarrays) and creates a merged array
      * that contains all the fields needed for each record.
      *
-     * @param array $variablesArray An array of arrays containing names of different variables.
-     * @param array $chartDataArrays An array of arrays containing data for different variables.
+     * @param array $variablesarray An array of arrays containing names of different variables.
+     * @param array $chartdataarrays An array of arrays containing data for different variables.
      * @return array The merged array containing all the fields needed for each record.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($variablesArray, $chartDataArrays)
+    public function createmergedarray($variablesarray, $chartdataarrays)
     {
         // Create an empty array to hold the merged data.
         $mergedarray = array();
     
         // Get the length of any of the arrays (assuming they all have the same length).
-        $lengthdata = count($chartDataArrays[0]['content']);
-        $lengthvar = count($variablesArray);
+        $lengthdata = count($chartdataarrays[0]['content']);
+        $lengthvar = count($variablesarray);
     
         // Iterate through all arrays at once.
         for ($k = 0; $k < $lengthdata; $k++) {
-            // Create a new array containing the current elements from all arrays in $chartDataArrays.
+            // Create a new array containing the current elements from all arrays in $chartdataarrays.
             $elementarray = array();
     
             // Add the current timecreated element to the new array.
-            $elementarray[] = $chartDataArrays[0]['timecreated'][$k];
+            $elementarray[] = $chartdataarrays[0]['timecreated'][$k];
     
             for ($j = 0; $j < $lengthvar; $j++) {
                 // Add the current content element for each variable to the new array.
-                $elementarray[] = $chartDataArrays[$j]['content'][$k];
+                $elementarray[] = $chartdataarrays[$j]['content'][$k];
             }
     
 
@@ -295,15 +295,15 @@ class Utility
      * @param string $date The date of the measurement.
      * @param string $filename The name of the file to write to.
      * @param string $delimiter The delimiter to use in the CSV file.
-     * @param array $variablesArray An array containing variable names.
-     * @param array $mergedArray The merged array of data to write to the CSV file.
+     * @param array $variablesarray An array containing variable names.
+     * @param array $mergedarray The merged array of data to write to the CSV file.
      *
      * @return void
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingfile($date, $filename, $delimiter, $variablesArray, $mergedarray)
+    public function writingfile($date, $filename, $delimiter, $variablesarray, $mergedarray)
     {
         global $CFG;
     
@@ -316,18 +316,18 @@ class Utility
         // Check if the file was opened successfully.
         if ($filehandler) {
             // Initialize an array to store the maximum width of each column.
-            $columnWidths = array();
+            $columnwidths = array();
     
             // Create an array of the header row.
-            $headerRow = array($date);
+            $headerrow = array($date);
     
             // Add variable names to the header row and initialize column widths.
-            foreach ($variablesArray as $variable) {
-                $headerRow[] = $variable;
-                $columnWidths[$variable] = strlen($variable);
+            foreach ($variablesarray as $variable) {
+                $headerrow[] = $variable;
+                $columnwidths[$variable] = strlen($variable);
             }
     
-            $csv = array($headerRow);
+            $csv = array($headerrow);
     
             // Loop through the merged array and create a new array for each row of data.
             foreach ($mergedarray as $elementarray) {
@@ -339,11 +339,11 @@ class Utility
                 foreach ($elementarray as $index => $content) {
                     // Skip the first element, as it represents the timecreated.
                     if ($index !== 0) {
-                        $variable = $variablesArray[$index - 1];
+                        $variable = $variablesarray[$index - 1];
                         $newelement[$variable] = $content;
                         
                         // Update column width if needed.
-                        $columnWidths[$variable] = max($columnWidths[$variable], strlen($content));
+                        $columnwidths[$variable] = max($columnwidths[$variable], strlen($content));
                     }
                 }
     
@@ -354,7 +354,7 @@ class Utility
             foreach ($csv as $row) {
                 // Pad each column value to match the maximum width of the column.
                 foreach ($row as $variable => $content) {
-                    $row[$variable] = str_pad($content, $columnWidths[$variable]);
+                    $row[$variable] = str_pad($content, $columnwidths[$variable]);
                 }
     
                 fputcsv($filehandler, $row, $delimiter);
@@ -395,7 +395,7 @@ class Utility
      *
      * @return array The array resulting from handling the fields.
      */
-    public function handleSelectedFields($fields)
+    public function handleselectedfields($fields)
     {
         if (!empty($fields)) {
             return is_array($fields) ? $fields : explode(',', $fields);
@@ -409,12 +409,12 @@ class Utility
      * @param string $username The username to use in the file name.
      * @param bool $csv A flag indicating whether a CSV file is requested.
      * @param string $datestring A date string to use in the file name.
-     * @param array $variablesArray An array containing variable names.
-     * @param array $mergedArray A merged array containing all the fields needed for each record.
+     * @param array $variablesarray An array containing variable names.
+     * @param array $mergedarray A merged array containing all the fields needed for each record.
      *
      * @return string The generated file name.
      */
-    public function generateFilename($username, $csv, $datestring, $variablesArray, $mergedArray)
+    public function generatefilename($username, $csv, $datestring, $variablesarray, $mergedarray)
     {
         global $CFG;
 
@@ -428,7 +428,7 @@ class Utility
 
             // Calls the writingFile() function to write the CSV file (the source code for writingFile() is not included in this description).
             $this->writingFile(
-                $datestring, $filename, $delimiter, $variablesArray, $mergedArray
+                $datestring, $filename, $delimiter, $variablesarray, $mergedarray
             );
         }
 

@@ -22,16 +22,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// Required Moodle files and configuration
-use tool_monitoring\Utility;
+// Required Moodle files and configuration.
+use tool_monitoring\utility;
 
 require_once __DIR__ . '/../../../config.php';
 
 // Ensure script is accessed within Moodle
 defined('MOODLE_INTERNAL') || die();
 
-// Instantiate the Utility class
-$utility = new Utility();
+// Instantiate the utility class.
+$utility = new utility();
 
 // Retrieve parameters safely
 $username = optional_param('username', null, PARAM_TEXT);
@@ -39,32 +39,32 @@ $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $csv = optional_param('csv', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $sproid = optional_param('sproid', 0, PARAM_INT);
-$selectedFieldsValue = optional_param('selectedFields', '', PARAM_TEXT);
+$selectedfieldsvalue = optional_param('selectedFields', '', PARAM_TEXT);
 
-// Set or update the session variable directly
-$_SESSION['selectedFields'] = $selectedFieldsValue;
+// Set or update the session variable directly.
+$_SESSION['selectedFields'] = $selectedfieldsvalue;
 
 // Use the session variable
-$selectedFields = $_SESSION['selectedFields'];
+$selectedfields = $_SESSION['selectedFields'];
 
-$selectedFieldsArray = [];
-if (isset($selectedFields)) {
-    $selectedFieldsArray = $utility->handleSelectedFields($selectedFields);
+$selectedfieldsarray = [];
+if (isset($selectedfields)) {
+    $selectedfieldsarray = $utility->handleselectedfields($selectedfields);
 }
 
-$variablesArray = [];
-foreach ($selectedFieldsArray as $field) {
-    // Execute the query to get the variables associated with known itemids
+$variablesarray = [];
+foreach ($selectedfieldsarray as $field) {
+    // Execute the query to get the variables associated with known itemids.
     $sql = "SELECT variable FROM {surveyprofield_numeric} WHERE itemid = :field";
     $params = ['field' => $field];
     $result = $DB->get_record_sql($sql, $params);
-    // Check if there are results before accessing the variable property
+    // Check if there are results before accessing the variable property.
     if (!empty($result) && isset($result->variable)) {
-        // Add the variable value to the end of the array
-        array_push($variablesArray, $result->variable);
+        // Add the variable value to the end of the array.
+        array_push($variablesarray, $result->variable);
     } else {
-        // If there are no results, add an empty value to the array (or a default value, depending on your needs)
-        $variablesArray[] = null; // You can change this to the desired default value
+        // If there are no results, add an empty value to the array (or a default value, depending on your needs).
+        $variablesarray[] = null; // You can change this to the desired default value.
     }
 }
 
@@ -78,7 +78,7 @@ $pagetitle = get_string('pagetitle', 'tool_monitoring');
 
 $paramsurl['courseid'] = $courseid;
 $paramsurl['sproid'] = $sproid;
-$paramsurl['selectedFields'] = $selectedFields;
+$paramsurl['selectedFields'] = $selectedfields;
 
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/monitoring/index.php', $paramsurl);
@@ -86,8 +86,8 @@ $PAGE->set_pagelayout('standard');
 $PAGE->requires->js_call_amd(
     'core/first',
     'require',
-    array('charts/chartjs/Chart.min', 'Chart'),
-    array('exports' => 'Chart'),
+    ['charts/chartjs/Chart.min', 'Chart'],
+    ['exports' => 'Chart'],
     true
 );
 
@@ -97,24 +97,24 @@ echo $OUTPUT->header();
 $paramurl['id'] = $courseid;
 $paramurl['section'] = 0;
 $urldashboard = new moodle_url('/course/view.php', $paramurl);
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
-// Now $course contains all course information, including the name
-$courseName = $course->fullname;
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
+// Now $course contains all course information, including the name.
+$coursename = $course->fullname;
 
-$dataHeader = array(
+$dataheader = [
     'pagetitle' => $pagetitle,
     'urldashboard' => $urldashboard,
-    'courseName' => $courseName
-);
+    'courseName' => $coursename,
+];
 
-$utility->rendermustachefile('templates/templateheader.mustache', $dataHeader);
+$utility->rendermustachefile('templates/templateheader.mustache', $dataheader);
 
 // SQL queries for users and user count
 $sqlusers = 'SELECT u.id, u.username
                FROM {role_assignments} ra
                    JOIN {user} u on u.id = ra.userid
                    JOIN {context} ctx ON ctx.id = ra.contextid
-                   WHERE ctx.instanceid = :courseid';
+              WHERE ctx.instanceid = :courseid';
 $idcourse = ['courseid' => $courseid];
 $queryusers = $DB->get_records_sql($sqlusers, $idcourse);
 
@@ -122,12 +122,12 @@ $querycountusers = 'SELECT count(*) as num
                       FROM {role_assignments} ra
                           JOIN {user} u on u.id = ra.userid
                           JOIN {context} ctx ON ctx.id = ra.contextid
-                   WHERE ctx.instanceid = :courseid';
+                     WHERE ctx.instanceid = :courseid';
 $idcourse = ['courseid' => $courseid];
 $resultcountuser = $DB->get_record_sql($querycountusers, $idcourse);
 $numuser = $resultcountuser->num;
 
-// Other variables and strings
+// Other variables and strings.
 $calendarparam['view'] = 'month';
 $calendarurl = new moodle_url('/calendar/view.php', $calendarparam);
 
@@ -144,27 +144,27 @@ $goback = get_string('goback', 'tool_monitoring');
 
 $canaccessallcharts = has_capability('tool/monitoring:accessallcharts', $context);
 
-$filenamearray = array();
+$filenamearray = [];
 
-// Check user's capability to access all charts
+// Check user's capability to access all charts.
 if (!$canaccessallcharts) {
     // If not, display a single user chart
-    $utility->singleuserchart($messageemptychart, $titlechart, $variablesArray, $selectedFieldsArray, null);
+    $utility->singleuserchart($messageemptychart, $titlechart, $variablesarray, $selectedfieldsarray, null);
 } else {
     // Prepare data for the search bar template
-    $data = array(
+    $data = [
         'searchusername' => $searchusername,
         'formAction' => '',
         'insusername' => $insusername,
         'search' => $search,
         'courseid' => $courseid,
-        'selectedFields' => $selectedFields
-    );
+        'selectedFields' => $selectedfields,
+    ];
 
-    // Render the search bar template
+    // Render the search bar template.
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
-    // SQL query to search for users by username
+    // SQL query to search for users by username.
     $sqlusers = 'SELECT u.id, u.username
             FROM {role_assignments} ra
                 JOIN {user} u on u.id = ra.userid
@@ -183,45 +183,45 @@ if (!$canaccessallcharts) {
             $utility->singleuserchart(
                 '',
                 $clinicaldata . $username,
-                $variablesArray,
-                $selectedFieldsArray,
+                $variablesarray,
+                $selectedfieldsarray,
                 $userid
             );
 
-            // Execute queries and prepare data for the user
-            $results = $utility->executequeries($userid, $selectedFieldsArray);
+            // Execute queries and prepare data for the user.
+            $results = $utility->executequeries($userid, $selectedfieldsarray);
 
             foreach ($results as $result) {
-                $preparedData = $utility->preparearray($result);
+                $prepareddata = $utility->preparearray($result);
 
-                if (!empty($preparedData['content']) && !empty($preparedData['timecreated'])) {
-                    $chartDataArrays[] = $preparedData;
+                if (!empty($prepareddata['content']) && !empty($prepareddata['timecreated'])) {
+                    $chartdataarrays[] = $prepareddata;
                 }
             }
 
-            // Generate a filename and add it to the array
-            $mergedarray = $utility->createmergedarray($variablesArray, $chartDataArrays);
+            // Generate a filename and add it to the array.
+            $mergedarray = $utility->createmergedarray($variablesarray, $chartdataarrays);
 
-            $filename = $utility->generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray);
+            $filename = $utility->generatefilename($username, $csv, $datestring, $variablesarray, $mergedarray);
             array_push($filenamearray, $filename);
 
-            // Prepare data for the CSV template
-            $data = array(
+            // Prepare data for the CSV template.
+            $data = [
                 'filenamearray' => $filenamearray,
                 'singlecsv' => $username,
                 'csvgen' => $csvgen,
                 'courseid' => $courseid,
-            );
+            ];
 
-            // Render the CSV template
+            // Render the CSV template.
             $utility->rendermustachefile('templates/templatecsv.mustache', $data);
-        } elseif (count($usersearched) === 0) {
+        } else if (count($usersearched) === 0) {
             // If no user is found, display a message
             $messagenotfound = get_string('messagenotfound', 'tool_monitoring');
             echo \html_writer::tag('div class="padding-top-bottom"', '<h5>' . $messagenotfound . $username . '</h5>');
         }
     } else {
-        // If multiple users are found, display charts for each
+        // If multiple users are found, display charts for each.
         if ($usersearched) {
             $queryusers = $usersearched;
         }
@@ -230,59 +230,59 @@ if (!$canaccessallcharts) {
             $username = $user->username;
             $userid = $user->id;
 
-            // Execute queries and prepare data for the user
-            $results = $utility->executequeries($userid, $selectedFieldsArray);
+            // Execute queries and prepare data for the user.
+            $results = $utility->executequeries($userid, $selectedfieldsarray);
 
-            $chartDataArrays = [];
+            $chartdataarrays = [];
             foreach ($results as $result) {
-                $preparedData = $utility->preparearray($result);
+                $prepareddata = $utility->preparearray($result);
 
-                if (!empty($preparedData['content']) && !empty($preparedData['timecreated'])) {
-                    $chartDataArrays[] = $preparedData;
+                if (!empty($prepareddata['content']) && !empty($prepareddata['timecreated'])) {
+                    $chartdataarrays[] = $prepareddata;
                 }
             }
 
-            // If the participant hasn't completed the surveypro, skip
-            if (!empty($chartDataArrays)) {
+            // If the participant hasn't completed the surveypro, skip.
+            if (!empty($chartdataarrays)) {
                 // Display the chart for the user
                 $title = $clinicaldata . $username;
                 echo \html_writer::tag(
                     'div class="padding-top-bottom"',
                     $utility->generatechart(
                         $title,
-                        $variablesArray,
-                        $chartDataArrays
+                        $variablesarray,
+                        $chartdataarrays
                     )
                 );
 
-                // Generate a filename and add it to the array
-                $mergedarray = $utility->createmergedarray($variablesArray, $chartDataArrays);
-                $filename = $utility->generateFilename($username, $csv, $datestring, $variablesArray, $mergedarray);
+                // Generate a filename and add it to the array.
+                $mergedarray = $utility->createmergedarray($variablesarray, $chartdataarrays);
+                $filename = $utility->generatefilename($username, $csv, $datestring, $variablesarray, $mergedarray);
                 array_push($filenamearray, $filename);
             }
         }
 
-        // Prepare data for the CSV template
-        $data = array(
+        // Prepare data for the CSV template.
+        $data = [
             'filenamearray' => $filenamearray,
             'csvgen' => $csvgen,
             'courseid' => $courseid,
-        );
+        ];
 
         // Render the CSV template
         $utility->rendermustachefile('templates/templatecsv.mustache', $data);
     }
 }
 
-// Prepare data for the calendar and back button template
-$data = array(
+// Prepare data for the calendar and back button template.
+$data = [
     'calendarurl' => $calendarurl,
     'gocalendar' => $gocalendar,
-    'goback' => $goback
-);
+    'goback' => $goback,
+];
 
-// Redirect to calendar
+// Redirect to calendar.
 $utility->rendermustachefile('templates/templatecalendarandbb.mustache', $data);
 
-// Output footer
+// Output footer.
 echo $OUTPUT->footer();
