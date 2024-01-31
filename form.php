@@ -26,7 +26,7 @@
 // Include necessary Moodle files.
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 
-// Check user access or require_course_login(), require_admin(), depending on the requirements..
+// Check user access or require_course_login(), require_admin(), depending on the requirements.
 require_login();
 
 // Ensure the script is only accessed within Moodle.
@@ -75,25 +75,19 @@ $selectoptions = get_string('selectoptions', 'tool_monitoring');
 $data = [];
 $transformedsurveysname = [];
 
-// Get the referring URL and current URL.
+// Get the referring URL.
 $referrer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
-$currenturl = $_SERVER['REQUEST_URI'];
+$currenturl = '';
 
-// Check if the current URL contains '/moodle/mod/lti/'.
-if (strpos($referrer, '/moodle/mod/lti/') !== false) {
+// Check if the current URL contains '/mod/lti/'.
+if (strpos($referrer, '/mod/lti/') !== false && $sproid == 0) {
     // Set the session variable.
     $_SESSION['urltool'] = $referrer;
-    $referrer = $_SESSION['urltool'];
+    $currenturl = $_SESSION['urltool'];
 }
 
-// If 'sproid' is 0, update the current URL from the session.
-if ($sproid == 0) {
-    // Check if the 'urltool' key exists before using it.
-    $currenturl = $_SESSION['urltool'] ?? '';
-}
-
-// Check if the current URL contains '/moodle/mod/lti/'.
-if (strpos($currenturl, '/moodle/mod/lti/') !== false) {
+// Check if the current URL contains '/mod/lti/'.
+if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lti/') !== false) {
 
     // Retrieve survey names.
     $surveysname = $DB->get_records('surveypro', ['course' => $courseid]);
