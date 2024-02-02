@@ -154,18 +154,33 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function rendermustachefile($pathfile, $data) {
+    public function renderMustacheFile($pathfile, $data) {
         if (file_exists($pathfile)) {
             // Create a new Mustache engine and load the template file.
             $mustache = new \Mustache_Engine();
             $template = file_get_contents($pathfile);
-            // Render the template with the specified data object.
-            echo $mustache->render($template, $data);
+    
+            // Ensure $data is an array before sanitizing.
+            if (is_array($data)) {
+                // Sanitize each element of the data array.
+                $sanitizedData = array_map(function($value) {
+                    return is_string($value) ? htmlspecialchars($value) : $value;
+                }, $data);
+    
+                // Render the template with the sanitized data object.
+                echo $mustache->render($template, $sanitizedData);
+            } else {
+                echo "Invalid data type. Expected an array.";
+            }
         } else {
             // If the template file doesn't exist, output an error message.
             echo "The file $pathfile does not exist.";
         }
     }
+    
+    
+    
+    
 
     /**
      * Renders HTML output for a single user's chart.

@@ -38,8 +38,12 @@ define('MONITORING_CSV_PATH', '/tool_monitoring/csv/');
 // Instantiate the utility class.
 $utility = new \tool_monitoring\utility();
 
+
 // Get the requested file name from parameters.
 $filename = required_param('f', PARAM_TEXT);
+
+// Sanitize the filename to prevent XSS.
+$filename = clean_param($filename, PARAM_FILE);
 
 $filenotexist = get_string('filenotexist', 'tool_monitoring');
 
@@ -47,7 +51,7 @@ $filenotexist = get_string('filenotexist', 'tool_monitoring');
 if (file_exists($CFG->tempdir . MONITORING_CSV_PATH . $filename)) {
     // Set HTTP headers for file download.
     header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=\"$filename\"");
+    header("Content-Disposition: attachment; filename=\"" . rawurlencode($filename) . "\"");
     header('Expires: 0');
     header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
     header('Pragma: public');
