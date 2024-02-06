@@ -18,13 +18,17 @@
  * Generate Chart.js charts.
  *
  * @package    tool_monitoring
- * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
+ * @copyright  2024 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023121200; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2021051700; // Requires this Moodle version.
-$plugin->component = 'tool_monitoring'; // Full name of the plugin (used for diagnostics).
+$plugin->component = 'tool_monitoring';
+$plugin->version = 2024020600; 
+$plugin->release = 'v1.0-r1';
+$plugin->requires = 2023121201;
+$plugin->supported = [401, 403];
+$plugin->maturity = MATURITY_STABLE;
+$plugin->dependencies = ['mod_surveypro' => 2023121201];

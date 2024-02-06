@@ -18,19 +18,12 @@
  * Monitoring utility class.
  *
  * @package   tool_monitoring
- * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
+ * @copyright  2024 Davide Mirra <davide.mirra@iss.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace tool_monitoring;
 
-/**
- * Utility class.
- *
- * @package    tool_monitoring
- * @copyright  2023 Davide Mirra <davide.mirra@iss.it>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class utility {
     /**
      * Returns an array containing two elements: the content and timecreated of all chart parameters
