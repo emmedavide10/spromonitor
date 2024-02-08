@@ -24,7 +24,8 @@
 
 namespace tool_monitoring;
 
-class utility {
+class utility
+{
     /**
      * Returns an array containing two elements: the content and timecreated of all chart parameters
      * in the input recordset.
@@ -35,7 +36,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function preparearray($result) {
+    public function preparearray($result)
+    {
         $content = [];
         $timecreated = [];
 
@@ -61,7 +63,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function generatechart($variablesarray, $chartdataarrays, $title = ''): string {
+    public function generatechart($variablesarray, $chartdataarrays, $title = ''): string
+    {
         global $OUTPUT;
 
         // Create chart series for each data array.
@@ -107,7 +110,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($selectedfieldsarray, $userid = null): array {
+    public function executequeries($selectedfieldsarray, $userid = null): array
+    {
         global $DB, $USER;
 
         // If $userid argument is not provided, use the current user.
@@ -147,7 +151,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function rendermustachefile($pathfile, $data) {
+    public function rendermustachefile($pathfile, $data)
+    {
         if (file_exists($pathfile)) {
             // Create a new Mustache engine and load the template file.
             $mustache = new \Mustache_Engine();
@@ -182,7 +187,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $userid = null) {
+    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $userid = null)
+    {
         global $USER;
 
         // Set the user ID to the current user if not specified.
@@ -234,7 +240,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($variablesarray, $chartdataarrays) {
+    public function createmergedarray($variablesarray, $chartdataarrays)
+    {
         // Create an empty array to hold the merged data.
         $mergedarray = [];
 
@@ -276,59 +283,71 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingfile($date, $filename, $delimiter, $variablesarray, $mergedarray) {
+    public function writingfile($filename, $delimiter, $variablesarray, $mergedarray)
+    {
         global $CFG;
-
+    
         // Open the file for writing.
         $exportsubdir = 'tool_monitoring/csv';
         make_temp_directory($exportsubdir);
         $filewithpath = $CFG->tempdir . '/' . $exportsubdir . '/' . $filename;
         $filehandler = fopen($filewithpath, 'w');
-
+    
         // Check if the file was opened successfully.
         if ($filehandler) {
             // Initialize an array to store the maximum width of each column.
             $columnwidths = [];
-
+    
             // Create an array of the header row.
-            $headerrow = [$date];
-
+            $headerrow = [];
+    
             // Add variable names to the header row and initialize column widths.
             foreach ($variablesarray as $variable) {
                 $headerrow[] = $variable;
+    
+                // Initialize column width based on the length of the variable name.
                 $columnwidths[$variable] = strlen($variable);
             }
-
+    
             $csv = [$headerrow];
-
+    
             // Loop through the merged array and create a new array for each row of data.
             foreach ($mergedarray as $elementarray) {
-                $newelement = [$date => $elementarray[0]];
-
+                $newelement = [$headerrow[0] => $elementarray[0]];
+    
                 // Add content values to the new array and update column widths.
                 foreach ($elementarray as $index => $content) {
                     // Skip the first element, as it represents the timecreated.
-                    if ($index !== 0) {
-                        $variable = $variablesarray[$index - 1];
+                    if ($index > 0 && isset($variablesarray[$index])) {
+                        $variable = $variablesarray[$index];
                         $newelement[$variable] = $content;
-
+    
                         // Update column width if needed.
                         $columnwidths[$variable] = max($columnwidths[$variable], strlen($content));
                     }
                 }
-
+    
                 array_push($csv, $newelement);
             }
-
+    
+            $newArray = array_combine($headerrow, $headerrow);
+    
+            // Write the header to the CSV file.
+            fputcsv($filehandler, $newArray, $delimiter);
+    
             // Loop through the data and write each row to the CSV file.
-            foreach ($csv as $row) {
-                // Pad each column value to match the maximum width of the column.
-                foreach ($row as $variable => $content) {
-                    $row[$variable] = str_pad($content, $columnwidths[$variable]);
+            foreach ($csv as $index => $row) {
+                // Skip the padding for the first row (headers/intestazioni).
+                if ($index > 0) {
+                    // Pad each column value to match the maximum width of the column.
+                    foreach ($row as $variable => $content) {
+                        $row[$variable] = str_pad($content, (double)$columnwidths[$variable]);
+                    }
+    
+                    fputcsv($filehandler, $row, $delimiter);
                 }
-
-                fputcsv($filehandler, $row, $delimiter);
             }
+    
             fclose($filehandler);
         }
     }
@@ -338,7 +357,8 @@ class utility {
      *
      * @return int The value of $courseid assigned based on the GET, POST, and session variables.
      */
-    public function getcourseid() {
+    public function getcourseid()
+    {
         // Check if the value is present in the GET variables.
         $courseid = optional_param('courseid', 0, PARAM_INT);
         if ($courseid == 0) {
@@ -355,7 +375,8 @@ class utility {
      *
      * @return array The array resulting from handling the fields.
      */
-    public function handleselectedfields($fields) {
+    public function handleselectedfields($fields)
+    {
         if (!empty($fields)) {
             return is_array($fields) ? $fields : explode(',', $fields);
         }
@@ -373,24 +394,35 @@ class utility {
      *
      * @return string The generated file name.
      */
-    public function generatefilename($username, $csv, $datestring, $variablesarray, $mergedarray) {
+    public function generatefilename($username, $csv, $datestring, $variablesarray, $mergedarray)
+    {
         global $CFG;
-
+    
         $delimiter = ';';
-
+    
         $date = userdate(time(), '%d%m%Y', 99, false, false); // Gets a formatted date as a string.
+    
+        // Add datestring as the first element of variablesarray
+        array_unshift($variablesarray, $datestring);
+    
+        // Create an array with continuous numerical keys
+        $variablesarray = array_values($variablesarray);
+    
         $filename = 'file_' . $date . '_' . $username . '.csv'; // Creates the file name.
         $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Creates the full file path.
-
-        if (isset($csv)) { // Checks if a CSV file is requested.
-
+    
+        if ($csv) { // Checks if a CSV file is requested.
+    
             // Calls the writingFile() function to write the CSV file.
             // The source code for writingFile() is not included in this description.
             $this->writingfile(
-                $datestring, $filename, $delimiter, $variablesarray, $mergedarray
+                $filename,
+                $delimiter,
+                $variablesarray,
+                $mergedarray
             );
         }
-
+    
         return $filename; // Returns the generated file name.
     }
 }

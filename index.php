@@ -112,7 +112,7 @@ $dataheader = [
 $utility->rendermustachefile('templates/templateheader.mustache', $dataheader);
 
 // SQL queries for users and user count.
-$sqlusers = 'SELECT u.id, u.username
+$sqlusers = 'SELECT DISTINCT(u.id), u.username
                FROM {role_assignments} ra
                    JOIN {user} u on u.id = ra.userid
                    JOIN {context} ctx ON ctx.id = ra.contextid
@@ -167,7 +167,7 @@ if (!$canaccessallcharts) {
     $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
 
     // SQL query to search for users by username.
-    $sqlusers = 'SELECT u.id, u.username
+    $sqlusers = 'SELECT DISTINCT(u.id), u.username
             FROM {role_assignments} ra
                 JOIN {user} u on u.id = ra.userid
                 WHERE u.username LIKE :username';
