@@ -355,4 +355,51 @@ class utility {
 
         return $courseid;
     }
+
+    /**
+     * Function to handle the conversion of $selectedfields into an array by splitting values based on commas.
+     *
+     * @param mixed $fields The fields to handle.
+     *
+     * @return array The array resulting from handling the fields.
+     */
+    public function handleselectedfields($fields) {
+        if (!empty($fields)) {
+            return is_array($fields) ? $fields : explode(',', $fields);
+        }
+        return [];
+    }
+
+        /**
+     * Generates the file name.
+     *
+     * @param string $username The username to use in the file name.
+     * @param bool $csv A flag indicating whether a CSV file is requested.
+     * @param string $datestring A date string to use in the file name.
+     * @param array $variablesarray An array containing variable names.
+     * @param array $mergedarray A merged array containing all the fields needed for each record.
+     *
+     * @return string The generated file name.
+     */
+    public function generatefilename($username, $datestring, $variablesarray, $mergedarray)
+    {
+        global $CFG;
+        $delimiter = ';';
+        $date = userdate(time(), '%d%m%Y', 99, false, false); // Gets a formatted date as a string.
+        // Add datestring as the first element of variablesarray
+        array_unshift($variablesarray, $datestring);
+        // Create an array with continuous numerical keys
+        $variablesarray = array_values($variablesarray);
+        $filename = 'file_' . $date . '_' . $username . '.csv'; // Creates the file name.
+        $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Creates the full file path.
+            // Calls the writingFile() function to write the CSV file.
+            // The source code for writingFile() is not included in this description.
+            $this->writingfile(
+                $filename,
+                $delimiter,
+                $variablesarray,
+                $mergedarray
+            );
+        return $filename; // Returns the generated file name.
+    }
 }

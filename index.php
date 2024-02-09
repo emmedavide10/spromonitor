@@ -38,7 +38,6 @@ $utility = new \tool_monitoring\utility();
 // Retrieve parameters safely.
 $username = optional_param('username', null, PARAM_TEXT);
 $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
-$csv = optional_param('csv', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $sproid = optional_param('sproid', 0, PARAM_INT);
 $selectedfieldsvalue = optional_param('selectedfields', '', PARAM_TEXT);
@@ -204,7 +203,7 @@ if (!$canaccessallcharts) {
             // Generate a filename and add it to the array.
             $mergedarray = $utility->createmergedarray($variablesarray, $chartdataarrays);
 
-            $filename = $utility->generatefilename($username, $csv, $datestring, $variablesarray, $mergedarray);
+            $filename = $utility->generatefilename($username, $datestring, $variablesarray, $mergedarray);
             array_push($filenamearray, $filename);
 
             // Prepare data for the CSV template.
@@ -259,7 +258,7 @@ if (!$canaccessallcharts) {
 
                 // Generate a filename and add it to the array.
                 $mergedarray = $utility->createmergedarray($variablesarray, $chartdataarrays);
-                $filename = $utility->generatefilename($username, $csv, $datestring, $variablesarray, $mergedarray);
+                $filename = $utility->generatefilename($username, $datestring, $variablesarray, $mergedarray);
                 array_push($filenamearray, $filename);
             }
         }
