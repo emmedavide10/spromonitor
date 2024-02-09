@@ -1,26 +1,26 @@
-# Politica di Sicurezza
+# Security Policy
 
-## Versioni Supportate
+## Supported Versions
 
-Questa sezione fornisce informazioni sulle versioni attualmente supportate con aggiornamenti di sicurezza per il progetto.
+This section provides information on the currently supported versions with security updates for the project.
 
-| Versione | È Supportata        |
-| ------- | ------------------ |
+| Version | Supported        |
+| ------- | ---------------- |
 | 1.0-r1  | :white_check_mark: |
 | < 1.0   | :x:                |
 
-## Segnalazione di una Vulnerabilità
+## Reporting a Vulnerability
 
-Per segnalare una vulnerabilità, si prega di seguire le seguenti linee guida:
+To report a vulnerability, please follow the guidelines below:
 
-1. **Dove Segnalare:** Invia un'email a [davide.mirra@iss.it](mailto:davide.mirra@iss.it) per la segnalazione della vulnerabilità.
-2. **Tempo di Risposta Previsto:** Ci impegniamo a fornire tempestive aggiornamenti sulle vulnerabilità segnalate. Gli utenti possono aspettarsi una risposta iniziale entro 72 ore dalla segnalazione.
-3. **Revisione della Vulnerabilità:** Una volta che una vulnerabilità viene segnalata, essa sarà oggetto di una revisione approfondita. Gli utenti saranno informati dell'esito di questa revisione.
-4. **Aggiornamenti e Comunicazioni:** Se la vulnerabilità viene accettata, il team lavorerà per fornire una soluzione tempestiva. Gli utenti saranno regolarmente informati sui progressi.
-5. **Divulgazione:** Una volta risolta la vulnerabilità, sarà pianificata ed eseguita una divulgazione coordinata.
+1. **Where to Report:** Send an email to [davide.mirra@iss.it](mailto:davide.mirra@iss.it) for vulnerability reporting.
+2. **Expected Response Time:** We commit to providing timely updates on reported vulnerabilities. Users can expect an initial response within 72 hours of reporting.
+3. **Vulnerability Review:** Once a vulnerability is reported, it will undergo a thorough review. Users will be informed of the outcome of this review.
+4. **Updates and Communications:** If the vulnerability is accepted, the team will work to provide a timely solution. Users will be regularly informed of progress.
+5. **Disclosure:** Once the vulnerability is resolved, a coordinated disclosure will be planned and executed.
 
-La collaborazione degli utenti nella segnalazione e risoluzione delle vulnerabilità è molto apprezzata.
+User collaboration in reporting and resolving vulnerabilities is highly appreciated.
 
-Grazie,
+Thank you,
 Davide Mirra
-(Maintainer di tool_monitoring)
+(Maintainer of tool_monitoring)
