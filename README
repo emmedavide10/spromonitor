@@ -1,26 +1,32 @@
-# Security Policy
+# Plugin Monitoring for Moodle
 
-## Supported Versions
+**Developer:** Davide Mirra  
+**Project Manager:** Claudia Giacomozzi  
+**Project Name:** C4D  
+**Project Link:** [Monitoring Plugin Repository](https://github.com/emmedavide10/monitoring.git)
 
-This section provides information on the currently supported versions with security updates for the project.
+## Project Overview
 
-| Version | Supported        |
-| ------- | ---------------- |
-| 1.0-r1  | :white_check_mark: |
-| < 1.0   | :x:                |
+The Monitoring plugin, developed by Davide Mirra, is a crucial component for Claudia Giacomozzi's C4D project. This plugin provides advanced monitoring features within the Moodle environment, generating insightful line graphs based on specific input parameters.
 
-## Reporting a Vulnerability
+## Description
 
-To report a vulnerability, please follow the guidelines below:
+The [surveypro module](https://github.com/kordan/moodle-mod_surveypro.git) has been enriched with a simple plotting tool, allowing the monitoring of parameters successively delivered by a compiler at different time points. It is especially useful when a survey is continuously proposed to a compiler to follow the change of one or more parameters. For example, within an intervention on a patient aimed at reducing obesity, a survey might be administered weekly to collect body weight. At each survey submission, the patient (and the clinician) can see graphically the progress and the impact of the intervention on body weight.
 
-1. **Where to Report:** Send an email to [davide.mirra@iss.it](mailto:davide.mirra@iss.it) for vulnerability reporting.
-2. **Expected Response Time:** We commit to providing timely updates on reported vulnerabilities. Users can expect an initial response within 72 hours of reporting.
-3. **Vulnerability Review:** Once a vulnerability is reported, it will undergo a thorough review. Users will be informed of the outcome of this review.
-4. **Updates and Communications:** If the vulnerability is accepted, the team will work to provide a timely solution. Users will be regularly informed of progress.
-5. **Disclosure:** Once the vulnerability is resolved, a coordinated disclosure will be planned and executed.
+## Installation
 
-User collaboration in reporting and resolving vulnerabilities is highly appreciated.
+To seamlessly integrate the plugin into your Moodle instance, follow these steps:
 
-Thank you,
-Davide Mirra
-(Maintainer of tool_monitoring)
+1. Ensure you have a functional Moodle instance.
+2. Copy the contents of this repository to the corresponding Moodle directory (`moodle/admin/tool/`).
+3. Follow the installation instructions specified for the Moodle system.
+
+## Contributions
+
+We welcome contributions to this project. If you encounter issues or have suggestions, please open an issue in the project's issue tracking system or directly contact the developer, Davide Mirra.
+
+## License
+
+This project is distributed under the terms of the GNU General Public License version 3 or later. For detailed information, refer to the included LICENSE file in this repository.
+
+© 2024 Davide Mirra. All rights reserved.
