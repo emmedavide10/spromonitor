@@ -38,13 +38,11 @@ class utility {
     public function preparearray($result) {
         $content = [];
         $timecreated = [];
-
         // Iterate over each row in the recordset and extract the values of content and timecreated.
         foreach ($result as $row) {
             $content[] = $row->content;
             $timecreated[] = date('d/m/Y', $row->timecreated);
         }
-
         // Return the content and timecreated arrays as a single associative array.
         return ['content' => $content, 'timecreated' => $timecreated];
     }
@@ -63,10 +61,8 @@ class utility {
      */
     public function generatechart($variablesarray, $chartdataarrays, $title = ''): string {
         global $OUTPUT;
-
         // Create chart series for each data array.
         $chartseries = [];
-
         foreach ($variablesarray as $index => $variable) {
             $contentarray = $chartdataarrays[$index]['content'];
             $timecreatedarray = $chartdataarrays[$index]['timecreated'];
@@ -74,23 +70,18 @@ class utility {
             // Create a new chart series for each variable.
             $chartseries[] = new \core\chart_series($variable, $contentarray);
         }
-
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
         $chart->set_legend_options(['position' => 'bottom']);
-
         // Add series to the chart in the normal order.
         foreach ($chartseries as $series) {
             $chart->add_series($series);
         }
-
         // Set the x-axis labels to the date values in the input arrays.
         $chart->set_labels($timecreatedarray);
-
         // Add spacing between charts (adjust the margin as needed).
         $charthtml = '<div style="margin-bottom: 7%">' . $OUTPUT->render($chart) . '</div>';
-
         return $charthtml;
     }
 
@@ -107,15 +98,12 @@ class utility {
      */
     public function executequeries($selectedfieldsarray, $userid = null): array {
         global $DB, $USER;
-
         // If $userid argument is not provided, use the current user.
         if (!isset($userid)) {
             $userid = $USER->id;
         }
-
         // Initialize the results array.
         $results = [];
-
         // Query to select SurveyPro module submissions based on user and specific module item.
         $query = 'SELECT s.timecreated, a.content
                   FROM {surveypro_submission} s
@@ -123,14 +111,12 @@ class utility {
                   WHERE s.status = :status
                   AND s.userid = :userid
                   AND a.itemid = :itemid';
-
         foreach ($selectedfieldsarray as $itemid) {
             // Execute the query for each item ID in the array.
             $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
             $result = $DB->get_records_sql($query, $queryparam);
             $results[] = $result;
         }
-
         // Return the results array.
         return $results;
     }
@@ -183,28 +169,23 @@ class utility {
      */
     public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $userid = null) {
         global $USER;
-
         // Set the user ID to the current user if not specified.
         if (!isset($userid)) {
             $userid = $USER->id;
         }
-
         // Execute the queries to retrieve the chart data.
         $results = $this->executequeries($selectedfieldsarray, $userid);
-
         $empty = true;
         foreach ($results as $subarr) {
             if (count($subarr) != 0) {
                 $empty = false;
             }
         }
-
         // Prepare the chart data arrays.
         $chartdataarrays = [];
         foreach ($results as $result) {
             $chartdataarrays[] = $this->preparearray($result);
         }
-
         // If the user has not completed the survey, display a message.
         if ($empty) {
             echo "<br><br>";
@@ -236,24 +217,19 @@ class utility {
     public function createmergedarray($variablesarray, $chartdataarrays) {
         // Create an empty array to hold the merged data.
         $mergedarray = [];
-
         // Get the length of any of the arrays (assuming they all have the same length).
         $lengthdata = count($chartdataarrays[0]['content']);
         $lengthvar = count($variablesarray);
-
         // Iterate through all arrays at once.
         for ($k = 0; $k < $lengthdata; $k++) {
             // Create a new array containing the current elements from all arrays in $chartdataarrays.
             $elementarray = [];
-
             // Add the current timecreated element to the new array.
             $elementarray[] = $chartdataarrays[0]['timecreated'][$k];
-
             for ($j = 0; $j < $lengthvar; $j++) {
                 // Add the current content element for each variable to the new array.
                 $elementarray[] = $chartdataarrays[$j]['content'][$k];
             }
-
             // Add the new array to the merged array.
             array_push($mergedarray, $elementarray);
         }
@@ -277,53 +253,41 @@ class utility {
      */
     public function writingfile($filename, $delimiter, $variablesarray, $mergedarray) {
         global $CFG;
-
         // Open the file for writing.
         $exportsubdir = 'tool_monitoring/csv';
         make_temp_directory($exportsubdir);
         $filewithpath = $CFG->tempdir . '/' . $exportsubdir . '/' . $filename;
         $filehandler = fopen($filewithpath, 'w');
-
         // Check if the file was opened successfully.
         if ($filehandler) {
             // Initialize an array to store the maximum width of each column.
             $columnwidths = [];
-
             // Create an array of the header row.
             $headerrow = [];
-
             // Add variable names to the header row and initialize column widths.
             foreach ($variablesarray as $variable) {
                 $headerrow[] = $variable;
-
                 // Initialize column width based on the length of the variable name.
                 $columnwidths[$variable] = strlen($variable);
             }
-
             $csv = [$headerrow];
-
             // Loop through the merged array and create a new array for each row of data.
             foreach ($mergedarray as $elementarray) {
                 $newelement = [$headerrow[0] => $elementarray[0]];
-
                 // Add content values to the new array and update column widths.
                 foreach ($elementarray as $index => $content) {
                     // Skip the first element, as it represents the timecreated.
                     if ($index > 0 && isset($variablesarray[$index])) {
                         $variable = $variablesarray[$index];
                         $newelement[$variable] = $content;
-
                         // Update column width if needed.
                         $columnwidths[$variable] = max($columnwidths[$variable], strlen($content));
                     }
                 }
-
                 array_push($csv, $newelement);
             }
-
             // Write the header to the CSV file.
             fputcsv($filehandler, array_combine($headerrow, $headerrow), $delimiter);
-
             // Loop through the data and write each row to the CSV file.
             foreach ($csv as $index => $row) {
                 // Skip the padding for the first row (headers).
@@ -332,11 +296,9 @@ class utility {
                     foreach ($row as $variable => $content) {
                         $row[$variable] = str_pad($content, (double)$columnwidths[$variable]);
                     }
-
                     fputcsv($filehandler, $row, $delimiter);
                 }
             }
-
             fclose($filehandler);
         }
     }
@@ -352,7 +314,6 @@ class utility {
         if ($courseid == 0) {
             $courseid = optional_param('context_id', 0, PARAM_INT);
         }
-
         return $courseid;
     }
 
@@ -370,7 +331,7 @@ class utility {
         return [];
     }
 
-        /**
+    /**
      * Generates the file name.
      *
      * @param string $username The username to use in the file name.
@@ -381,14 +342,13 @@ class utility {
      *
      * @return string The generated file name.
      */
-    public function generatefilename($username, $datestring, $variablesarray, $mergedarray)
-    {
+    public function generatefilename($username, $datestring, $variablesarray, $mergedarray) {
         global $CFG;
         $delimiter = ';';
         $date = userdate(time(), '%d%m%Y', 99, false, false); // Gets a formatted date as a string.
-        // Add datestring as the first element of variablesarray
+        // Add datestring as the first element of variablesarray.
         array_unshift($variablesarray, $datestring);
-        // Create an array with continuous numerical keys
+        // Create an array with continuous numerical keys.
         $variablesarray = array_values($variablesarray);
         $filename = 'file_' . $date . '_' . $username . '.csv'; // Creates the file name.
         $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Creates the full file path.
