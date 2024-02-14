@@ -15,20 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Generate Chart.js charts.
+ * Description of surveypro backup settings
  *
- * @package    tool_monitoring
- * @copyright  2024 Davide Mirra <davide.mirra@iss.it>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_surveypro
+ * @copyright 2013 onwards kordan <stringapiccola@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'tool_monitoring';
-$plugin->version = 2024020608;
-$plugin->release = 'v1.0-r1';
-$plugin->requires = 2022112800;
-$plugin->supported = [401, 403];
-$plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = ['mod_surveypro' => 2023111102];
+ // This activity has not particular settings but the inherited from the generic
+ // backup_activity_task so here there isn't any class definition, like the ones
+ // existing in /backup/moodle2/backup_settingslib.php (activities section).

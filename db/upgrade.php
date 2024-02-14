@@ -15,20 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Generate Chart.js charts.
+ * Upgrade code for install
  *
- * @package    tool_monitoring
- * @copyright  2024 Davide Mirra <davide.mirra@iss.it>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   tool_monitoring
+ * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Upgrade the user tours plugin.
+ *
+ * @param int $oldversion The old version of the user tours plugin
+ * @return bool
+ */
+function xmldb_tool_monitoring_upgrade($oldversion) {
 
-defined('MOODLE_INTERNAL') || die();
+    if ($oldversion < 2024020607) {
+        upgrade_plugin_savepoint(true, 2024020607, 'tool', 'monitoring');
+    }
 
-$plugin->component = 'tool_monitoring';
-$plugin->version = 2024020608;
-$plugin->release = 'v1.0-r1';
-$plugin->requires = 2022112800;
-$plugin->supported = [401, 403];
-$plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = ['mod_surveypro' => 2023111102];
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    return true;
+}
