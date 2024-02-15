@@ -24,7 +24,7 @@
 
 
 // Include necessary Moodle files.
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
 // Check user access or require_course_login(), require_admin(), depending on the requirements.
 require_login();
@@ -66,10 +66,13 @@ echo \html_writer::tag('h2', $pagetitle, ['class' => 'centerpara']);
 // Get localized strings for display.
 $titleformspro = get_string('titleformspro', 'tool_monitoring');
 $titleformparams = get_string('titleformparams', 'tool_monitoring');
+$titleformdates = get_string('titleformdates', 'tool_monitoring');
+$buttoncontinue = get_string('buttoncontinue', 'tool_monitoring');
 $buttonsubmit = get_string('buttonsubmit', 'tool_monitoring');
 $errorquestion = get_string('errorquestion', 'tool_monitoring');
-$errorspro = get_string('errorspro', 'tool_monitoring');
+$errordata = get_string('errordata', 'tool_monitoring');
 $selectoptions = get_string('selectoptions', 'tool_monitoring');
+$errorspro = get_string('errorspro', 'tool_monitoring');
 
 // Initialize variables.
 $data = [];
@@ -86,8 +89,11 @@ if (strpos($referrer, '/mod/lti/') !== false && $sproid == 0) {
     $currenturl = $_SESSION['urltool'];
 }
 
+$setupfields = has_capability('tool/monitoring:setupfields', $context);
+
+
 // Check if the current URL contains '/mod/lti/'.
-if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lti/') !== false) {
+if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lti/') !== false && $setupfields) {
 
     // Retrieve survey names.
     $surveysname = $DB->get_records('surveypro', ['course' => $courseid]);
@@ -96,62 +102,87 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
     if ($surveysname) {
         // Iterate over the results and add to the associative array.
         foreach ($surveysname as $result) {
-            $transformedsurveysname[] = [
-                'id' => $result->id,
-                'name' => $result->name,
-                // Add other fields if necessary.
-            ];
+            // Check if the survey ID is already in tool_monitoring.
+            $existingRecord = $DB->get_record('tool_monitoring', ['surveyproid' => $result->id]);
+
+            if (!$existingRecord) {
+                $transformedsurveysname[] = [
+                    'id' => $result->id,
+                    'name' => $result->name,
+                    // Add other fields if necessary.
+                ];
+            }
         }
     }
-
-    // Prepare data for rendering the survey template.
-    $data = [
-        'courseid' => $courseid,
-        'namesurveys' => $transformedsurveysname,
-        'buttonsubmit' => $buttonsubmit,
-        'titleformspro' => $titleformspro,
-        'errorspro' => $errorspro,
-        'selectoptions' => $selectoptions,
-    ];
-    $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
+        // Prepare data for rendering the survey template.
+        $data = [
+            'courseid' => $courseid,
+            'namesurveys' => $transformedsurveysname,
+            'buttonsubmit' => $buttonsubmit,
+            'titleformspro' => $titleformspro,
+            'errorspro' => $errorspro,
+            'selectoptions' => $selectoptions,
+        ];
+        $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
+    
 } else {
-    // Retrieve questions.
     $questions = $DB->get_records('surveypro_item', ['surveyproid' => $sproid]);
 
-    // Transform the $questions array to match the expected structure.
-    $transformedquestions = [];
+    $transformedquestionsnumeric = [];
+    $transformedquestionsdate = [];
 
     foreach ($questions as $question) {
         // Assuming $question->plugin is available and represents the question type.
         $isnumeric = ($question->plugin === 'numeric');
-        $fielddetails = $DB->get_record('surveyprofield_numeric', ['itemid' => $question->id]);
+        $isdate = ($question->plugin === 'date');
 
-        if ($question->plugin === 'numeric') {
-            // If it is of type numeric, retrieve details from the surveyprofield_numeric table.
-            $questioncontent = $fielddetails->variable;
-            if (!isset($questioncontent)) {
-                $questioncontent = $fielddetails->content;
+        if ($isnumeric || $isdate) {
+            // If it is of type numeric or date, retrieve details accordingly.
+            $fielddetails = null;
+            if ($isnumeric) {
+                $fielddetails = $DB->get_record('surveyprofield_numeric', ['itemid' => $question->id]);
+            } elseif ($isdate) {
+                $fielddetails = $DB->get_record('surveyprofield_date', ['itemid' => $question->id]);
             }
 
-            $transformedquestions[] = [
-                'id' => $question->id,
-                'questioncontent' => $questioncontent, // Adjust accordingly.
-                'isnumeric' => $isnumeric,
-            ];
+            if ($fielddetails) {
+                $questioncontent = $fielddetails->variable;
+                if (!isset($questioncontent)) {
+                    $questioncontent = $fielddetails->content;
+                }
+
+                if ($isnumeric) {
+                    $transformedquestionsnumeric[] = [
+                        'id' => $question->id,
+                        'questioncontent' => $questioncontent,
+                        'isnumeric' => $isnumeric,
+                    ];
+                }
+
+                if ($isdate) {
+                    $transformedquestionsdate[] = [
+                        'id' => $question->id,
+                        'questioncontent' => $questioncontent,
+                        'isdate' => $isdate,
+                    ];
+                }
+            }
         }
     }
-
-    // Data is now in the expected structure for the Mustache template.
-
-    // Prepare data for rendering the question template.
     $data = [
-        'questions' => $transformedquestions,
+        'numquestions' => $transformedquestionsnumeric,
+        'datequestions' => $transformedquestionsdate,
         'courseid' => $courseid,
         'sproid' => $sproid,
+        'buttoncontinue' => $buttoncontinue,
         'buttonsubmit' => $buttonsubmit,
         'titleformparams' => $titleformparams,
+        'titleformdates' => $titleformdates,
         'errorquestion' => $errorquestion,
+        'errorspro' => $errorspro,
+        'errordata' => $errordata,
     ];
+
     $utility->rendermustachefile('templates/templateparams.mustache', $data);
 }
 

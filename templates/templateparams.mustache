@@ -12,15 +12,15 @@
 </head>
 
 <body>
-    <!-- Container for displaying questions -->
+    <!-- Container for displaying numquestions -->
     <div id="questioncontainer">
         <!-- Heading for the form -->
         <h3 id="titleparams">{{titleformparams}}</h3>
-        <!-- Loop through questions -->
-        {{#questions}}
+        <!-- Loop through numquestions -->
+        {{#numquestions}}
             <!-- Check if the question is numeric -->
             {{#isnumeric}}
-                <!-- Checkbox for numeric questions -->
+                <!-- Checkbox for numeric numquestions -->
                 <label class="custom-checkbox">
                     <!-- Exclamation circle icon for errors (initially hidden) -->
                     <i class="fa fa-exclamation-circle" style="font-size:20px;color:red;margin-right:5px; display:none"></i>
@@ -32,9 +32,44 @@
                     <span class="checkmark"></span>
                 </label><br>
             {{/isnumeric}}
-        {{/questions}}
+        {{/numquestions}}
 
-        <!-- Form for submitting questions -->
+<a href="#" class="continue-link" onclick="validatequestions(event)">
+    {{buttoncontinue}} &rarr;
+</a>
+
+        <!-- Hidden input for course ID -->
+        <input type="hidden" name="courseid" value="{{courseid}}">
+        <!-- Hidden input for survey ID -->
+        <input type="hidden" name="sproid" value="{{sproid}}">
+            <!-- Hidden input for selected fields -->
+            <input type="hidden" name="selectedfields" id="selectedfieldsinput" value="">
+
+    </div>
+
+
+    <div id="datecontainer">
+        <!-- Heading for the form -->
+        <h3 id="titleparams">{{titleformdates}}</h3>
+        <!-- Loop through datequestions -->
+        {{#datequestions}}
+            <!-- Check if the question is numeric -->
+            {{#isdate}}
+                <!-- Checkbox for numeric datequestions -->
+                <label class="custom-checkbox">
+                    <!-- Exclamation circle icon for errors (initially hidden) -->
+                    <i class="fa fa-exclamation-circle" style="font-size:20px;color:red;margin-right:5px; display:none"></i>
+                    <!-- Checkbox input -->
+                    <input type="checkbox" name="date_ids[]" value="{{id}}">
+                    <!-- Question content -->
+                    <span style="font-weight: bold;">{{{questioncontent}}}</span>
+                    <!-- Checkmark for checkbox -->
+                    <span class="checkmark"></span>
+                </label><br>
+            {{/isdate}}
+        {{/datequestions}}
+
+        <!-- Form for submitting datequestions -->
         <form id="questionform" method="post" action="index.php">
             <!-- Hidden input for course ID -->
             <input type="hidden" name="courseid" value="{{courseid}}">
@@ -42,10 +77,14 @@
             <input type="hidden" name="sproid" value="{{sproid}}">
             <!-- Hidden input for selected fields -->
             <input type="hidden" name="selectedfields" id="selectedfieldsinput" value="">
+            <!-- Hidden input for selected data -->
+            <input type="hidden" name="selecteddata" id="selecteddatainput" value="">
+            <input type="hidden" name="createrow" id="createrow" value="">
             <!-- Button to submit the form with validation -->
-            <input type="button" value="{{buttonsubmit}}" onclick="validateandsubmitquestion(event)">
+            <input type="button" value="{{buttonsubmit}}" onclick="validatedataandsubmit(event)">
         </form>
     </div>
+
 
     <!-- Empty space for styling -->
     <div id="emptyspace"></div>
@@ -57,6 +96,15 @@
             <i class="fas fa-exclamation-triangle"></i>
             <!-- Error message -->
             <span>{{errorquestion}}</span>
+        </p>
+        </div>
+
+    <div id="error-data-popup">
+        <p>
+            <!-- Icona per la data (sostituisci con l'icona desiderata) -->
+            <i class="fas fa-calendar"></i>
+            <!-- Messaggio di errore -->
+            <span>{{errordata}}</span>
         </p>
     </div>
 

@@ -26,9 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'tool_monitoring';
-$plugin->version = 2024020608;
+$plugin->version = 2024020609;
 $plugin->release = 'v1.0-r1';
 $plugin->requires = 2022112800;
 $plugin->supported = [401, 403];
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = ['mod_surveypro' => 2023111102];
+//aggiornare campo e modificare version

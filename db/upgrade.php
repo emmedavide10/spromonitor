@@ -30,8 +30,8 @@
  */
 function xmldb_tool_monitoring_upgrade($oldversion) {
 
-    if ($oldversion < 2024020607) {
-        upgrade_plugin_savepoint(true, 2024020607, 'tool', 'monitoring');
+    if ($oldversion < 2024020609) {
+        upgrade_plugin_savepoint(true, 2024020609, 'tool', 'monitoring');
     }
 
     // Automatically generated Moodle v4.3.0 release upgrade line.

@@ -1,3 +1,22 @@
+/* Styles for the date container */
+#datecontainer {
+    display: none; /* Initially hidden */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 8% auto;
+    max-width: 600px;
+}
+
+/* Custom style for h3 heading inside datecontainer */
+#datecontainer h3 {
+    font-size: 1.7em;
+    text-align: center;
+    color: #333;
+    margin-bottom: 8%;
+}
+
 /* Styles for the question container */
 #questioncontainer {
     background-color: #fff;
@@ -244,6 +263,38 @@
     margin-right: 5px;
 }
 
+/* Styles for the error popup */
+#error-data-popup {
+    display: none;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2%;
+    background-color: rgba(255, 153, 153, 0.9);
+    border: 1px solid #cc0000;
+    border-radius: 10px;
+    box-shadow: 0 0 1% rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    max-width: 45%;
+}
+
+#error-data-popup p {
+    margin: 0;
+    text-align: center;
+}
+
+#error-data-popup i {
+    margin-right: 1%;
+    /* Icon for the date (replace with your desired icon) */
+    /* Example: Font Awesome calendar icon */
+    font-family: 'Font Awesome 5 Free';
+    content: "\f073"; /* Unicode for the calendar icon */
+    font-size: 1.0vw;
+}
+
+
 /* Styles for empty space */
 #emptyspace {
     margin-top: 7%;
@@ -262,3 +313,7 @@
     border: 0.3em solid #f44336;
     text-align: center;
 }
+
+
+
+

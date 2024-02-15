@@ -29,12 +29,15 @@ $string['date'] = 'Date';
 $string['csvgen'] = 'Generate CSV';
 $string['gocalendar'] = 'Go to calendar';
 $string['titleformspro'] = 'Select SurveyPro';
+$string['titleformdates'] = 'Select the measurement date you want to graph';
 $string['titleformparams'] = 'Select the fields you want to graph';
 $string['buttonsubmit'] = 'Submit';
 $string['goback'] = 'Previous';
 $string['errorquestion'] = 'Select fields. Minimum: 1 - Maximum: 5';
-$string['errorspro'] = 'No SurveyPro was selected. Select or create at least one to proceed';
 $string['selectoptions'] = 'Select an option';
 $string['filenotexist'] = 'The requested file does not exist';
+$string['buttoncontinue'] = 'Continue';
+$string['errordata'] = 'Select ONLY a measurement date';
+$string['errorspro'] = 'No SurveyPro was selected. Select or create at least one to proceed';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

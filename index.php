@@ -24,7 +24,7 @@
 
 
 // Include necessary Moodle files.
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 
 // Check user access or require_course_login(), require_admin(), depending on the requirements..
 require_login();
@@ -41,6 +41,33 @@ $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $sproid = optional_param('sproid', 0, PARAM_INT);
 $selectedfieldsvalue = optional_param('selectedfields', '', PARAM_TEXT);
+$selecteddatavalue = optional_param('selecteddata', '', PARAM_TEXT);
+$createrow = optional_param('createrow', 0, PARAM_INT);
+
+/*
+echo "Username: " . $username . "<br>";
+echo "Single CSV: " . $singlecsv . "<br>";
+echo "Course ID: " . $courseid . "<br>";
+echo "Spro ID: " . $sproid . "<br>";
+echo "Selected Fields Value: " . $selectedfieldsvalue . "<br>";
+echo "Selected Data Value: " . $selecteddatavalue . "<br>";
+echo "Create Row: " . $createrow . "<br>";
+die;*/
+
+/*
+if ($createrow == 1) {
+    // If the record doesn't exist, add a new record to tool_monitoring.
+    $newRecord = new stdClass();
+    $newRecord->courseid = $courseid;
+    $newRecord->surveyproid = $sproid;
+    $newRecord->fieldscsv = $selectedfieldsvalue;
+    $newRecord->measuredateid = $selecteddatavalue;
+    $newRecord->timecreated = time();
+    $newRecord->timemodified = 0;
+
+    $DB->insert_record('tool_monitoring', $newRecord);
+}*/
+
 
 // Set or update the session variable directly.
 $_SESSION['selectedfields'] = $selectedfieldsvalue;

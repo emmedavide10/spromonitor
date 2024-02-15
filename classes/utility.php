@@ -35,6 +35,7 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
+    //sistemare e settare la data nel caso in cui non ci fosse impostare quella di invio del spro come è già presente tutt'ora
     public function preparearray($result) {
         $content = [];
         $timecreated = [];
