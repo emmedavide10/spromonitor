@@ -43,6 +43,7 @@ $sproid = optional_param('sproid', 0, PARAM_INT);
 $selectedfieldsvalue = optional_param('selectedfields', '', PARAM_TEXT);
 $selecteddatavalue = optional_param('selecteddata', '', PARAM_TEXT);
 $createrow = optional_param('createrow', 0, PARAM_INT);
+$updaterow = optional_param('updaterow', 0, PARAM_INT);
 
 /*
 echo "Username: " . $username . "<br>";
@@ -52,10 +53,15 @@ echo "Spro ID: " . $sproid . "<br>";
 echo "Selected Fields Value: " . $selectedfieldsvalue . "<br>";
 echo "Selected Data Value: " . $selecteddatavalue . "<br>";
 echo "Create Row: " . $createrow . "<br>";
+echo "Update Row: " . $updaterow . "<br>";
+
 die;*/
 
-/*
+$row = $DB->get_record('tool_monitoring', ['surveyproid' => $sproid], '*');
+$tooldata = new stdClass();
+
 if ($createrow == 1) {
+    echo "aaaaaaaa";
     // If the record doesn't exist, add a new record to tool_monitoring.
     $newRecord = new stdClass();
     $newRecord->courseid = $courseid;
@@ -63,11 +69,19 @@ if ($createrow == 1) {
     $newRecord->fieldscsv = $selectedfieldsvalue;
     $newRecord->measuredateid = $selecteddatavalue;
     $newRecord->timecreated = time();
-    $newRecord->timemodified = 0;
+    $tooldata = $DB->insert_record('tool_monitoring', $newRecord);
+} elseif ($updaterow == 1){
+    echo "asdsdsasd";
+    $row->fieldscsv = $selectedfieldsvalue;
+    $row->measuredateid = $selecteddatavalue;
+    $row->timemodified = time();
+    $tooldata = $DB->update_record('tool_monitoring', $row);
+}
+else{
+    $tooldata = $row;
+}
 
-    $DB->insert_record('tool_monitoring', $newRecord);
-}*/
-
+print_r($tooldata); die;
 
 // Set or update the session variable directly.
 $_SESSION['selectedfields'] = $selectedfieldsvalue;
@@ -177,7 +191,7 @@ $filenamearray = [];
 // Check user's capability to access all charts.
 if (!$canaccessallcharts) {
     // If not, display a single user chart.
-    $utility->singleuserchart($messageemptychart, $titlechart, $variablesarray, $selectedfieldsarray, null);
+    $utility->singleuserchart($messageemptychart, $titlechart, $variablesarray, $selectedfieldsarray, $selecteddatavalue, null);
 } else {
     // Prepare data for the search bar template.
     $data = [
@@ -217,7 +231,7 @@ if (!$canaccessallcharts) {
             );
 
             // Execute queries and prepare data for the user.
-            $results = $utility->executequeries($selectedfieldsarray, $userid);
+            $results = $utility->executequeries($selectedfieldsarray, $selecteddatavalue, $userid);
 
             foreach ($results as $result) {
                 $prepareddata = $utility->preparearray($result);
@@ -233,6 +247,7 @@ if (!$canaccessallcharts) {
             $filename = $utility->generatefilename($username, $datestring, $variablesarray, $mergedarray);
             array_push($filenamearray, $filename);
 
+      
             // Prepare data for the CSV template.
             $data = [
                 'filenamearray' => $filenamearray,
@@ -259,7 +274,7 @@ if (!$canaccessallcharts) {
             $userid = $user->id;
 
             // Execute queries and prepare data for the user.
-            $results = $utility->executequeries($selectedfieldsarray, $userid);
+            $results = $utility->executequeries($selectedfieldsarray, $selecteddatavalue, $userid);
 
             $chartdataarrays = [];
             foreach ($results as $result) {

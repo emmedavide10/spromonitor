@@ -17,7 +17,9 @@
         <!-- Form for survey submission -->
         <form id="surveyform" style="margin-top: 3%;" method="post" action="">
             <!-- Hidden input for course ID -->
-            <input type="hidden" name="courseid" value="{{courseid}}">
+            <input type="hidden" name="courseid" id="courseid" value="{{courseid}}">
+            <input type="hidden" name="createrow" id="createrow" value="{{createrow}}">
+            <input type="hidden" name="updaterow" id="updaterow" value="{{updaterow}}">
             <!-- Dropdown menu for selecting surveys -->
             <select id="sproid" name="sproid">
                 <!-- Default option with placeholder text -->
@@ -46,5 +48,7 @@
 
     <!-- Script inclusion for form validation -->
     <script src='script/form.js'></script>
+        <script src='script/utility.js'></script>
+
 </body>
 </html>

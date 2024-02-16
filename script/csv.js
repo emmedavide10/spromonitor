@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to hide the error message after a certain period of time
     function hideErrorMessage() {
-        var errorFile = document.getElementById('error-file');
-        errorFile.style.display = 'none';
+        var errorfile = document.getElementById('error-file');
+        errorfile.style.display = 'none';
 
         // Go back one page only if there are no JavaScript errors
         if (!window.jsError) {

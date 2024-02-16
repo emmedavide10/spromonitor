@@ -32,16 +32,26 @@ require_login();
 // Ensure the script is only accessed within Moodle.
 defined('MOODLE_INTERNAL') || die();
 
+
 // Instantiate the utility class.
 $utility = new \tool_monitoring\utility();
 
 // Get the course ID and 'sproid' parameter.
 $courseid = $utility->getcourseid();
+if($courseid==0){
+    $courseid = optional_param('courseid', 0, PARAM_INT);
+}
+
 $sproid = optional_param('sproid', 0, PARAM_INT);
+$updaterow = optional_param('updaterow', 0, PARAM_INT);
+$createrow = optional_param('createrow', 0, PARAM_INT);
+
+
 
 // Set up Moodle context, page title, and other page settings.
 $context = \context_course::instance($courseid);
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
+
 
 $paramsurl['courseid'] = $courseid;
 $paramsurl['sproid'] = $sproid;
@@ -73,6 +83,8 @@ $errorquestion = get_string('errorquestion', 'tool_monitoring');
 $errordata = get_string('errordata', 'tool_monitoring');
 $selectoptions = get_string('selectoptions', 'tool_monitoring');
 $errorspro = get_string('errorspro', 'tool_monitoring');
+$defaultfields = get_string('defaultfields', 'tool_monitoring');
+$customfields = get_string('customfields', 'tool_monitoring');
 
 // Initialize variables.
 $data = [];
@@ -90,7 +102,9 @@ if (strpos($referrer, '/mod/lti/') !== false && $sproid == 0) {
 }
 
 $setupfields = has_capability('tool/monitoring:setupfields', $context);
+$existingRecord = $DB->get_record('tool_monitoring', ['surveyproid' => $sproid]);
 
+//echo $setupfields; die;
 
 // Check if the current URL contains '/mod/lti/'.
 if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lti/') !== false && $setupfields) {
@@ -103,29 +117,34 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
         // Iterate over the results and add to the associative array.
         foreach ($surveysname as $result) {
             // Check if the survey ID is already in tool_monitoring.
-            $existingRecord = $DB->get_record('tool_monitoring', ['surveyproid' => $result->id]);
-
-            if (!$existingRecord) {
-                $transformedsurveysname[] = [
-                    'id' => $result->id,
-                    'name' => $result->name,
-                    // Add other fields if necessary.
-                ];
-            }
+            $transformedsurveysname[] = [
+                'id' => $result->id,
+                'name' => $result->name,
+                // Add other fields if necessary.
+            ];
         }
     }
-        // Prepare data for rendering the survey template.
-        $data = [
-            'courseid' => $courseid,
-            'namesurveys' => $transformedsurveysname,
-            'buttonsubmit' => $buttonsubmit,
-            'titleformspro' => $titleformspro,
-            'errorspro' => $errorspro,
-            'selectoptions' => $selectoptions,
-        ];
-        $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
-    
-} else {
+    if ($existingRecord) {
+        $updaterow = 1;
+    } else {
+        $createrow = 1;
+    }
+    // Prepare data for rendering the survey template.
+    $data = [
+        'sproid' => $sproid,
+        'courseid' => $courseid,
+        'namesurveys' => $transformedsurveysname,
+        'buttonsubmit' => $buttonsubmit,
+        'titleformspro' => $titleformspro,
+        'errorspro' => $errorspro,
+        'selectoptions' => $selectoptions,
+        'capability' => $setupfields,
+        'updaterow' => $updaterow,
+        'createrow' => $createrow,
+    ];
+    $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
+} elseif (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lti/') !== true && $setupfields) {
+
     $questions = $DB->get_records('surveypro_item', ['surveyproid' => $sproid]);
 
     $transformedquestionsnumeric = [];
@@ -169,6 +188,7 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
             }
         }
     }
+
     $data = [
         'numquestions' => $transformedquestionsnumeric,
         'datequestions' => $transformedquestionsdate,
@@ -181,9 +201,54 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
         'errorquestion' => $errorquestion,
         'errorspro' => $errorspro,
         'errordata' => $errordata,
+        'updaterow' => $updaterow,
+        'createrow' => $createrow,
     ];
 
-    $utility->rendermustachefile('templates/templateparams.mustache', $data);
+    //echo $existingRecord; die;
+    if ($existingRecord && $updaterow == 0 ) {
+        $data = [
+            'sproid' => $sproid,
+            'courseid' => $courseid,
+            'selectoptions' => $selectoptions,
+            'customfields' => $customfields,
+            'defaultfields' => $defaultfields,
+            'buttoncontinue' => $buttoncontinue,
+            'updaterow' => $updaterow,
+        ];
+        $utility->rendermustachefile('templates/templatecheckfields.mustache', $data);
+    } elseif ($existingRecord && $updaterow == 1) {
+        $utility->rendermustachefile('templates/templateparams.mustache', $data);
+    } elseif (!$existingRecord) {
+        $utility->rendermustachefile('templates/templateparams.mustache', $data);
+    }
+} elseif (!$setupfields) {
+    // Retrieve survey names.
+    $surveysname = $DB->get_records('surveypro', ['course' => $courseid]);
+
+    // Check if there are results.
+    if ($surveysname) {
+        // Iterate over the results and add to the associative array.
+        foreach ($surveysname as $result) {
+            // Check if the survey ID is already in tool_monitoring.
+            $transformedsurveysname[] = [
+                'id' => $result->id,
+                'name' => $result->name,
+                // Add other fields if necessary.
+            ];
+        }
+    }
+    // Prepare data for rendering the survey template.
+    $data = [
+        'courseid' => $courseid,
+        'namesurveys' => $transformedsurveysname,
+        'buttonsubmit' => $buttonsubmit,
+        'titleformspro' => $titleformspro,
+        'errorspro' => $errorspro,
+        'selectoptions' => $selectoptions,
+        'capability' => $setupfields,
+    ];
+    $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
 }
 
 // Output the HTML footer.

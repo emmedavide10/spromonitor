@@ -1,6 +1,7 @@
 /* Styles for the date container */
 #datecontainer {
-    display: none; /* Initially hidden */
+    display: none;
+    /* Initially hidden */
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -19,6 +20,7 @@
 
 /* Styles for the question container */
 #questioncontainer {
+    /* Initially hidden */
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -290,7 +292,8 @@
     /* Icon for the date (replace with your desired icon) */
     /* Example: Font Awesome calendar icon */
     font-family: 'Font Awesome 5 Free';
-    content: "\f073"; /* Unicode for the calendar icon */
+    content: "\f073";
+    /* Unicode for the calendar icon */
     font-size: 1.0vw;
 }
 
@@ -315,5 +318,48 @@
 }
 
 
+input[type="radio"]+label::before {
+    display: inline-block;
+    width: 3%;
+    /* Convertito da 16px a percentuale */
+    height: 3%;
+    /* Convertito da 16px a percentuale */
+    border: 1px solid #333;
+    border-radius: 50%;
+    margin-right: 0.5%;
+    /* Convertito da 5px a percentuale */
+    background-color: white;
+}
 
+input[type="radio"]:checked+label::before {
+    background-color: #007bff;
+    /* Cambia colore quando selezionato */
+}
 
+/* Stile aggiuntivo per le etichette */
+label {
+    cursor: pointer;
+}
+
+/* Centra il titolo */
+h3#selectoptions {
+    text-align: center;
+    margin-bottom: 10%;
+}
+
+/* Aggiungi spazio tra il titolo e i radio button */
+.form-check {
+    margin-bottom: 2%;
+    margin-top: 3%;
+
+    /* Convertito da 20px a percentuale */
+}
+
+/* Sposta l'href a destra */
+.continue-link {
+    float: right;
+    margin-top: -2%;
+    /* Spostato leggermente più in alto */
+    margin-right: -1%;
+    /* Spostato leggermente più a sinistra */
+}

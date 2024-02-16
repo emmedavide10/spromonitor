@@ -24,7 +24,8 @@
 
 namespace tool_monitoring;
 
-class utility {
+class utility
+{
     /**
      * Returns an array containing two elements: the content and timecreated of all chart parameters
      * in the input recordset.
@@ -36,7 +37,8 @@ class utility {
      * @author Davide Mirra
      */
     //sistemare e settare la data nel caso in cui non ci fosse impostare quella di invio del spro come è già presente tutt'ora
-    public function preparearray($result) {
+    public function preparearray($result)
+    {
         $content = [];
         $timecreated = [];
         // Iterate over each row in the recordset and extract the values of content and timecreated.
@@ -60,7 +62,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function generatechart($variablesarray, $chartdataarrays, $title = ''): string {
+    public function generatechart($variablesarray, $chartdataarrays, $title = ''): string
+    {
         global $OUTPUT;
         // Create chart series for each data array.
         $chartseries = [];
@@ -97,30 +100,34 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($selectedfieldsarray, $userid = null): array {
+    public function executequeries($selectedfieldsarray, $selecteddatavalue, $userid = null): array
+    {
         global $DB, $USER;
+    
         // If $userid argument is not provided, use the current user.
-        if (!isset($userid)) {
-            $userid = $USER->id;
-        }
+        $userid = $userid ?? $USER->id;
+    
         // Initialize the results array.
         $results = [];
+    
         // Query to select SurveyPro module submissions based on user and specific module item.
-        $query = 'SELECT s.timecreated, a.content
+        $query = 'SELECT ' . ($selecteddatavalue ?: 's.timecreated') . ', a.content
                   FROM {surveypro_submission} s
                   JOIN {surveypro_answer} a ON a.submissionid = s.id
                   WHERE s.status = :status
                   AND s.userid = :userid
                   AND a.itemid = :itemid';
+    
         foreach ($selectedfieldsarray as $itemid) {
             // Execute the query for each item ID in the array.
             $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
-            $result = $DB->get_records_sql($query, $queryparam);
-            $results[] = $result;
+            $results[] = $DB->get_records_sql($query, $queryparam);
         }
+    
         // Return the results array.
         return $results;
     }
+    
 
     /**
      * Renders HTML output from a Mustache template file.
@@ -132,7 +139,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function rendermustachefile($pathfile, $data) {
+    public function rendermustachefile($pathfile, $data)
+    {
         if (file_exists($pathfile)) {
             // Create a new Mustache engine and load the template file.
             $mustache = new \Mustache_Engine();
@@ -168,14 +176,15 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $userid = null) {
+    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $selecteddatavalue, $userid = null)
+    {
         global $USER;
         // Set the user ID to the current user if not specified.
         if (!isset($userid)) {
             $userid = $USER->id;
         }
         // Execute the queries to retrieve the chart data.
-        $results = $this->executequeries($selectedfieldsarray, $userid);
+        $results = $this->executequeries($selectedfieldsarray, $selecteddatavalue, $userid);
         $empty = true;
         foreach ($results as $subarr) {
             if (count($subarr) != 0) {
@@ -215,7 +224,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($variablesarray, $chartdataarrays) {
+    public function createmergedarray($variablesarray, $chartdataarrays)
+    {
         // Create an empty array to hold the merged data.
         $mergedarray = [];
         // Get the length of any of the arrays (assuming they all have the same length).
@@ -252,7 +262,8 @@ class utility {
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingfile($filename, $delimiter, $variablesarray, $mergedarray) {
+    public function writingfile($filename, $delimiter, $variablesarray, $mergedarray)
+    {
         global $CFG;
         // Open the file for writing.
         $exportsubdir = 'tool_monitoring/csv';
@@ -295,7 +306,7 @@ class utility {
                 if ($index > 0) {
                     // Pad each column value to match the maximum width of the column.
                     foreach ($row as $variable => $content) {
-                        $row[$variable] = str_pad($content, (double)$columnwidths[$variable]);
+                        $row[$variable] = str_pad($content, (float)$columnwidths[$variable]);
                     }
                     fputcsv($filehandler, $row, $delimiter);
                 }
@@ -309,7 +320,8 @@ class utility {
      *
      * @return int The value of $courseid assigned based on the GET, POST, and session variables.
      */
-    public function getcourseid() {
+    public function getcourseid()
+    {
         // Check if the value is present in the GET variables.
         $courseid = optional_param('courseid', 0, PARAM_INT);
         if ($courseid == 0) {
@@ -325,7 +337,8 @@ class utility {
      *
      * @return array The array resulting from handling the fields.
      */
-    public function handleselectedfields($fields) {
+    public function handleselectedfields($fields)
+    {
         if (!empty($fields)) {
             return is_array($fields) ? $fields : explode(',', $fields);
         }
@@ -343,7 +356,8 @@ class utility {
      *
      * @return string The generated file name.
      */
-    public function generatefilename($username, $datestring, $variablesarray, $mergedarray) {
+    public function generatefilename($username, $datestring, $variablesarray, $mergedarray)
+    {
         global $CFG;
         $delimiter = ';';
         $date = userdate(time(), '%d%m%Y', 99, false, false); // Gets a formatted date as a string.
@@ -353,14 +367,14 @@ class utility {
         $variablesarray = array_values($variablesarray);
         $filename = 'file_' . $date . '_' . $username . '.csv'; // Creates the file name.
         $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Creates the full file path.
-            // Calls the writingFile() function to write the CSV file.
-            // The source code for writingFile() is not included in this description.
-            $this->writingfile(
-                $filename,
-                $delimiter,
-                $variablesarray,
-                $mergedarray
-            );
+        // Calls the writingFile() function to write the CSV file.
+        // The source code for writingFile() is not included in this description.
+        $this->writingfile(
+            $filename,
+            $delimiter,
+            $variablesarray,
+            $mergedarray
+        );
         return $filename; // Returns the generated file name.
     }
 }
