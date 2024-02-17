@@ -9,11 +9,17 @@
 </head>
 
 <body>
+<!-- Error popup container -->
+<div id="error-popup" style="display: none;">
+    <!-- Error message with file icon -->
+    <p>
+        <i class="fas fa-file-csv"></i>
+        <span>{{filenotexist}}</span>
+    </p>
+</div>
 
-
-
-    <!-- Include JavaScript file for CSV functionality -->
-    <script src="script/csv.js"></script>
+    <script src='script/csv.js'></script>
+    <script src='script/utility.js'></script>
 </body>
 
 </html>

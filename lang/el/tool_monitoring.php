@@ -36,5 +36,11 @@ $string['errorquestion'] = 'Epiléxte pedía. Eláchisto: 1 - Mégisto: 5';
 $string['errorspro'] = 'Den epiléchthike SurveyPro. Epiléxte í dimiourgíste touláchiston éna gia na synechísete';
 $string['selectoptions'] = 'Epiléxte mia epilogí';
 $string['filenotexist'] = 'To archeío pou zitíthike den ypárchei';
+$string['buttoncontinue'] = 'Synécheia';
+$string['errordata'] = 'Epiléxte MONO imerominía métrisis';
+$string['errorspro'] = 'Den epiléchthike SurveyPro. Epiléxte í dimiourgíste touláchiston éna gia na synechísete';
+$string['defaultfields'] = 'Thélo na diatiríso ta proepilegména pedía';
+$string['customfields'] = 'Thélo na oríso ta pedía';
+$string['erroradiobtn'] = 'Prépei na epiléxete mia epilogí prin synechísete';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

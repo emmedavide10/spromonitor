@@ -41,5 +41,6 @@ $string['errordata'] = 'Select ONLY a measurement date';
 $string['errorspro'] = 'No SurveyPro was selected. Select or create at least one to proceed';
 $string['defaultfields'] = 'I want to keep the default preset fields';
 $string['customfields'] = 'I want to set the fields';
+$string['erroradiobtn'] = 'You must select an option before proceeding';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

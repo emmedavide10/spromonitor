@@ -36,5 +36,11 @@ $string['errorquestion'] = 'Wybierz pola. Minimum: 1 - Maksimum: 5';
 $string['errorspro'] = 'Nie wybrano żadnego SurveyPro. Wybierz lub utwórz co najmniej jeden, aby kontynuować';
 $string['selectoptions'] = 'Wybierz opcję';
 $string['filenotexist'] = 'Żądany plik nie istnieje';
+$string['buttoncontinue'] = 'Kontynuuj';
+$string['errordata'] = 'Wybierz TYLKO datę pomiaru';
+$string['errorspro'] = 'Nie wybrano żadnego SurveyPro. Wybierz lub utwórz co najmniej jeden, aby kontynuować';
+$string['defaultfields'] = 'Chcę zachować domyślne, wstępnie ustawione pola';
+$string['customfields'] = 'Chcę ustawić pola';
+$string['erroradiobtn'] = 'Przed kontynuowaniem musisz wybrać opcję';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

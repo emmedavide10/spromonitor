@@ -36,5 +36,11 @@ $string['errorquestion'] = 'Seleziona i campi. Minimo: 1 - Massimo: 5';
 $string['errorspro'] = 'Non è stato selezionato alcun SurveyPro. Selezionane o creane almeno uno per procedere';
 $string['selectoptions'] = 'Seleziona un\' opzione';
 $string['filenotexist'] = 'Il file richiesto non esiste';
+$string['buttoncontinue'] = 'Continua';
+$string['errordata'] = 'Seleziona SOLO una data di misurazione';
+$string['errorspro'] = 'Non è stato selezionato alcun SurveyPro. Seleziona o creane almeno uno per procedere';
+$string['defaultfields'] = 'Voglio mantenere i campi preimpostati di default';
+$string['customfields'] = 'Voglio impostare i campi';
+$string['erroradiobtn'] = 'Devi selezionare un\' opzione prima di procedere';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

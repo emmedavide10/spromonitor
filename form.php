@@ -85,6 +85,8 @@ $selectoptions = get_string('selectoptions', 'tool_monitoring');
 $errorspro = get_string('errorspro', 'tool_monitoring');
 $defaultfields = get_string('defaultfields', 'tool_monitoring');
 $customfields = get_string('customfields', 'tool_monitoring');
+$errorradiobtn = get_string('errorradiobtn', 'tool_monitoring');
+
 
 // Initialize variables.
 $data = [];
@@ -215,6 +217,7 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
             'defaultfields' => $defaultfields,
             'buttoncontinue' => $buttoncontinue,
             'updaterow' => $updaterow,
+            'errorradiobtn' => $errorradiobtn,
         ];
         $utility->rendermustachefile('templates/templatecheckfields.mustache', $data);
     } elseif ($existingRecord && $updaterow == 1) {
