@@ -32,26 +32,17 @@ require_login();
 // Ensure the script is only accessed within Moodle.
 defined('MOODLE_INTERNAL') || die();
 
-
 // Instantiate the utility class.
 $utility = new \tool_monitoring\utility();
-
 // Get the course ID and 'sproid' parameter.
 $courseid = $utility->getcourseid();
-if($courseid==0){
-    $courseid = optional_param('courseid', 0, PARAM_INT);
-}
-
 $sproid = optional_param('sproid', 0, PARAM_INT);
 $updaterow = optional_param('updaterow', 0, PARAM_INT);
 $createrow = optional_param('createrow', 0, PARAM_INT);
 
-
-
 // Set up Moodle context, page title, and other page settings.
 $context = \context_course::instance($courseid);
 $pagetitle = get_string('pagetitle', 'tool_monitoring');
-
 
 $paramsurl['courseid'] = $courseid;
 $paramsurl['sproid'] = $sproid;
@@ -85,9 +76,7 @@ $selectoptions = get_string('selectoptions', 'tool_monitoring');
 $errorspro = get_string('errorspro', 'tool_monitoring');
 $defaultfields = get_string('defaultfields', 'tool_monitoring');
 $customfields = get_string('customfields', 'tool_monitoring');
-$errorradiobtn = get_string('errorradiobtn', 'tool_monitoring');
-
-
+$erroradiobtn = get_string('erroradiobtn', 'tool_monitoring');
 // Initialize variables.
 $data = [];
 $transformedsurveysname = [];
@@ -208,7 +197,7 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
     ];
 
     //echo $existingRecord; die;
-    if ($existingRecord && $updaterow == 0 ) {
+    if ($existingRecord && $updaterow == 0) {
         $data = [
             'sproid' => $sproid,
             'courseid' => $courseid,
@@ -217,7 +206,7 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
             'defaultfields' => $defaultfields,
             'buttoncontinue' => $buttoncontinue,
             'updaterow' => $updaterow,
-            'errorradiobtn' => $errorradiobtn,
+            'erroradiobtn' => $erroradiobtn,
         ];
         $utility->rendermustachefile('templates/templatecheckfields.mustache', $data);
     } elseif ($existingRecord && $updaterow == 1) {
@@ -225,7 +214,7 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
     } elseif (!$existingRecord) {
         $utility->rendermustachefile('templates/templateparams.mustache', $data);
     }
-} elseif (!$setupfields) {
+} elseif (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lti/') !== false && !$setupfields) {
     // Retrieve survey names.
     $surveysname = $DB->get_records('surveypro', ['course' => $courseid]);
 
@@ -252,6 +241,11 @@ if (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lt
         'capability' => $setupfields,
     ];
     $utility->rendermustachefile('templates/templatesurveys.mustache', $data);
+} elseif (isset($currenturl) && is_string($currenturl) && strpos($currenturl, '/mod/lti/') !== true && !$setupfields) {
+    $paramurl['courseid'] = $courseid;
+    $paramurl['sproid'] = $sproid;
+    $redirecturl = new \moodle_url('index.php', $paramurl);
+    redirect($redirecturl); // Go to the previous page of the form.
 }
 
 // Output the HTML footer.

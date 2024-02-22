@@ -33,16 +33,16 @@
                 </label><br>
             {{/isnumeric}}
         {{/numquestions}}
-
-        <a href="#" class="continue-link" onclick="validatequestions(event)">
-            {{buttoncontinue}} &rarr;
-        </a>
+    <a href="#" id="continueButton" class="continue-link" onclick="validatequestions(event)">
+      {{buttoncontinue}}  <i class="fas fa-chevron-right"></i> 
+    </a>
             <!-- Hidden input for course ID -->
             <input type="hidden" name="courseid" id="courseid" value="{{courseid}}">
             <!-- Hidden input for survey ID -->
             <input type="hidden" name="sproid" id="sproid" value="{{sproid}}">
             <!-- Hidden input for selected fields -->
-            <input type="hidden" name="selectedfields" id="selectedfieldsinput" value="">
+<!-- Hidden input for selected fields in the data container -->
+<input type="hidden" name="selectedfield" id="selectedfieldsinput" value="">
             <!-- Hidden input for selected data -->
             <input type="hidden" name="selecteddata" id="selecteddatainput" value="">
             <input type="hidden" name="createrow" id="createrow" value="{{createrow}}">
@@ -116,6 +116,7 @@
     <!-- Script for form validation -->
     <script src='script/form.js'></script>
     <script src='script/utility.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
 </body>
 
 </html>

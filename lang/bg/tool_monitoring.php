@@ -41,6 +41,6 @@ $string['errordata'] = 'Izberete SAMO data na izmervane';
 $string['errorspro'] = 'Ne e izbran SurveyPro. Izberete ili sŭzdaĭte pone edin, za da prodŭlzhite';
 $string['defaultfields'] = 'Iskam da zapazya predvaritelno zadadenite poleta po podrazbirane';
 $string['customfields'] = 'Iskam da nastroya poletata';
-$string['errorradiobtn'] = 'Tryabva da izberete optsiya, predi da prodŭlzhite';
+$string['erroradiobtn'] = 'Tryabva da izberete optsiya, predi da prodŭlzhite';
 
 $string['monitoring:accessallcharts'] = 'Access all charts';

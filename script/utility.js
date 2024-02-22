@@ -9,17 +9,21 @@ function fadeout(element, speed, callback) {
 }
 
 // Redirect to index.php
-function redirectToIndex(sproid, courseid, selectedfieldsstring, updaterow, createrow) {
+function redirectToIndex(sproid, courseid, selectedfieldsstring, updaterow, createrow, selectedData) {
     var url = 'index.php?sproid=' + encodeURIComponent(sproid) +
-        '&courseid=' + encodeURIComponent(courseid) +
-        '&selectedfields=' + encodeURIComponent(selectedfieldsstring);
-
+        '&courseid=' + encodeURIComponent(courseid);
+    if (selectedfieldsstring) {
+        url += '&selectedfields=' + encodeURIComponent(selectedfieldsstring);
+    }
     if (updaterow == 1) {
         url += '&updaterow=' + encodeURIComponent(updaterow);
     } else if (createrow == 1) {
         url += '&createrow=' + encodeURIComponent(createrow);
     }
-    alert(url);
+    // Aggiungi il parametro selectedData solo se è diverso da undefined o null
+    if (selectedData !== undefined && selectedData !== null) {
+        url += '&selecteddata=' + encodeURIComponent(selectedData);
+    }
     window.location.href = url;
 }
 
@@ -70,7 +74,16 @@ function getValue(id) {
 }
 
 // Generic function to toggle visibility of containers
-function toggleContainers(showId, hideId) {
+function toggleContainers(showId, hideId, selectedFieldsString) {
     getElement(showId).style.display = 'block';
     getElement(hideId).style.display = 'none';
+
+    // Passa i campi selezionati al container successivo
+    if (showId === 'datecontainer') {
+        // Esegui le operazioni necessarie per il container dei dati
+        // Ad esempio, potresti impostare un valore di un campo nascosto nel form dei dati
+        document.getElementById('selectedfieldsinput').value = selectedFieldsString;
+    }
 }
+
+

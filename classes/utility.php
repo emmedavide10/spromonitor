@@ -26,50 +26,51 @@ namespace tool_monitoring;
 
 class utility
 {
-    /**
-     * Returns an array containing two elements: the content and timecreated of all chart parameters
-     * in the input recordset.
-     *
-     * @param moodle_recordset $result The recordset containing the chart parameters.
-     * @return array An array containing two elements: the content and timecreated of all chart parameters.
-     *
-     * @since Moodle 3.1
-     * @author Davide Mirra
-     */
-    //sistemare e settare la data nel caso in cui non ci fosse impostare quella di invio del spro come è già presente tutt'ora
-    public function preparearray($result)
-    {
-        $content = [];
-        $timecreated = [];
-        // Iterate over each row in the recordset and extract the values of content and timecreated.
-        foreach ($result as $row) {
-            $content[] = $row->content;
-            $timecreated[] = date('d/m/Y', $row->timecreated);
+
+    
+    public function bckTable(){
+        global $CFG, $DB;
+
+        $table = 'tool_monitoring';
+        $filename = $table . date('Y_m_d') . '.sql';
+        $filepath = $CFG->dirroot . '\\admin\\tool\\monitoring\\' . $filename; // Creates the full file path.
+
+        $file_bck = fopen($filepath, 'w');
+
+        $rows = $DB->get_records($table);
+        foreach($rows as $row){
+            $sql = "INSERT INTO $table (id, courseid, surveyproid, fieldscsv, measuredateid, timecreated, timemodified)
+            VALUES ($row->id, $row->courseid, $row->surveyproid, $row->fieldscsv, $row->measuredateid, $row->timecreated, $row->timemodified);\n";
+            fwrite($file_bck, $sql);
         }
-        // Return the content and timecreated arrays as a single associative array.
-        return ['content' => $content, 'timecreated' => $timecreated];
+        fclose($file_bck);
     }
+    
+
+
 
     /**
      * Generates a line chart based on input data arrays.
      *
      * @param string $title Optional; The chart title.
      * @param array $variablesarray An array containing variable names.
-     * @param array $chartdataarrays An array containing chart data arrays with 'content' and 'timecreated' keys.
+     * @param array $chartdataarray An array containing chart data arrays with 'content' and 'timecreated' keys.
      *
      * @return string HTML containing the generated chart.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function generatechart($variablesarray, $chartdataarrays, $title = ''): string
+
+    public function generatechart($variablesarray, $transformedarray, $title = ''): string
     {
+
         global $OUTPUT;
         // Create chart series for each data array.
         $chartseries = [];
         foreach ($variablesarray as $index => $variable) {
-            $contentarray = $chartdataarrays[$index]['content'];
-            $timecreatedarray = $chartdataarrays[$index]['timecreated'];
+            $contentarray = $transformedarray[$index]['content'];
+            $timecreatedarray = $transformedarray[$index]['timecreated'];
 
             // Create a new chart series for each variable.
             $chartseries[] = new \core\chart_series($variable, $contentarray);
@@ -89,6 +90,7 @@ class utility
         return $charthtml;
     }
 
+
     /**
      * Executes queries to retrieve data for generating charts.
      *
@@ -100,34 +102,65 @@ class utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($selectedfieldsarray, $selecteddatavalue, $userid = null): array
+    public function executequeries($selectedfieldsarray, $selecteddateid, $userid = null): array
     {
         global $DB, $USER;
-    
         // If $userid argument is not provided, use the current user.
         $userid = $userid ?? $USER->id;
-    
+
         // Initialize the results array.
-        $results = [];
-    
-        // Query to select SurveyPro module submissions based on user and specific module item.
-        $query = 'SELECT ' . ($selecteddatavalue ?: 's.timecreated') . ', a.content
-                  FROM {surveypro_submission} s
-                  JOIN {surveypro_answer} a ON a.submissionid = s.id
-                  WHERE s.status = :status
-                  AND s.userid = :userid
-                  AND a.itemid = :itemid';
-    
+        $results = array();
+
         foreach ($selectedfieldsarray as $itemid) {
-            // Execute the query for each item ID in the array.
+
+            // Query to select SurveyPro module submissions based on user and specific module item.
+            $query = 'SELECT s.id, a.content, s.timecreated, a.itemid
+            FROM {surveypro_submission} s
+            JOIN {surveypro_answer} a ON a.submissionid = s.id
+            WHERE s.status = :status
+            AND s.userid = :userid
+            AND a.itemid = :itemid';
+
+            // Esegui la query per ogni item ID nell'array.
             $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
-            $results[] = $DB->get_records_sql($query, $queryparam);
+            $result = $DB->get_records_sql($query, $queryparam);
+
+            // Check se il risultato non è vuoto e ha la struttura attesa.
+            if (!empty($result) && isset($result)) {
+                foreach ($result as $item) {
+                    $value = $item->content;
+                    $id = $item->id;
+                    $itemid = $item->itemid;
+
+                    if ($value != '@@_NOANSW_@@' && is_numeric($value) && $value >= 0) {
+
+                        $date = '';
+
+                        if (!empty($selecteddateid)) {
+                            $querydate = 'SELECT a.content
+                            FROM {surveypro_submission} s
+                            JOIN {surveypro_answer} a ON a.submissionid = s.id
+                            WHERE a.itemid = :itemid
+                            AND s.id = :submissionid';
+
+                            $resultdate = $DB->get_record_sql($querydate, ['itemid' => $selecteddateid, 'submissionid' => $id]);
+                            $date = $resultdate->content;
+                        } else {
+                            $date = $item->timecreated;
+                        }
+
+                        // Crea un array associativo con content e timecreated.
+                        $resultWithDateAndId = array('id' => $id, 'content' => $value, 'timecreated' => $date, 'itemid' => $itemid);
+                        // Verifica se il valore da cercare è presente
+                        array_push($results, $resultWithDateAndId);
+                    }
+                }
+            }
         }
-    
-        // Return the results array.
+
         return $results;
     }
-    
+
 
     /**
      * Renders HTML output from a Mustache template file.
@@ -176,28 +209,19 @@ class utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $selecteddatavalue, $userid = null)
+    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $selecteddateid, $userid = null)
     {
         global $USER;
         // Set the user ID to the current user if not specified.
         if (!isset($userid)) {
             $userid = $USER->id;
         }
-        // Execute the queries to retrieve the chart data.
-        $results = $this->executequeries($selectedfieldsarray, $selecteddatavalue, $userid);
-        $empty = true;
-        foreach ($results as $subarr) {
-            if (count($subarr) != 0) {
-                $empty = false;
-            }
-        }
-        // Prepare the chart data arrays.
-        $chartdataarrays = [];
-        foreach ($results as $result) {
-            $chartdataarrays[] = $this->preparearray($result);
-        }
+
+        $chartdataarray = $this->executequeries($selectedfieldsarray, $selecteddateid, $userid);
+        $transformedarray = $this->transformarray($chartdataarray);
+
         // If the user has not completed the survey, display a message.
-        if ($empty) {
+        if (isset($transformedarray)) {
             echo "<br><br>";
             echo \html_writer::tag('h5 class="padding-top-bottom"', $message);
         } else {
@@ -206,7 +230,7 @@ class utility
                 'div class="padding-top-bottom"',
                 $this->generatechart(
                     $variablesarray,
-                    $chartdataarrays,
+                    $transformedarray,
                     $title
                 )
             );
@@ -214,32 +238,33 @@ class utility
     }
 
     /**
-     * This function takes an array of arrays ($chartdataarrays) and creates a merged array
+     * This function takes an array of arrays ($chartdataarray) and creates a merged array
      * that contains all the fields needed for each record.
      *
      * @param array $variablesarray An array of arrays containing names of different variables.
-     * @param array $chartdataarrays An array of arrays containing data for different variables.
+     * @param array $chartdataarray An array of arrays containing data for different variables.
      * @return array The merged array containing all the fields needed for each record.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($variablesarray, $chartdataarrays)
+    public function createmergedarray($variablesarray, $transformedarray)
     {
         // Create an empty array to hold the merged data.
+
         $mergedarray = [];
         // Get the length of any of the arrays (assuming they all have the same length).
-        $lengthdata = count($chartdataarrays[0]['content']);
+        $lengthdata = count($transformedarray[0]['content']);
         $lengthvar = count($variablesarray);
         // Iterate through all arrays at once.
         for ($k = 0; $k < $lengthdata; $k++) {
-            // Create a new array containing the current elements from all arrays in $chartdataarrays.
+            // Create a new array containing the current elements from all arrays in $transformedarray.
             $elementarray = [];
             // Add the current timecreated element to the new array.
-            $elementarray[] = $chartdataarrays[0]['timecreated'][$k];
+            $elementarray[] = $transformedarray[0]['timecreated'][$k];
             for ($j = 0; $j < $lengthvar; $j++) {
                 // Add the current content element for each variable to the new array.
-                $elementarray[] = $chartdataarrays[$j]['content'][$k];
+                $elementarray[] = $transformedarray[$j]['content'][$k];
             }
             // Add the new array to the merged array.
             array_push($mergedarray, $elementarray);
@@ -376,5 +401,28 @@ class utility
             $mergedarray
         );
         return $filename; // Returns the generated file name.
+    }
+
+
+    function transformarray($chartDataArray)
+    {
+        $transformedarray = [];
+
+        foreach ($chartDataArray as $data) {
+            $itemId = $data['itemid'];
+            $timecreated = date('d/m/Y', $data['timecreated']); // Converte il timestamp in una data leggibile
+
+            if (!isset($transformedarray[$itemId])) {
+                $transformedarray[$itemId] = [
+                    'timecreated' => [],
+                    'content' => [],
+                ];
+            }
+
+            $transformedarray[$itemId]['timecreated'][] = $timecreated;
+            $transformedarray[$itemId]['content'][] = $data['content'];
+        }
+
+        return array_values($transformedarray);
     }
 }

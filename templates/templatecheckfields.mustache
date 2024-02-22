@@ -23,15 +23,15 @@
         <!-- Hidden input for survey ID -->
         <input type="hidden" id="sproid" name="sproid" value="{{sproid}}">
          <!-- Link per continuare -->
-         <a href="#" class="continue-link" onclick="checkradiobutton(event)">
-         {{buttoncontinue}} &rarr;
-         </a>
+    <a href="#" id="continueButton" class="continue-link" onclick="checkradiobutton(event)">
+      {{buttoncontinue}}  <i class="fas fa-chevron-right"></i> 
+    </a>
       </div>
       <div id="emptyspace"></div>
       <div id="error-popup">
          <p>
             <i class="fas fa-exclamation-triangle"></i>
-            <span>{{errorradiobtn}}</span>
+            <span>{{erroradiobtn}}</span>
          </p>
       </div>
       <script src='script/checkfields.js'></script>

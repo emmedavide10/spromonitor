@@ -151,6 +151,7 @@
 
 /* Styles for the survey container */
 #sprocontainer {
+    position: relative; /* Rende il posizionamento dei figli relativo a questo elemento */
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -357,9 +358,8 @@ h3#selectoptions {
 
 /* Sposta l'href a destra */
 .continue-link {
-    float: right;
-    margin-top: -2%;
-    /* Spostato leggermente più in alto */
-    margin-right: -1%;
-    /* Spostato leggermente più a sinistra */
+    position: absolute;
+    bottom: 5%; /* Spazio sotto il div in percentuale */
+    right: 3%; /* Spazio a destra del div in percentuale */
+    margin-top: 1%; /* Spazio sopra il pulsante in percentuale (opzionale, regola secondo le tue preferenze) */
 }

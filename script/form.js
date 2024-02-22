@@ -1,10 +1,10 @@
 // Validates and submits the survey form
 function validateandsubmitsurvey() {
-    var capability = '{{capability}}';
+    var capability = getValue("capability");
     var sproid = getValue("sproid");
-    var updaterow = getValue("updaterow");
     var courseid = getValue("courseid");
     var createrow = getValue("createrow");
+    var updaterow = getValue("updaterow");
 
     var errorPopup = getElement("error-popup");
 
@@ -13,13 +13,13 @@ function validateandsubmitsurvey() {
     } else {
         fadeout(errorPopup, 1);
         if (!capability) {
-            redirectToIndex(sproid, courseid, selectedFieldsString, updaterow, createrow);
+            redirectToIndex(sproid, courseid);
         } else {
             var url = 'form.php?sproid=' + encodeURIComponent(sproid) +
                 '&courseid=' + encodeURIComponent(courseid);
             if (updaterow == 1) {
                 url += '&updaterow=' + encodeURIComponent(updaterow);
-            } else if (updaterow == 0) {
+            } else if (createrow == 1) {
                 url += '&createrow=' + encodeURIComponent(createrow);
             }
             window.location.href = url;
@@ -30,46 +30,43 @@ function validateandsubmitsurvey() {
 // Prevents the normal form submission behavior and initiates validation and submission of the question form
 function validatequestions(event) {
     event.preventDefault();
-
-    var capability = '{{capability}}';
     var sproid = getValue("sproid");
     var courseid = getValue("courseid");
     var updaterow = getValue("updaterow");
     var createrow = getValue("createrow");
 
-    if (capability) {
-        var checkboxes = document.querySelectorAll('input[name="question_ids[]"]');
-        var checkboxesdate = document.querySelectorAll('input[name="date_ids[]"]');
+    var checkboxes = document.querySelectorAll('input[name="question_ids[]"]');
+    var checkboxesdate = document.querySelectorAll('input[name="date_ids[]"]');
 
-        var checkboxesLength = checkboxesdate.length;
+    var checkboxesLength = checkboxesdate.length;
 
-        var errorPopup = getElement("error-popup");
-        var exclamationIcons = document.querySelectorAll('.fa-exclamation-circle');
+    var errorPopup = getElement("error-popup");
+    var exclamationIcons = document.querySelectorAll('.fa-exclamation-circle');
 
-        var selectedFieldValues = [];
+    var selectedFieldValues = [];
 
-        checkboxes.forEach(function (checkbox) {
-            if (checkbox.checked) {
-                selectedFieldValues.push(checkbox.value);
-            }
-        });
+    checkboxes.forEach(function (checkbox) {
+        if (checkbox.checked) {
+            selectedFieldValues.push(checkbox.value);
+        }
+    });
 
-        if (selectedFieldValues.length === 0 || selectedFieldValues.length > 5) {
-            showErrorMessage(errorPopup, exclamationIcons);
-            setTimeout(function () {
-                fadeout(errorPopup, 1);
-            }, 4000);
-        } else {
+    if (selectedFieldValues.length === 0 || selectedFieldValues.length > 5) {
+        showErrorMessage(errorPopup, exclamationIcons);
+        setTimeout(function () {
             fadeout(errorPopup, 1);
-            var selectedFieldsString = selectedFieldValues.join(',');
+        }, 4000);
+    } else {
+        fadeout(errorPopup, 1);
+        var selectedFieldsString = selectedFieldValues.join(',');
 
-            if (checkboxesLength) {
-                toggleContainers('questioncontainer', 'datecontainer');
-            } else {
-                redirectToIndex(sproid, courseid, selectedFieldsString, updaterow, createrow);
-            }
+        if (checkboxesLength > 0) {
+            toggleContainers('datecontainer', 'questioncontainer', selectedFieldsString);
+        } else {
+            redirectToIndex(sproid, courseid, selectedFieldsString, updaterow, createrow);
         }
     }
+
 }
 
 // Prevents the normal form submission behavior and initiates validation and submission of the date
@@ -81,6 +78,9 @@ function validatedataandsubmit(event) {
     var exclamationIcons = document.querySelectorAll('.fa-exclamation-circle');
     var updaterow = getValue("updaterow");
     var createrow = getValue("createrow");
+    var sproid = getValue("sproid");
+    var courseid = getValue("courseid");
+    var selectedFieldsString = getValue("selectedfieldsinput");
 
     var selectedDataValues = [];
 
@@ -96,7 +96,8 @@ function validatedataandsubmit(event) {
             fadeout(errorPopup, 1);
         }, 4000);
     } else {
+        var selectedData = selectedDataValues[0];
         fadeout(errorPopup, 1);
-        redirectToIndex(sproid, courseid, selectedFieldsString, updaterow, createrow);
+        redirectToIndex(sproid, courseid, selectedFieldsString, updaterow, createrow, selectedData);
     }
 }
