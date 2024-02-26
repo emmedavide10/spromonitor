@@ -26,7 +26,6 @@ namespace tool_monitoring;
 
 class utility
 {
-
     
     public function bckTable(){
         global $CFG, $DB;
