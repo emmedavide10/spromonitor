@@ -15,19 +15,21 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Plugin administration pages are defined here.
  *
  * @package     mod_spromonitor
+ * @category    admin
  * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'mod_spromonitor';
-$plugin->release = 'v1.0-r1';
-$plugin->version = 2024020100;
-$plugin->requires = 2022112800;
-$plugin->supported = [401, 403];
-$plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = ['mod_surveypro' => 2023111102];
+if ($hassiteconfig) {
+    $settings = new admin_settingpage('mod_spromonitor_settings', new lang_string('modulename', 'mod_spromonitor'));
+
+    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+    if ($ADMIN->fulltree) {
+        // TODO: Define actual plugin settings page and add it to the tree - {@link https://docs.moodle.org/dev/Admin_settings}.
+    }
+}

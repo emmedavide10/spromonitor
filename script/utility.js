@@ -86,4 +86,3 @@ function toggleContainers(showId, hideId, selectedFieldsString) {
     }
 }
 
-

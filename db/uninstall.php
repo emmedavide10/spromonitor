@@ -15,19 +15,18 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Code that is executed before the tables and data are dropped during the plugin uninstallation.
  *
  * @package     mod_spromonitor
+ * @category    upgrade
  * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Custom uninstallation procedure.
+ */
+function xmldb_spromonitor_uninstall() {
 
-$plugin->component = 'mod_spromonitor';
-$plugin->release = 'v1.0-r1';
-$plugin->version = 2024020100;
-$plugin->requires = 2022112800;
-$plugin->supported = [401, 403];
-$plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = ['mod_surveypro' => 2023111102];
+    return true;
+}

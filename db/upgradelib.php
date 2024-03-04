@@ -15,19 +15,22 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * Plugin upgrade helper functions are defined here.
  *
  * @package     mod_spromonitor
+ * @category    upgrade
  * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Helper function used by the upgrade.php file.
+ */
+function mod_spromonitor_helper_function() {
+    global $DB;
 
-$plugin->component = 'mod_spromonitor';
-$plugin->release = 'v1.0-r1';
-$plugin->version = 2024020100;
-$plugin->requires = 2022112800;
-$plugin->supported = [401, 403];
-$plugin->maturity = MATURITY_STABLE;
-$plugin->dependencies = ['mod_surveypro' => 2023111102];
+    // Please note: you can only use raw low level database access here.
+    // Avoid Moodle API calls in upgrade steps.
+    //
+    // For more information please read {@link https://docs.moodle.org/dev/Upgrade_API}.
+}

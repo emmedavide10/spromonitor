@@ -15,37 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Monitoring utility class.
+ * Spromonitor utility class.
  *
- * @package   tool_monitoring
+ * @package   mod_spromonitor
  * @copyright  2024 Davide Mirra <davide.mirra@iss.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_monitoring;
+namespace mod_spromonitor;
 
 class utility
 {
-    
-    public function bckTable(){
-        global $CFG, $DB;
-
-        $table = 'tool_monitoring';
-        $filename = $table . date('Y_m_d') . '.sql';
-        $filepath = $CFG->dirroot . '\\admin\\tool\\monitoring\\' . $filename; // Creates the full file path.
-
-        $file_bck = fopen($filepath, 'w');
-
-        $rows = $DB->get_records($table);
-        foreach($rows as $row){
-            $sql = "INSERT INTO $table (id, courseid, surveyproid, fieldscsv, measuredateid, timecreated, timemodified)
-            VALUES ($row->id, $row->courseid, $row->surveyproid, $row->fieldscsv, $row->measuredateid, $row->timecreated, $row->timemodified);\n";
-            fwrite($file_bck, $sql);
-        }
-        fclose($file_bck);
-    }
-    
-
 
 
     /**
@@ -124,6 +104,7 @@ class utility
             $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
             $result = $DB->get_records_sql($query, $queryparam);
 
+
             // Check se il risultato non è vuoto e ha la struttura attesa.
             if (!empty($result) && isset($result)) {
                 foreach ($result as $item) {
@@ -131,19 +112,27 @@ class utility
                     $id = $item->id;
                     $itemid = $item->itemid;
 
-                    if ($value != '@@_NOANSW_@@' && is_numeric($value) && $value >= 0) {
+                    if (empty($value)) {
+                        $value = 0;
+                    }
 
-                        $date = '';
+                    if ($value !== '@@_NOANSW_@@' && is_numeric($value) && $value >= 0) {
+                        $date = 0;
 
                         if (!empty($selecteddateid)) {
                             $querydate = 'SELECT a.content
-                            FROM {surveypro_submission} s
-                            JOIN {surveypro_answer} a ON a.submissionid = s.id
-                            WHERE a.itemid = :itemid
-                            AND s.id = :submissionid';
+                                FROM {surveypro_submission} s
+                                JOIN {surveypro_answer} a ON a.submissionid = s.id
+                                WHERE a.itemid = :itemid
+                                AND s.id = :submissionid';
 
                             $resultdate = $DB->get_record_sql($querydate, ['itemid' => $selecteddateid, 'submissionid' => $id]);
-                            $date = $resultdate->content;
+
+                            if ($resultdate->content === '@@_NOANSW_@@') {
+                                $date = 0;
+                            } else {
+                                $date = $resultdate->content;
+                            }
                         } else {
                             $date = $item->timecreated;
                         }
@@ -156,7 +145,6 @@ class utility
                 }
             }
         }
-
         return $results;
     }
 
@@ -217,10 +205,11 @@ class utility
         }
 
         $chartdataarray = $this->executequeries($selectedfieldsarray, $selecteddateid, $userid);
+
         $transformedarray = $this->transformarray($chartdataarray);
 
         // If the user has not completed the survey, display a message.
-        if (isset($transformedarray)) {
+        if (empty($transformedarray) ) {
             echo "<br><br>";
             echo \html_writer::tag('h5 class="padding-top-bottom"', $message);
         } else {
@@ -286,11 +275,11 @@ class utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function writingfile($filename, $delimiter, $variablesarray, $mergedarray)
-    {
+    public function writingfile($filename, $delimiter, $variablesarray, $mergedarray) {
         global $CFG;
+
         // Open the file for writing.
-        $exportsubdir = 'tool_monitoring/csv';
+        $exportsubdir = 'mod_spromonitor/csv';
         make_temp_directory($exportsubdir);
         $filewithpath = $CFG->tempdir . '/' . $exportsubdir . '/' . $filename;
         $filehandler = fopen($filewithpath, 'w');
@@ -390,7 +379,7 @@ class utility
         // Create an array with continuous numerical keys.
         $variablesarray = array_values($variablesarray);
         $filename = 'file_' . $date . '_' . $username . '.csv'; // Creates the file name.
-        $filepath = $CFG->dirroot . '/admin/tool/monitoring/' . $filename; // Creates the full file path.
+        $filepath = $CFG->dirroot . '/mod/spromonitor/' . $filename; // Creates the full file path.
         // Calls the writingFile() function to write the CSV file.
         // The source code for writingFile() is not included in this description.
         $this->writingfile(
@@ -409,7 +398,7 @@ class utility
 
         foreach ($chartDataArray as $data) {
             $itemId = $data['itemid'];
-            $timecreated = date('d/m/Y', $data['timecreated']); // Converte il timestamp in una data leggibile
+            $timecreated = date('d/m/Y', (int)$data['timecreated']); // Converte il timestamp in una data leggibile
 
             if (!isset($transformedarray[$itemId])) {
                 $transformedarray[$itemId] = [

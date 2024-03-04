@@ -1,54 +1,46 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <!-- Set character set and viewport for responsiveness -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Include custom stylesheet and Font Awesome library -->
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-</head>
-
-<body>
-
-<!-- CSV download button section -->
-<div id="csvbutton">
-    <div class="float-right">
-        <!-- Form for submitting CSV download request -->
-        <form action="" method="post" id="myForm">
-            <!-- Hidden inputs for form data -->
-            <input type="hidden" value="csv" name="1" id="ok">
-            <input type="hidden" value="{{singlecsv}}" name="singlecsv">
-            <input type="hidden" name="courseid" value="{{courseid}}">
-            
-            <!-- CSV download button with icon -->
-            <button type="submit" name="csv" id="csv" class="btn btn-primary">
-                <i class="fas fa-file-csv" style="margin-right: 7px;"></i>{{csvgen}}
-            </button>
-        </form>
-    </div>
-</div>
-
-<!-- Section for displaying CSV download links -->
-<div class="visible-box" id="downloadsection">
-    <h5 id="downloadcsv">Download CSV</h5>
-    <!-- List for displaying download links -->
-    <ul id='link'>
-        {{#filenamearray}}
+   <head>
+      <!-- Set character set and viewport for responsiveness -->
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Include custom stylesheet and Font Awesome library -->
+      <link rel="stylesheet" href="style/style.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+   </head>
+   <body>
+      <!-- CSV download button section -->
+      <div id="csvbutton">
+         <div class="float-right">
+            <!-- Form for submitting CSV download request -->
+            <form action="" method="post" id="myForm">
+               <!-- Hidden inputs for form data -->
+               <input type="hidden" value="csv" name="1" id="ok">
+               <input type="hidden" value="{{singlecsv}}" name="singlecsv">
+               <input type="hidden" name="courseid" value="{{courseid}}">
+               <!-- CSV download button with icon -->
+               <button type="submit" name="csv" id="csv" class="btn btn-primary">
+               <i class="fas fa-file-csv" style="margin-right: 7px;"></i>{{csvgen}}
+               </button>
+            </form>
+         </div>
+      </div>
+      <!-- Section for displaying CSV download links -->
+      <div class="visible-box" id="downloadsection">
+         <h5 id="downloadcsv">Download CSV</h5>
+         <!-- List for displaying download links -->
+         <ul id='link'>
+            {{#filenamearray}}
             <!-- List item for each CSV file with success icon and download link -->
             <li class="download-success">
-                <i class='fas fa-check-circle'></i>
-                <a href='export.php?f={{.}}'>Download {{.}}</a>
+               <i class='fas fa-check-circle'></i>
+               <a href='export.php?f={{.}}'>Download {{.}}</a>
             </li>
-        {{/filenamearray}}
-    </ul>
-</div>
-
-<!-- Include JavaScript file for CSV functionality -->
-<script src="script/csv.js"></script>
+            {{/filenamearray}}
+         </ul>
+      </div>
+      <!-- Include JavaScript file for CSV functionality -->
+      <script src="script/csv.js"></script>
       <script src='script/utility.js'></script>
-</body>
-
+   </body>
 </html>

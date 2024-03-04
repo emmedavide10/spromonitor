@@ -1,0 +1,355 @@
+/* Styles for the date container */
+#datecontainer {
+    display: none;
+    /* Initially hidden */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 8% auto;
+    max-width: 600px;
+}
+
+/* Custom style for h3 heading inside datecontainer */
+#datecontainer h3 {
+    font-size: 1.7em;
+    text-align: center;
+    color: #333;
+    margin-bottom: 8%;
+}
+
+/* Styles for the question container */
+#questioncontainer {
+    /* Initially hidden */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 8% auto;
+    max-width: 600px;
+}
+
+/* Custom style for h3 heading */
+#questioncontainer h3 {
+    font-size: 1.7em;
+    text-align: center;
+    color: #333;
+    margin-bottom: 8%;
+}
+
+/* Styles for custom checkboxes */
+.custom-checkbox {
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 1px;
+}
+
+.custom-checkbox input {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+}
+
+.custom-checkbox:hover input~.checkmark {
+    background-color: #ddd;
+}
+
+.custom-checkbox input:checked~.checkmark {
+    background-color: #4CAF50;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.custom-checkbox input:checked~.checkmark:after {
+    display: block;
+}
+
+.custom-checkbox .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+/* Styles for the question form */
+#questionform {
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+#questionform input[type="hidden"],
+#questionform input[type="button"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    box-sizing: border-box;
+}
+
+#questionform input[type="button"] {
+    background-color: #2196F3;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#questionform input[type="button"]:hover {
+    background-color: #0b7dda;
+}
+
+#questionform input[type="button"]:focus {
+    outline: none;
+}
+
+/* Styles for download section */
+#downloadsection {
+    display: none;
+}
+
+.download-success {
+    color: #4CAF50;
+}
+
+/* Styles for the visible box */
+.visible-box {
+    border: 2px solid #474947;
+    background-color: #f2f2f2;
+    padding: 15px;
+    padding-bottom: 5px;
+    margin-top: 7%;
+    margin-bottom: 7%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 8px rgba(145, 34, 34, 0.1);
+    border-radius: 8px;
+}
+
+/* Styles for the survey container */
+#sprocontainer {
+    position: relative; /* Rende il posizionamento dei figli relativo a questo elemento */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    padding: 20px;
+    margin: 8% auto;
+}
+
+/* Styles for the survey title */
+#titlesurvey {
+    font-size: 1.7em;
+    text-align: center;
+    color: #333;
+    margin-bottom: 8%;
+}
+
+/* Styles for the survey select */
+#sproid {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#sproid:hover {
+    border-color: #aaa;
+}
+
+#sproid:focus {
+    outline: none;
+    border-color: #2196F3;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
+
+/* Styles for the survey submit button */
+#surveyform input[type="button"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+#surveyform input[type="button"]:hover {
+    background-color: #0b7dda;
+}
+
+#surveyform input[type="button"]:focus {
+    outline: none;
+}
+
+/* Styles for the survey error message */
+#errorsurvey {
+    margin-top: 5px;
+    color: red;
+}
+
+/* Styles for hiding the default dropdown arrow */
+#sproid::-ms-expand {
+    display: none;
+}
+
+#sproid::after {
+    content: '\25BC';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #555;
+}
+
+#sproid:hover::after {
+    color: #333;
+}
+
+#searchbar {
+    margin-bottom: 10%;
+    margin-top: 2%;
+
+}
+
+/* Styles for the error popup */
+#error-popup {
+    display: none;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: rgba(255, 153, 153, 0.9);
+    border: 1px solid #cc0000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    max-width: 45%;
+}
+
+#error-popup p {
+    margin: 0;
+    text-align: center;
+}
+
+#error-popup i {
+    margin-right: 5px;
+}
+
+/* Styles for the error popup */
+#error-data-popup {
+    display: none;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2%;
+    background-color: rgba(255, 153, 153, 0.9);
+    border: 1px solid #cc0000;
+    border-radius: 10px;
+    box-shadow: 0 0 1% rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    max-width: 45%;
+}
+
+#error-data-popup p {
+    margin: 0;
+    text-align: center;
+}
+
+#error-data-popup i {
+    margin-right: 1%;
+    /* Icon for the date (replace with your desired icon) */
+    /* Example: Font Awesome calendar icon */
+    font-family: 'Font Awesome 5 Free';
+    content: "\f073";
+    /* Unicode for the calendar icon */
+    font-size: 1.0vw;
+}
+
+
+/* Styles for empty space */
+#emptyspace {
+    margin-top: 7%;
+}
+
+/* Styles for empty space */
+#emptyspacemin {
+    margin-top: 3%;
+}
+
+.padding-top-bottom {
+    margin-bottom: 5%;
+}
+
+
+#error-file {
+    position: relative;
+    padding: 1%;
+    background-color: white;
+    color: black;
+    border: 0.3em solid #f44336;
+    text-align: center;
+}
+
+
+input[type="radio"]+label::before {
+    display: inline-block;
+    width: 3%;
+    height: 3%;
+    border: 1px solid #333;
+    border-radius: 50%;
+    margin-right: 0.5%;
+    background-color: white;
+}
+
+input[type="radio"]:checked+label::before {
+    background-color: #007bff;
+}
+
+label {
+    cursor: pointer;
+}
+
+h3#selectoptions {
+    text-align: center;
+    margin-bottom: 10%;
+}
+
+.form-check {
+    margin-bottom: 2%;
+    margin-top: 3%;
+
+}

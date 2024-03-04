@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,143 +12,121 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Moodle MONITORING plugin lib
+ * Library of interface functions and constants.
  *
- * @package     tool_monitoring
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_spromonitor
+ * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
+ * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-use core\context;
 
 /**
- * Main hook.
+ * Return if the plugin supports $feature.
  *
- * e.g. Add permissions logic across a site or course
- *
- * @param mixed $courseorid
- * @param mixed $autologinguest
- * @param mixed $cm
- * @param mixed $setwantsurltome
- * @param mixed $preventredirect
- * @return void
- * @throws \moodle_exception
+ * @param string $feature Constant representing the feature.
+ * @return true | null True if the feature is supported, null otherwise.
  */
-function tool_monitoring_after_require_login($courseorid = null, $autologinguest = null, $cm = null,
-    $setwantsurltome = null, $preventredirect = null): void {
-
-    global $SESSION;
-    // Tests for hooks being fired to test patches.
-    if (PHPUNIT_TEST) {
-        $SESSION->monitoring_login_hook_test = true;
+function spromonitor_supports(string $feature) {
+    switch ($feature) {
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_OTHER;
+        default:
+            return null;
     }
-
-    /*if (empty($SESSION->tool_monitoring_authenticated)) {
-        \tool_monitoring\manager::require_auth($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
-    }*/
 }
 
 /**
- * Extends navigation bar and injects MONITORING Preferences menu to user preferences.
+ * Saves a new instance of the mod_spromonitor into the database.
  *
- * @param navigation_node $navigation
- * @param stdClass $user
- * @param context_user $usercontext
+ * Given an object containing all the necessary data, (defined by the form
+ * in mod_form.php) this function will create a new instance and return the id
+ * number of the instance.
+ *
+ * @param object $spromonitor An object from the form.
+ * @param mod_spromonitor_mod_form $mform The form.
+ * @return int The id of the newly inserted record.
+ */
+function spromonitor_add_instance($spromonitor, $mform = null) {
+    global $DB;
+
+    $spromonitor->timecreated = time();
+
+    $id = $DB->insert_record('spromonitor', $spromonitor);
+
+    return $id;
+}
+
+/**
+ * Updates an instance of the mod_spromonitor in the database.
+ *
+ * Given an object containing all the necessary data (defined in mod_form.php),
+ * this function will update an existing instance with new data.
+ *
+ * @param object $spromonitor An object from the form in mod_form.php.
+ * @param mod_spromonitor_mod_form $mform The form.
+ * @return bool True if successful, false otherwise.
+ */
+function spromonitor_update_instance($spromonitor, $mform = null) {
+    global $DB;
+
+    $spromonitor->id = $spromonitor->instance;
+    $spromonitor->timemodified = time();
+
+    return $DB->update_record('spromonitor', $spromonitor);
+}
+
+/**
+ * Removes an instance of the mod_spromonitor from the database.
+ *
+ * @param int $id Id of the module instance.
+ * @return bool True if successful, false on failure.
+ */
+function spromonitor_delete_instance(int $id) {
+    global $DB;
+
+    $exists = $DB->get_record('spromonitor', ['id' => $id]);
+    if ($exists) {
+        $DB->delete_records('spromonitor', ['id' => $id]);
+        $return = true;
+    } else {
+        $return = false;
+    }
+
+    return $return;
+}
+
+/**
+ * Extends the global navigation tree by adding mod_spromonitor nodes if there is a relevant content.
+ *
+ * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
+ *
+ * @param navigation_node $spromonitornode An object representing the navigation tree node.
  * @param stdClass $course
- * @param context_course $coursecontext
- *
- * @return mix void or null
- * @throws \moodle_exception
+ * @param stdClass $module
+ * @param cm_info $cm
  */
-function tool_monitoring_extend_navigation_user_settings(navigation_node $navigation, stdClass $user, $usercontext, stdClass $course, $coursecontext) {
-    global $PAGE;
+function spromonitor_extend_navigation(navigation_node $spromonitornode, stdClass $course, stdClass $spromonitor, cm_info $cm) {
 
-    // Only inject if user is on the preferences page.
-    $onpreferencepage = $PAGE->url->compare(new moodle_url('/user/preferences.php'), URL_MATCH_BASE);
-    if (!$onpreferencepage) {
-        return null;
-    }
-
-    if (\tool_monitoring\manager::is_ready() && \tool_monitoring\manager::possible_factor_setup()) {
-        $url = new moodle_url('/admin/tool/monitoring/user_preferences.php');
-        $node = navigation_node::create(get_string('preferences:header', 'tool_monitoring'), $url,
-            navigation_node::TYPE_SETTING);
-        $usernode = $navigation->find('useraccount', navigation_node::TYPE_CONTAINER);
-        $usernode->add_node($node);
-    }
 }
 
 /**
- * Triggered as soon as practical on every moodle bootstrap after config has
- * been loaded. The $USER object is available at this point too.
+ * Extends the settings navigation with the mod_spromonitor settings.
  *
- * @return void
+ * This function is called when the context for the page is a mod_spromonitor module.
+ * This is not called by AJAX so it is safe to rely on the $PAGE.
+ *
+ * @param settings_navigation $settingsnav {@see settings_navigation}
+ * @param navigation_node $spromonitornode {@see navigation_node}
  */
-function tool_monitoring_after_config(): void {
-    global $CFG, $SESSION;
+function spromonitor_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $spromonitornode = null) {
 
-    // Tests for hooks being fired to test patches.
-    // Store in $CFG, $SESSION not present at this point.
-    if (PHPUNIT_TEST) {
-        $CFG->monitoring_config_hook_test = true;
-    }
-
-    // Check for not logged in.
-    /*if (isloggedin() && !isguestuser()) {
-        // If not authenticated, force login required.
-        if (empty($SESSION->tool_monitoring_authenticated)) {
-            \tool_monitoring\manager::require_auth();
-        }
-    }*/
 }
 
-/**
- * Any plugin typically an admin tool can add new bulk user actions
- *
- * @return array
- */
-function tool_monitoring_bulk_user_actions(): array {
-    return [
-        'tool_monitoring_reset_factors' => new action_link(
-            new moodle_url('/admin/tool/monitoring/reset_factor.php'),
-            get_string('resetfactor', 'tool_monitoring')
-        ),
-    ];
-}
-
-/**
- * Serves any files for the guidance page.
- *
- * @param stdClass $course
- * @param stdClass $cm
- * @param context $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
- * @param array $options
- * @return bool
- */
-function tool_monitoring_pluginfile(stdClass $course, stdClass $cm, context $context, string $filearea,
-    array $args, bool $forcedownload, array $options = []): bool {
-    // Hardcode to only send guidance files from the top level.
-    $fs = get_file_storage();
-    $file = $fs->get_file(
-        $context->id,
-        'tool_monitoring',
-        'guidance',
-        0,
-        '/',
-        $args[1]
-    );
-    if (!$file) {
-        send_file_not_found();
-        return false;
-    }
-    send_file($file, $file->get_filename());
-
-    return true;
-}

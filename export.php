@@ -17,14 +17,14 @@
 /**
  * Generate Chart.js charts.
  *
- * @package    tool_monitoring
+ * @package    spromonitor
  * @copyright  2024 Davide Mirra <davide.mirra@iss.it>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 // Include necessary Moodle files.
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require(__DIR__.'/../../config.php');
 
 // Check user access or require_course_login(), require_admin(), depending on the requirements..
 require_login();
@@ -32,11 +32,11 @@ require_login();
 // Ensure the script is only accessed within Moodle.
 defined('MOODLE_INTERNAL') || die();
 
-// Define constant for the CSV path within the tool_monitoring directory.
-define('MONITORING_CSV_PATH', '/tool_monitoring/csv/');
+// Define constant for the CSV path within the spromonitor directory.
+define('SPROMONITOR_CSV_PATH', '/mod_spromonitor/csv/');
 
 // Instantiate the utility class.
-$utility = new \tool_monitoring\utility();
+$utility = new \mod_spromonitor\utility();
 
 
 // Get the requested file name from parameters.
@@ -45,10 +45,10 @@ $filename = required_param('f', PARAM_TEXT);
 // Sanitize the filename to prevent XSS.
 $filename = clean_param($filename, PARAM_FILE);
 
-$filenotexist = get_string('filenotexist', 'tool_monitoring');
+$filenotexist = get_string('filenotexist', 'spromonitor');
 
 // Check if the requested file exists.
-if (file_exists($CFG->tempdir . MONITORING_CSV_PATH . $filename)) {
+if (file_exists($CFG->tempdir . SPROMONITOR_CSV_PATH . $filename)) {
     // Set HTTP headers for file download.
     header("Content-Type: application/download\n");
     header("Content-Disposition: attachment; filename=\"" . rawurlencode($filename) . "\"");
@@ -57,8 +57,8 @@ if (file_exists($CFG->tempdir . MONITORING_CSV_PATH . $filename)) {
     header('Pragma: public');
 
     // Open and output the file content.
-    $exportfilehandler = fopen($CFG->tempdir . MONITORING_CSV_PATH . $filename, 'rb');
-    print fread($exportfilehandler, filesize($CFG->tempdir . MONITORING_CSV_PATH . $filename));
+    $exportfilehandler = fopen($CFG->tempdir . SPROMONITOR_CSV_PATH . $filename, 'rb');
+    print fread($exportfilehandler, filesize($CFG->tempdir . SPROMONITOR_CSV_PATH . $filename));
     fclose($exportfilehandler);
 } else {
     // If the file does not exist, display an error message.

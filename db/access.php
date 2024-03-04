@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for tool_monitoring
+ * Capability definitions for mod
  *
  * The capabilities are loaded into the database table when the module is
  * installed or updated. Whenever the capability definitions are updated,
@@ -39,7 +39,7 @@
  *
  * This capability determines who can or cannot access and view all graphs
  *
- * @package   tool_monitoring
+ * @package   mod_spromonitor
  * @copyright  2024 Davide Mirra <davide.mirra@iss.it>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +47,32 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
-    'tool/monitoring:accessallcharts' => [
+    'mod/spromonitor:addinstance' => [
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+        'clonepermissionsfrom' => 'moodle/course:manageactivities',
+    ],
+
+    'mod/spromonitor:view' => [
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'guest' => CAP_ALLOW,
+            'frontpage' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
+    'mod/spromonitor:accessallcharts' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
@@ -56,7 +81,7 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
-    'tool/monitoring:setupfields' => [
+    'mod/spromonitor:setupfields' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
