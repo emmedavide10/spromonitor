@@ -1,6 +1,6 @@
-# Spromonitor #
+# Spromonitor ##
 
-# Plugin Monitoring for Moodle ##
+## Plugin Monitoring for Moodle ##
 
 **Developer:** Davide Mirra  
 **Project Manager:** Claudia Giacomozzi  
