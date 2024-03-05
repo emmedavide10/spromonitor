@@ -23,7 +23,7 @@
  */
 
 // Include necessary files and initialize parameters.
-require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 
 // Get the course ID from the URL parameter.

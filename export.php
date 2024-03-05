@@ -24,7 +24,7 @@
 
 
 // Include necessary Moodle files.
-require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/../../config.php');
 
 // Check user access or require_course_login(), require_admin(), depending on the requirements..
 require_login();
