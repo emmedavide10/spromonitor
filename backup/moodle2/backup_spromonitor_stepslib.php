@@ -18,7 +18,7 @@
  * Define all the backup steps that will be used by the backup_spromonitor_activity_task
  *
  * @package   mod_spromonitor
- * @copyright 2013 onwards kordan <stringapiccola@gmail.com>
+ * @copyright 2024 onwards kordan <stringapiccola@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

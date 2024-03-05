@@ -18,7 +18,7 @@
  * The main mod_spromonitor configuration form.
  *
  * @package     mod_spromonitor
- * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
+ * @copyright   2024 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,14 +33,16 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_spromonitor_mod_form extends moodleform_mod {
+class mod_spromonitor_mod_form extends moodleform_mod
+{
     /**
-     * Defines forms elements
+     * Defines form elements
      */
-    public function definition() {
+    public function definition()
+    {
         global $CFG, $COURSE, $DB;
 
-        // Was the form, with a surveyproid onboard, reloaded?
+        // Check if the form, with a surveyproid onboard, was reloaded.
         $surveyproid = optional_param('surveyproid', 0, PARAM_INT);
 
         $mform = $this->_form;
@@ -75,8 +77,8 @@ class mod_spromonitor_mod_form extends moodleform_mod {
         $elementgroup = [];
         $elementgroup[] = $mform->createElement('select', $fieldname, get_string($fieldname, 'mod_spromonitor'), $surveysnames);
         $elementgroup[] = $mform->createElement('submit', 'reload', get_string('reload'));
-        $mform->addGroup($elementgroup, $fieldname.'group', get_string('reload'), [' '], false);
-        $mform->addHelpButton($fieldname.'group', $fieldname, 'spromonitor');
+        $mform->addGroup($elementgroup, $fieldname . 'group', get_string('reload'), [' '], false);
+        $mform->addHelpButton($fieldname . 'group', $fieldname, 'spromonitor');
         $mform->setType($fieldname, PARAM_INT);
         $mform->_required[] = $fieldname;
 
@@ -107,7 +109,7 @@ class mod_spromonitor_mod_form extends moodleform_mod {
 
                 $params = [
                     'multiple' => true,
-                    'valuehtmlcallback' => function($value) {
+                    'valuehtmlcallback' => function ($value) {
                         global $OUTPUT, $DB;
 
                         $sqlnumeric = 'SELECT variable
@@ -135,7 +137,6 @@ class mod_spromonitor_mod_form extends moodleform_mod {
                 $sqlparams = ['surveyproid' => $sproid, 'plugin' => 'date'];
                 $records = $DB->get_records_sql($sqldate, $sqlparams);
 
-
                 if ($records) {
                     $options = [];
                     foreach ($records as $record) {
@@ -144,7 +145,11 @@ class mod_spromonitor_mod_form extends moodleform_mod {
                     $mform->addElement('select', $fieldname, get_string($fieldname, 'mod_spromonitor'), $datefield);
                 } else {
                     $content = \html_writer::start_tag('div', ['class' => 'fitem']);
-                    $content .= \html_writer::start_tag('div', ['class' => 'fstatic fullwidth label_static']);
+                    $content .= \html_writer::start_tag(
+                        'div',
+
+                        ['class' => 'fstatic fullwidth label_static']
+                    );
                     $content .= get_string('missingdate', 'mod_spromonitor');
                     $content .= \html_writer::end_tag('div');
                     $content .= \html_writer::end_tag('div');
@@ -168,14 +173,15 @@ class mod_spromonitor_mod_form extends moodleform_mod {
     }
 
     /**
-     * Allows module to modify the data returned by form get_data().
+     * Allows the module to modify the data returned by form get_data().
      * This method is also called in the bulk activity completion form.
      *
      * Only available on moodleform_mod.
      *
      * @param stdClass $data the form data to be modified.
      */
-    public function data_postprocessing($data) {
+    public function data_postprocessing($data)
+    {
         parent::data_postprocessing($data);
 
         if (isset($data->fieldscsv)) {
@@ -190,20 +196,14 @@ class mod_spromonitor_mod_form extends moodleform_mod {
      * @param array $files
      * @return array $errors
      */
-    public function validation_jumpme($data, $files) {
+    public function validation($data, $files)
+    {
         global $USER;
 
         // Useless: $mform = $this->_form;.
 
         $errors = parent::validation($data, $files);
 
-        // if (empty($data->surveyproid)) {
-        if (empty($data['surveyproid'])) {
-            $errors['surveyproid'] = get_string('missingsurveyproid', 'mod_spromonitor');
-            return $errors;
-        }
-
-        // if (empty($data->fieldscsv)) {
         if (empty($data['fieldscsv'])) {
             $errors['fieldscsv'] = get_string('missingfieldscsv', 'mod_spromonitor');
             return $errors;

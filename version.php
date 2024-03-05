@@ -18,7 +18,7 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     mod_spromonitor
- * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
+ * @copyright   2024 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
