@@ -65,7 +65,6 @@ class restore_spromonitor_activity_task extends restore_activity_task {
         $contents = [];
 
         $contents[] = new restore_decode_content('spromonitor', ['intro'], 'spromonitor');
-        // $contents[] = new restore_decode_content('spromonitor', ['thankspage'], 'spromonitor');
 
         return $contents;
     }

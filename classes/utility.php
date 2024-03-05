@@ -24,8 +24,7 @@
 
 namespace mod_spromonitor;
 
-class utility
-{
+class utility {
 
 
     /**
@@ -41,8 +40,7 @@ class utility
      * @author Davide Mirra
      */
 
-    public function generatechart($variablesarray, $transformedarray, $title = ''): string
-    {
+    public function generatechart($variablesarray, $transformedarray, $title = ''): string {
 
         global $OUTPUT;
         // Create chart series for each data array.
@@ -75,37 +73,36 @@ class utility
      *
      * @param int|null $userid The ID of the user to retrieve data for. If not provided, the current user is used.
      * @param array $selectedfieldsarray An array containing selected field IDs.
+     * @param int|null $selecteddateid The ID of the selected date, if applicable.
      *
      * @return array An array containing the query results.
      *
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function executequeries($selectedfieldsarray, $selecteddateid, $userid = null): array
-    {
+    public function executequeries($selectedfieldsarray, $selecteddateid, $userid = null): array {
         global $DB, $USER;
         // If $userid argument is not provided, use the current user.
         $userid = $userid ?? $USER->id;
 
         // Initialize the results array.
-        $results = array();
+        $results = [];
 
         foreach ($selectedfieldsarray as $itemid) {
 
             // Query to select SurveyPro module submissions based on user and specific module item.
             $query = 'SELECT s.id, a.content, s.timecreated, a.itemid
-            FROM {surveypro_submission} s
-            JOIN {surveypro_answer} a ON a.submissionid = s.id
-            WHERE s.status = :status
-            AND s.userid = :userid
-            AND a.itemid = :itemid';
+                FROM {surveypro_submission} s
+                JOIN {surveypro_answer} a ON a.submissionid = s.id
+                WHERE s.status = :status
+                AND s.userid = :userid
+                AND a.itemid = :itemid';
 
-            // Esegui la query per ogni item ID nell'array.
-            $queryparam = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
-            $result = $DB->get_records_sql($query, $queryparam);
+            // Execute the query for each item ID in the array.
+            $queryparams = ['status' => 0, 'userid' => $userid, 'itemid' => (int)$itemid];
+            $result = $DB->get_records_sql($query, $queryparams);
 
-
-            // Check se il risultato non è vuoto e ha la struttura attesa.
+            // Check if the result is not empty and has the expected structure.
             if (!empty($result) && isset($result)) {
                 foreach ($result as $item) {
                     $value = $item->content;
@@ -137,17 +134,16 @@ class utility
                             $date = $item->timecreated;
                         }
 
-                        // Crea un array associativo con content e timecreated.
-                        $resultWithDateAndId = array('id' => $id, 'content' => $value, 'timecreated' => $date, 'itemid' => $itemid);
-                        // Verifica se il valore da cercare è presente
-                        array_push($results, $resultWithDateAndId);
+                        // Create an associative array with 'id', 'content', 'timecreated', and 'itemid'.
+                        $resultwithdateandid = ['id' => $id, 'content' => $value, 'timecreated' => $date, 'itemid' => $itemid];
+                        // Check if the value to search for is present.
+                        array_push($results, $resultwithdateandid);
                     }
                 }
             }
         }
         return $results;
     }
-
 
     /**
      * Renders HTML output from a Mustache template file.
@@ -159,8 +155,7 @@ class utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function rendermustachefile($pathfile, $data)
-    {
+    public function rendermustachefile($pathfile, $data) {
         if (file_exists($pathfile)) {
             // Create a new Mustache engine and load the template file.
             $mustache = new \Mustache_Engine();
@@ -196,8 +191,7 @@ class utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $selecteddateid, $userid = null)
-    {
+    public function singleuserchart($message, $title, $variablesarray, $selectedfieldsarray, $selecteddateid, $userid = null) {
         global $USER;
         // Set the user ID to the current user if not specified.
         if (!isset($userid)) {
@@ -236,8 +230,7 @@ class utility
      * @since Moodle 3.1
      * @author Davide Mirra
      */
-    public function createmergedarray($variablesarray, $transformedarray)
-    {
+    public function createmergedarray($variablesarray, $transformedarray) {
         // Create an empty array to hold the merged data.
 
         $mergedarray = [];
@@ -333,8 +326,7 @@ class utility
      *
      * @return int The value of $courseid assigned based on the GET, POST, and session variables.
      */
-    public function getcourseid()
-    {
+    public function getcourseid() {
         // Check if the value is present in the GET variables.
         $courseid = optional_param('courseid', 0, PARAM_INT);
         if ($courseid == 0) {
@@ -350,8 +342,7 @@ class utility
      *
      * @return array The array resulting from handling the fields.
      */
-    public function handleselectedfields($fields)
-    {
+    public function handleselectedfields($fields) {
         if (!empty($fields)) {
             return is_array($fields) ? $fields : explode(',', $fields);
         }
@@ -369,8 +360,7 @@ class utility
      *
      * @return string The generated file name.
      */
-    public function generatefilename($username, $datestring, $variablesarray, $mergedarray)
-    {
+    public function generatefilename($username, $datestring, $variablesarray, $mergedarray) {
         global $CFG;
         $delimiter = ';';
         $date = userdate(time(), '%d%m%Y', 99, false, false); // Gets a formatted date as a string.
@@ -391,26 +381,38 @@ class utility
         return $filename; // Returns the generated file name.
     }
 
-
-    function transformarray($chartDataArray)
-    {
+    /**
+     * Transforms an array of chart data into a structured format suitable for rendering a chart.
+     *
+     * @param array $chartdataarray An array containing chart data, each element having keys
+     * like 'itemid', 'timecreated', and 'content'.
+     * @return array The transformed array structure, where each item is represented with 'timecreated' and 'content' arrays.
+     */
+    public function transformarray($chartdataarray) {
+        // Initialize an empty array to store the transformed data.
         $transformedarray = [];
 
-        foreach ($chartDataArray as $data) {
-            $itemId = $data['itemid'];
-            $timecreated = date('d/m/Y', (int)$data['timecreated']); // Converte il timestamp in una data leggibile
+        // Loop through each element in the input chart data array.
+        foreach ($chartdataarray as $data) {
+            // Extract relevant data from the current element.
+            $itemid = $data['itemid'];
+            $timecreated = date('d/m/Y', (int)$data['timecreated']); // Convert the timestamp to a readable date.
 
-            if (!isset($transformedarray[$itemId])) {
-                $transformedarray[$itemId] = [
+            // If the item ID is not yet present in the transformed array, initialize it with empty arrays.
+            if (!isset($transformedarray[$itemid])) {
+                $transformedarray[$itemid] = [
                     'timecreated' => [],
                     'content' => [],
                 ];
             }
 
-            $transformedarray[$itemId]['timecreated'][] = $timecreated;
-            $transformedarray[$itemId]['content'][] = $data['content'];
+            // Append the time created and content to their respective arrays for the current item.
+            $transformedarray[$itemid]['timecreated'][] = $timecreated;
+            $transformedarray[$itemid]['content'][] = $data['content'];
         }
 
+        // Reset array keys to ensure a numerically indexed array.
         return array_values($transformedarray);
     }
+
 }

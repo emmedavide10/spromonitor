@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once(dirname(__FILE__).'/../../../../config.php');
 require_once($CFG->dirroot.'/mod/spromonitor/db/upgradelib.php');
 
+require_login();
+
 /**
  * Define all the restore steps that will be used by the restore_spromonitor_activity_task
  *

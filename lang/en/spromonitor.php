@@ -52,4 +52,3 @@ $string['surveyproid'] = 'Name of the target surveypro';
 $string['titlechart'] = 'Your monitoring data';
 $string['titleformspro'] = 'Select SurveyPro';
 $string['hoverlinktest'] = 'Return to the course';
-

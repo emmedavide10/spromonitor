@@ -25,21 +25,20 @@
 namespace mod_spromonitor;
 
 
-class viewmanager
-{
+class viewmanage {
 
     /**
-     * @var object Course module object
+     * @var object Course module object.
      */
     protected $cm;
 
     /**
-     * @var object Context object
+     * @var object Context object.
      */
     protected $context;
 
     /**
-     * @var object spromonitor object
+     * @var object spromonitor object.
      */
     protected $spromonitor;
 
@@ -50,8 +49,7 @@ class viewmanager
      * @param object $context
      * @param object $surveypro
      */
-    public function __construct($cm, $context, $spromonitor)
-    {
+    public function __construct($cm, $context, $spromonitor) {
         $this->cm = $cm;
         $this->context = $context;
         $this->spromonitor = $spromonitor;
@@ -62,8 +60,7 @@ class viewmanager
      *
      * @return void
      */
-    public function display_activityneedssetup()
-    {
+    public function display_activityneedssetup() {
         global $OUTPUT;
 
         $message = get_string('activityneedssetup', 'spromonitor');
@@ -75,8 +72,7 @@ class viewmanager
      *
      * @return void
      */
-    public function display_chart()
-    {
+    public function display_chart() {
         global $DB, $PAGE, $CFG;
 
         $spromonitor = $this->spromonitor;
@@ -91,7 +87,6 @@ class viewmanager
         $selectedfieldsid = $spromonitor->fieldscsv;
         $selecteddateid = $spromonitor->measuredateid;
 
-
         $selectedfieldsarray = [];
         $variablesarray = [];
 
@@ -99,7 +94,6 @@ class viewmanager
         if (isset($selectedfieldsid)) {
             $selectedfieldsarray = $utility->handleselectedfields($selectedfieldsid);
         }
-
 
         foreach ($selectedfieldsarray as $field) {
             // Execute the query to get the variables associated with known itemids.
@@ -162,7 +156,7 @@ class viewmanager
         $hoverlinktest = get_string('hoverlinktest', 'spromonitor');
 
           // Data for the header template.
-          $dataheader = [
+        $dataheader = [
             'pagetitle' => $pagetitle,
             'urldashboard' => $urldashboard,
             'courseName' => $coursename,
@@ -171,25 +165,23 @@ class viewmanager
 
         $utility->rendermustachefile('templates/templateheader.mustache', $dataheader);
 
-
         // Check user's capability to access all charts.
         $canaccessallcharts = has_capability('mod/spromonitor:accessallcharts', $context);
 
-
         // SQL queries for users and user count.
         $sqlusers = 'SELECT DISTINCT(u.id), u.username
-               FROM {role_assignments} ra
-                   JOIN {user} u on u.id = ra.userid
-                   JOIN {context} ctx ON ctx.id = ra.contextid
-              WHERE ctx.instanceid = :courseid';
+                     FROM {role_assignments} ra
+                     JOIN {user} u on u.id = ra.userid
+                     JOIN {context} ctx ON ctx.id = ra.contextid
+                     WHERE ctx.instanceid = :courseid';
         $idcourse = ['courseid' => $courseid];
         $queryusers = $DB->get_records_sql($sqlusers, $idcourse);
 
         $querycountusers = 'SELECT count(*) as num
-                      FROM {role_assignments} ra
-                          JOIN {user} u on u.id = ra.userid
-                          JOIN {context} ctx ON ctx.id = ra.contextid
-                     WHERE ctx.instanceid = :courseid';
+                            FROM {role_assignments} ra
+                            JOIN {user} u on u.id = ra.userid
+                            JOIN {context} ctx ON ctx.id = ra.contextid
+                            WHERE ctx.instanceid = :courseid';
         $idcourse = ['courseid' => $courseid];
         $resultcountuser = $DB->get_record_sql($querycountusers, $idcourse);
         $numuser = $resultcountuser->num;
@@ -205,7 +197,6 @@ class viewmanager
         $csvgen = get_string('csvgen', 'spromonitor');
         $goback = get_string('goback', 'spromonitor');
 
-
         $datevariable = '';
 
         // Check if the date variable is set, otherwise use the default.
@@ -216,7 +207,6 @@ class viewmanager
         }
 
         $filenamearray = [];
-
 
         // Check user's capability to access all charts.
         if (!$canaccessallcharts) {
@@ -242,7 +232,6 @@ class viewmanager
 
             // Render the search bar template.
             $utility->rendermustachefile('templates/templatesearchbar.mustache', $data);
-
 
             // SQL query to search for users by username.
             $sqlusers = 'SELECT DISTINCT(u.id), u.username

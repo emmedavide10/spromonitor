@@ -33,13 +33,11 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_spromonitor_mod_form extends moodleform_mod
-{
+class mod_spromonitor_mod_form extends moodleform_mod {
     /**
      * Defines form elements
      */
-    public function definition()
-    {
+    public function definition() {
         global $CFG, $COURSE, $DB;
 
         // Check if the form, with a surveyproid onboard, was reloaded.
@@ -117,10 +115,10 @@ class mod_spromonitor_mod_form extends moodleform_mod
                             WHERE itemid = :itemid';
                         $sqlparams = ['itemid' => $value];
                         $varname = $DB->get_record_sql($sqlnumeric, $sqlparams);
-                        // $varname is an stdClass with the property variable if the surveypro item with id = $value.
+                        // The variable $varname is an stdClass with the property variable if the surveypro item with id = $value.
 
                         return $OUTPUT->render_from_template('mod_spromonitor/numericfieldslist', $varname);
-                    }
+                    },
                 ];
                 $mform->addElement('autocomplete', $fieldname, get_string($fieldname, 'mod_spromonitor'), $eachnumeric, $params);
                 $mform->setType($fieldname, PARAM_INT);
@@ -180,8 +178,7 @@ class mod_spromonitor_mod_form extends moodleform_mod
      *
      * @param stdClass $data the form data to be modified.
      */
-    public function data_postprocessing($data)
-    {
+    public function data_postprocessing($data) {
         parent::data_postprocessing($data);
 
         if (isset($data->fieldscsv)) {
@@ -196,11 +193,7 @@ class mod_spromonitor_mod_form extends moodleform_mod
      * @param array $files
      * @return array $errors
      */
-    public function validation($data, $files)
-    {
-        global $USER;
-
-        // Useless: $mform = $this->_form;.
+    public function validation($data, $files) {
 
         $errors = parent::validation($data, $files);
 
