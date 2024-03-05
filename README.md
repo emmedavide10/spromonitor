@@ -1,8 +1,19 @@
-# spromonitor #
+# Spromonitor #
 
-TODO Describe the plugin shortly here.
+# Plugin Monitoring for Moodle ##
 
-TODO Provide more detailed description here.
+**Developer:** Davide Mirra  
+**Project Manager:** Claudia Giacomozzi  
+**Project Name:** C4D  
+**Project Link:** [Spromonitor Module Repository](https://github.com/emmedavide10/spromonitor.git)
+
+## Project Overview ##
+
+The Spromonitor Module, developed by Davide Mirra, is a crucial component for Claudia Giacomozzi's C4D project. This plugin provides advanced monitoring features within the Moodle environment, generating insightful line graphs based on specific input parameters.
+
+## Description ##
+
+The [surveypro module](https://github.com/kordan/moodle-mod_surveypro.git) has been enriched with a simple plotting tool, allowing the monitoring of parameters successively delivered by a compiler at different time points. It is especially useful when a survey is continuously proposed to a compiler to follow the change of one or more parameters. For example, within an intervention on a patient aimed at reducing obesity, a survey might be administered weekly to collect body weight. At each survey submission, the patient (and the clinician) can see graphically the progress and the impact of the intervention on body weight.
 
 ## Installing via uploaded ZIP file ##
 
@@ -27,18 +38,12 @@ Alternatively, you can run
 
 to complete the installation from the command line.
 
+## Contributions ##
+
+We welcome contributions to this project. If you encounter issues or have suggestions, please open an issue in the project's issue tracking system or directly contact the developer, Davide Mirra.
+
 ## License ##
 
-2013 onwards kordan <stringapiccola@gmail.com>
+This project is distributed under the terms of the GNU General Public License version 3 or later. For detailed information, refer to the included LICENSE file in this repository.
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-this program.  If not, see <https://www.gnu.org/licenses/>.
+© 2024 Davide Mirra. All rights reserved.
