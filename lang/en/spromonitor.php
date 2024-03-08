@@ -52,3 +52,5 @@ $string['surveyproid'] = 'Name of the target surveypro';
 $string['titlechart'] = 'Your monitoring data';
 $string['titleformspro'] = 'Select SurveyPro';
 $string['hoverlinktest'] = 'Return to the course';
+$string['dubleidnotallowed'] = 'A monitor pointing the same surveypro has already been created. Please choose a different surveypro.';
+$string['missingfieldscsv'] = 'Select the numerical fields of the surveypro you want to graph.';

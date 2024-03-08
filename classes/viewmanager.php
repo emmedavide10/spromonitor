@@ -25,7 +25,7 @@
 namespace mod_spromonitor;
 
 
-class viewmanage {
+class viewmanager {
 
     /**
      * @var object Course module object.
@@ -77,6 +77,7 @@ class viewmanage {
 
         $spromonitor = $this->spromonitor;
         $cm = $this->cm;
+        $context = $this->context;
 
         $utility = new \mod_spromonitor\utility();
         // Retrieve parameters safely.
@@ -118,9 +119,6 @@ class viewmanage {
             $result = $DB->get_record_sql($sqldata, $fieldate);
             $dateselectedvariable = $result->variable;
         }
-
-        // Set up the Moodle context.
-        $context = \context_course::instance($courseid);
 
         // If the username is not set, use the singlecsv parameter.
         if (!isset($username)) {

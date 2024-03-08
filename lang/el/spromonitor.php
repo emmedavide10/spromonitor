@@ -52,3 +52,5 @@ $string['surveyproid'] = 'Ónoma tou stóchou surveypro';
 $string['titlechart'] = 'Ta dedoména parakoloúthisis';
 $string['titleformspro'] = 'Epiléxte SurveyPro';
 $string['hoverlinktest'] = 'Epistrofí sto máthima';
+$string['dubleidnotallowed'] = 'Échei ídi dimiourgitheí mia othóni pou deíchnei to ídio surveypro. Parakaló epiléxte diaforetikó epangelmatía érevnas.';
+$string['missingfieldscsv'] = 'Epiléxte ta arithmitiká pedía tou surveypro pou thélete na schimatísete grafiká.';

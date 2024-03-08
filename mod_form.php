@@ -33,11 +33,13 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @copyright   2013 onwards kordan <stringapiccola@gmail.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_spromonitor_mod_form extends moodleform_mod {
+class mod_spromonitor_mod_form extends moodleform_mod
+{
     /**
      * Defines form elements
      */
-    public function definition() {
+    public function definition()
+    {
         global $CFG, $COURSE, $DB;
 
         // Check if the form, with a surveyproid onboard, was reloaded.
@@ -178,7 +180,8 @@ class mod_spromonitor_mod_form extends moodleform_mod {
      *
      * @param stdClass $data the form data to be modified.
      */
-    public function data_postprocessing($data) {
+    public function data_postprocessing($data)
+    {
         parent::data_postprocessing($data);
 
         if (isset($data->fieldscsv)) {
@@ -193,15 +196,23 @@ class mod_spromonitor_mod_form extends moodleform_mod {
      * @param array $files
      * @return array $errors
      */
-    public function validation($data, $files) {
-
+    public function validation($data, $files)
+    {
+        global $DB;
+    
         $errors = parent::validation($data, $files);
-
+    
+        $record = $DB->get_record('spromonitor', ['surveyproid' => $data['surveyproid']]);
+    
+        if ($data['instance'] != $record->id) {
+            $errors['fieldscsv'] = get_string('dubleidnotallowed', 'mod_spromonitor');
+        }
+    
         if (empty($data['fieldscsv'])) {
             $errors['fieldscsv'] = get_string('missingfieldscsv', 'mod_spromonitor');
-            return $errors;
         }
-
+    
         return $errors;
     }
+    
 }
