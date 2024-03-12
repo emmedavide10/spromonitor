@@ -34,6 +34,8 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_spromonitor_mod_form extends moodleform_mod {
+
+
     /**
      * Defines form elements
      */
@@ -187,22 +189,66 @@ class mod_spromonitor_mod_form extends moodleform_mod {
     }
 
     /**
-     * Validation.
+     * Validation method for spromonitor module.
      *
-     * @param array $data
-     * @param array $files
-     * @return array $errors
+     * @param array $data Array of data to validate.
+     * @param array $files Array of files to validate.
+     * @return array Array of validation errors.
      */
     public function validation($data, $files) {
         global $DB;
-        $errors = parent::validation($data, $files);
+
+        // Retrieve the record from the database based on surveyproid.
         $record = $DB->get_record('spromonitor', ['surveyproid' => $data['surveyproid']]);
+
+        // Check for pending deletions.
+        if ($this->spromonitor_instance_pending_deletion($data['course'], 'spromonitor', $record->id)) {
+            // Return empty errors array if there are pending deletions.
+            return [];
+        }
+
+        // Continue with validation if there are no pending deletions.
+        $errors = parent::validation($data, $files);
+
+        // Check if the instance ID in the data is different from the retrieved record's ID.
         if ($data['instance'] != $record->id) {
             $errors['fieldscsv'] = get_string('dubleidnotallowed', 'mod_spromonitor');
         }
+
+        // Check if the 'fieldscsv' in data is empty.
         if (empty($data['fieldscsv'])) {
             $errors['fieldscsv'] = get_string('missingfieldscsv', 'mod_spromonitor');
         }
+
         return $errors;
+    }
+
+    /**
+     * Check if a spromonitor instance is pending deletion.
+     *
+     * @param int $courseid Course ID.
+     * @param string $modulename Module name (spromonitor).
+     * @param int $instanceid Instance ID.
+     * @return bool True if pending deletion, false otherwise.
+     */
+    public function spromonitor_instance_pending_deletion($courseid, $modulename, $instanceid) {
+        // Check if any of the required parameters is empty.
+        if (empty($courseid) || empty($modulename) || empty($instanceid)) {
+            return false;
+        }
+
+        // Get fast modinfo for the given course.
+        $modinfo = get_fast_modinfo($courseid);
+
+        // Get instances of the specified module.
+        $instances = $modinfo->get_instances_of($modulename);
+
+        // Check if the instance with the given ID has deletion in progress.
+        if (isset($instances[$instanceid]) && $instances[$instanceid]->deletioninprogress == 1) {
+            return true;
+        }
+
+        // Return false if not pending deletion.
+        return false;
     }
 }
