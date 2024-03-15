@@ -54,3 +54,5 @@ $string['titleformspro'] = 'Seleziona SurveyPro';
 $string['hoverlinktest'] = 'Ritorna al corso';
 $string['dubleidnotallowed'] = 'È già stato creato un monitor che punta allo stesso SurveyPro. Scegli un sondaggio diverso.';
 $string['missingfieldscsv'] = 'Seleziona i campi numerici del SurveyPro che vuoi rappresentare graficamente.';
+$string['selectspro'] = 'Seleziona il Surveypro';
+$string['selectspro'] = 'Seleziona il Surveypro';

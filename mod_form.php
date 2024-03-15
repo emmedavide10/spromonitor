@@ -76,8 +76,10 @@ class mod_spromonitor_mod_form extends moodleform_mod {
         $mform->registerNoSubmitButton('reload');
         $elementgroup = [];
         $elementgroup[] = $mform->createElement('select', $fieldname, get_string($fieldname, 'mod_spromonitor'), $surveysnames);
+        $selectspro = get_string('selectspro', 'mod_spromonitor');
+
         $elementgroup[] = $mform->createElement('submit', 'reload', get_string('reload'));
-        $mform->addGroup($elementgroup, $fieldname . 'group', get_string('reload'), [' '], false);
+        $mform->addGroup($elementgroup, $fieldname . 'group', $selectspro, [' '], false);
         $mform->addHelpButton($fieldname . 'group', $fieldname, 'spromonitor');
         $mform->setType($fieldname, PARAM_INT);
         $mform->_required[] = $fieldname;
@@ -97,7 +99,6 @@ class mod_spromonitor_mod_form extends moodleform_mod {
                 JOIN {surveyprofield_numeric} n ON n.itemid = i.id
                 WHERE i.surveyproid = :surveyproid
                 AND i.plugin = :plugin';
-
             $sqlparams = ['surveyproid' => $sproid, 'plugin' => 'numeric'];
             $records = $DB->get_records_sql($sqlnumeric, $sqlparams);
 
@@ -197,30 +198,31 @@ class mod_spromonitor_mod_form extends moodleform_mod {
      */
     public function validation($data, $files) {
         global $DB;
-
-        // Retrieve the record from the database based on surveyproid.
-        $record = $DB->get_record('spromonitor', ['surveyproid' => $data['surveyproid']]);
-
-        // Check for pending deletions.
-        if ($this->spromonitor_instance_pending_deletion($data['course'], 'spromonitor', $record->id)) {
-            // Return empty errors array if there are pending deletions.
-            return [];
-        }
-
-        // Continue with validation if there are no pending deletions.
+        // Continue with validation.
         $errors = parent::validation($data, $files);
 
-        // Check if the instance ID in the data is different from the retrieved record's ID.
-        if ($data['instance'] != $record->id) {
-            $errors['fieldscsv'] = get_string('dubleidnotallowed', 'mod_spromonitor');
-        }
+        // Retrieve records from the database based on surveyproid.
+        $records = $DB->get_records('spromonitor', ['surveyproid' => $data['surveyproid']]);
+        if ($records) {
+            // Filter out records pending deletion.
+            $foundrecords = [];
+            foreach ($records as $record) {
+                if (!$this->spromonitor_instance_pending_deletion($data['course'], 'spromonitor', $record->id)) {
+                    $foundrecords[] = $record;
+                }
+            }
 
+            if (count($foundrecords) > 1) {
+                // If no valid records remain, return a serious error.
+                $errors['fieldscsv'] = get_string('dubleidnotallowed', 'mod_spromonitor');
+                return $errors;
+            }
+        }
         // Check if the 'fieldscsv' in data is empty.
         if (empty($data['fieldscsv'])) {
             $errors['fieldscsv'] = get_string('missingfieldscsv', 'mod_spromonitor');
+            return $errors;
         }
-
-        return $errors;
     }
 
     /**
