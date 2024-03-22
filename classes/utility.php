@@ -26,46 +26,116 @@ namespace mod_spromonitor;
 
 class utility {
 
+/**
+ * Generates a line chart based on input data arrays.
+ *
+ * @param string $title Optional; The chart title.
+ * @param array $variablesarray An array containing variable names.
+ * @param array $transformedarray An array containing chart data arrays with 'content' and 'timecreated' keys.
+ *
+ * @return string HTML containing the generated chart.
+ *
+ * @since Moodle 3.1
+ * @author Davide Mirra
+ */
+public function generatechart($variablesarray, $transformedarray, $title = ''): string {
 
-    /**
-     * Generates a line chart based on input data arrays.
-     *
-     * @param string $title Optional; The chart title.
-     * @param array $variablesarray An array containing variable names.
-     * @param array $chartdataarray An array containing chart data arrays with 'content' and 'timecreated' keys.
-     *
-     * @return string HTML containing the generated chart.
-     *
-     * @since Moodle 3.1
-     * @author Davide Mirra
-     */
+    global $OUTPUT;
+    // Create chart series for each data array.
+    $chartseries = [];
 
-    public function generatechart($variablesarray, $transformedarray, $title = ''): string {
+    // Convert the input array into the required format for chart generation.
+    $arrayconverted = $this->convertarray($variablesarray, $transformedarray);
 
-        global $OUTPUT;
-        // Create chart series for each data array.
-        $chartseries = [];
-        foreach ($variablesarray as $index => $variable) {
-            $contentarray = $transformedarray[$index]['content'];
-            $timecreatedarray = $transformedarray[$index]['timecreated'];
+    // Revert the converted array back to the original format.
+    $arrayreverted = $this->revertarray($arrayconverted);
 
-            // Create a new chart series for each variable.
-            $chartseries[] = new \core\chart_series($variable, $contentarray);
-        }
-        // Create a new line chart and set its properties.
-        $chart = new \core\chart_line();
-        $chart->set_title($title);
-        $chart->set_legend_options(['position' => 'bottom']);
-        // Add series to the chart in the normal order.
-        foreach ($chartseries as $series) {
-            $chart->add_series($series);
-        }
-        // Set the x-axis labels to the date values in the input arrays.
-        $chart->set_labels($timecreatedarray);
-        // Add spacing between charts (adjust the margin as needed).
-        $charthtml = '<div style="margin-bottom: 7%">' . $OUTPUT->render($chart) . '</div>';
-        return $charthtml;
+    // Iterate through each variable to create chart series.
+    foreach ($variablesarray as $index => $variable) {
+        $contentarray = $arrayreverted[$index]['content'];
+        $timecreatedarray = $arrayreverted[$index]['timecreated'];
+
+        // Create a new chart series for each variable.
+        $chartseries[] = new \core\chart_series($variable, $contentarray);
     }
+    // Create a new line chart and set its properties.
+    $chart = new \core\chart_line();
+    $chart->set_title($title);
+    $chart->set_legend_options(['position' => 'bottom']);
+    // Add series to the chart in the normal order.
+    foreach ($chartseries as $series) {
+        $chart->add_series($series);
+    }
+    // Set the x-axis labels to the date values in the input arrays.
+    $chart->set_labels($timecreatedarray);
+    // Add spacing between charts (adjust the margin as needed).
+    $charthtml = '<div style="margin-bottom: 7%">' . $OUTPUT->render($chart) . '</div>';
+    return $charthtml;
+}
+
+/**
+ * Converts the input array into aggregated format based on date.
+ *
+ * @param array $variablesarray An array containing variable names.
+ * @param array $transformedarray An array containing chart data arrays with 'content' and 'timecreated' keys.
+ *
+ * @return array The converted array in aggregated format.
+ */
+private function convertarray($variablesarray, $transformedarray): array {
+    // Array to store aggregated data based on date.
+    $arrayconverted = [];
+    // Create the aggregated array.
+    foreach ($variablesarray as $index => $variable) {
+        $contentarray = $transformedarray[$index]['content'];
+        $timecreatedarray = $transformedarray[$index]['timecreated'];
+
+        // Aggregate data based on date.
+        foreach ($timecreatedarray as $key => $date) {
+            if (!isset($arrayconverted[$date])) {
+                $arrayconverted[$date] = [];
+            }
+            $arrayconverted[$date][] = $contentarray[$key];
+        }
+    }
+
+    // Function for date comparison to sort the array.
+    $date_compare = function($a, $b) {
+        $dateA = strtotime(str_replace('/', '-', $a));
+        $dateB = strtotime(str_replace('/', '-', $b));
+        return $dateA - $dateB;
+    };
+    
+    // Sort the array based on date key.
+    uksort($arrayconverted, $date_compare);
+    
+    return $arrayconverted;
+}
+
+/**
+ * Reverts the aggregated array back to the original format.
+ *
+ * @param array $arrayconverted The array in aggregated format.
+ *
+ * @return array The reverted array in original format.
+ */
+private function revertarray($arrayconverted): array {
+    // Array to store reverted data.
+    $revertedarray = [];
+    
+    // Iterate through the aggregated array.
+    foreach ($arrayconverted as $date => $contentarray) {
+        foreach ($contentarray as $index => $content) {
+            // Add content to the reverted array.
+            if (!isset($revertedarray[$index])) {
+                $revertedarray[$index] = ['timecreated' => [], 'content' => []];
+            }
+            $revertedarray[$index]['timecreated'][] = $date;
+            $revertedarray[$index]['content'][] = $content;
+        }
+    }
+    
+    return $revertedarray;
+}
 
 
     /**
@@ -198,9 +268,9 @@ class utility {
             $userid = $USER->id;
         }
 
-        $chartdataarray = $this->executequeries($selectedfieldsarray, $selecteddateid, $userid);
+        $arrayconvertedarray = $this->executequeries($selectedfieldsarray, $selecteddateid, $userid);
 
-        $transformedarray = $this->transformarray($chartdataarray);
+        $transformedarray = $this->transformarray($arrayconvertedarray);
 
         // If the user has not completed the survey, display a message.
         if (empty($transformedarray) ) {
@@ -220,11 +290,11 @@ class utility {
     }
 
     /**
-     * This function takes an array of arrays ($chartdataarray) and creates a merged array
+     * This function takes an array of arrays ($arrayconvertedarray) and creates a merged array
      * that contains all the fields needed for each record.
      *
      * @param array $variablesarray An array of arrays containing names of different variables.
-     * @param array $chartdataarray An array of arrays containing data for different variables.
+     * @param array $arrayconvertedarray An array of arrays containing data for different variables.
      * @return array The merged array containing all the fields needed for each record.
      *
      * @since Moodle 3.1
@@ -233,23 +303,30 @@ class utility {
     public function createmergedarray($variablesarray, $transformedarray) {
         // Create an empty array to hold the merged data.
 
+        // Convert the input array into the required format for chart generation.
+        $arrayconverted = $this->convertarray($variablesarray, $transformedarray);
+
+        // Revert the converted array back to the original format.
+        $arrayreverted = $this->revertarray($arrayconverted);
+
         $mergedarray = [];
         // Get the length of any of the arrays (assuming they all have the same length).
-        $lengthdata = count($transformedarray[0]['content']);
+        $lengthdata = count($arrayreverted[0]['content']);
         $lengthvar = count($variablesarray);
         // Iterate through all arrays at once.
         for ($k = 0; $k < $lengthdata; $k++) {
             // Create a new array containing the current elements from all arrays in $transformedarray.
             $elementarray = [];
             // Add the current timecreated element to the new array.
-            $elementarray[] = $transformedarray[0]['timecreated'][$k];
+            $elementarray[] = $arrayreverted[0]['timecreated'][$k];
             for ($j = 0; $j < $lengthvar; $j++) {
                 // Add the current content element for each variable to the new array.
-                $elementarray[] = $transformedarray[$j]['content'][$k];
+                $elementarray[] = $arrayreverted[$j]['content'][$k];
             }
             // Add the new array to the merged array.
             array_push($mergedarray, $elementarray);
         }
+     
         // Return the merged array.
         return $mergedarray;
     }
@@ -384,16 +461,16 @@ class utility {
     /**
      * Transforms an array of chart data into a structured format suitable for rendering a chart.
      *
-     * @param array $chartdataarray An array containing chart data, each element having keys
+     * @param array $arrayconvertedarray An array containing chart data, each element having keys
      * like 'itemid', 'timecreated', and 'content'.
      * @return array The transformed array structure, where each item is represented with 'timecreated' and 'content' arrays.
      */
-    public function transformarray($chartdataarray) {
+    public function transformarray($arrayconvertedarray) {
         // Initialize an empty array to store the transformed data.
         $transformedarray = [];
 
         // Loop through each element in the input chart data array.
-        foreach ($chartdataarray as $data) {
+        foreach ($arrayconvertedarray as $data) {
             // Extract relevant data from the current element.
             $itemid = $data['itemid'];
             $timecreated = date('d/m/Y', (int)$data['timecreated']); // Convert the timestamp to a readable date.

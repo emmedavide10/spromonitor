@@ -70,7 +70,7 @@ class mod_spromonitor_mod_form extends moodleform_mod {
         $fieldname = 'modulesettinghdr';
         $mform->addElement('header', $fieldname, get_string($fieldname, 'mod_spromonitor'));
 
-        // Adding a select to get the linked surveypro.
+        // Adding a select to get a surveypro to link.
         $fieldname = 'surveyproid';
         $surveysnames = $DB->get_records_menu('surveypro', ['course' => $COURSE->id], 'name', 'id, name');
         $mform->registerNoSubmitButton('reload');
@@ -80,7 +80,7 @@ class mod_spromonitor_mod_form extends moodleform_mod {
 
         $elementgroup[] = $mform->createElement('submit', 'reload', get_string('reload'));
         $mform->addGroup($elementgroup, $fieldname . 'group', $selectspro, [' '], false);
-        $mform->addHelpButton($fieldname . 'group', $fieldname, 'spromonitor');
+        $mform->addHelpButton($fieldname.'group', $fieldname, 'spromonitor');
         $mform->setType($fieldname, PARAM_INT);
         $mform->_required[] = $fieldname;
 
@@ -198,59 +198,36 @@ class mod_spromonitor_mod_form extends moodleform_mod {
      */
     public function validation($data, $files) {
         global $DB;
+
         // Continue with validation.
         $errors = parent::validation($data, $files);
 
         // Retrieve records from the database based on surveyproid.
         $records = $DB->get_records('spromonitor', ['surveyproid' => $data['surveyproid']]);
-        if ($records) {
+        if (count($records)) {
             // Filter out records pending deletion.
             $foundrecords = [];
             foreach ($records as $record) {
-                if (!$this->spromonitor_instance_pending_deletion($data['course'], 'spromonitor', $record->id)) {
+                if (!course_module_instance_pending_deletion($data['course'], 'spromonitor', $record->id)) {
                     $foundrecords[] = $record;
                 }
             }
 
-            if (count($foundrecords) > 1) {
+            $allowedrecords = empty($data['coursemodule']) ? 0 : 1;
+            if (count($foundrecords) > $allowedrecords) {
+
                 // If no valid records remain, return a serious error.
-                $errors['fieldscsv'] = get_string('dubleidnotallowed', 'mod_spromonitor');
+                $errors['surveyproidgroup'] = get_string('dubleidnotallowed', 'mod_spromonitor');
                 return $errors;
             }
         }
+
         // Check if the 'fieldscsv' in data is empty.
         if (empty($data['fieldscsv'])) {
-            $errors['fieldscsv'] = get_string('missingfieldscsv', 'mod_spromonitor');
+            $errors['surveyproidgroup'] = get_string('missingfieldscsv', 'mod_spromonitor');
             return $errors;
         }
-    }
 
-    /**
-     * Check if a spromonitor instance is pending deletion.
-     *
-     * @param int $courseid Course ID.
-     * @param string $modulename Module name (spromonitor).
-     * @param int $instanceid Instance ID.
-     * @return bool True if pending deletion, false otherwise.
-     */
-    public function spromonitor_instance_pending_deletion($courseid, $modulename, $instanceid) {
-        // Check if any of the required parameters is empty.
-        if (empty($courseid) || empty($modulename) || empty($instanceid)) {
-            return false;
-        }
-
-        // Get fast modinfo for the given course.
-        $modinfo = get_fast_modinfo($courseid);
-
-        // Get instances of the specified module.
-        $instances = $modinfo->get_instances_of($modulename);
-
-        // Check if the instance with the given ID has deletion in progress.
-        if (isset($instances[$instanceid]) && $instances[$instanceid]->deletioninprogress == 1) {
-            return true;
-        }
-
-        // Return false if not pending deletion.
-        return false;
+        return $errors;
     }
 }

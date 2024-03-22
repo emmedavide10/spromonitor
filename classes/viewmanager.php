@@ -73,18 +73,18 @@ class viewmanager {
      * @return void
      */
     public function display_chart() {
+
         global $DB, $PAGE, $CFG;
 
         $spromonitor = $this->spromonitor;
         $cm = $this->cm;
         $context = $this->context;
-
+        
         $utility = new \mod_spromonitor\utility();
         // Retrieve parameters safely.
         $username = optional_param('username', null, PARAM_TEXT);
         $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
         $courseid = $spromonitor->course;
-        $sproid = $spromonitor->surveyproid;
         $selectedfieldsid = $spromonitor->fieldscsv;
         $selecteddateid = $spromonitor->measuredateid;
 
@@ -175,15 +175,6 @@ class viewmanager {
         $idcourse = ['courseid' => $courseid];
         $queryusers = $DB->get_records_sql($sqlusers, $idcourse);
 
-        $querycountusers = 'SELECT count(*) as num
-                            FROM {role_assignments} ra
-                            JOIN {user} u on u.id = ra.userid
-                            JOIN {context} ctx ON ctx.id = ra.contextid
-                            WHERE ctx.instanceid = :courseid';
-        $idcourse = ['courseid' => $courseid];
-        $resultcountuser = $DB->get_record_sql($querycountusers, $idcourse);
-        $numuser = $resultcountuser->num;
-
         // Other variables and strings.
         $datedefault = get_string('date', 'spromonitor');
         $clinicaldata = get_string('clinicaldata', 'spromonitor');
@@ -193,7 +184,7 @@ class viewmanager {
         $titlechart = get_string('titlechart', 'spromonitor');
         $messageemptychart = get_string('messageemptychart', 'spromonitor');
         $csvgen = get_string('csvgen', 'spromonitor');
-        $goback = get_string('goback', 'spromonitor');
+        //$goback = get_string('goback', 'spromonitor');
 
         $datevariable = '';
 
@@ -327,13 +318,5 @@ class viewmanager {
                 $utility->rendermustachefile('templates/templatecsv.mustache', $data);
             }
         }
-
-        // Prepare data for the calendar and back button template.
-        $data = [
-            'goback' => $goback,
-        ];
-
-        // Redirect to calendar.
-        $utility->rendermustachefile('templates/templatecalendarandbb.mustache', $data);
     }
 }
