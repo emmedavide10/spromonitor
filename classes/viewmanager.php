@@ -79,11 +79,29 @@ class viewmanager {
         $spromonitor = $this->spromonitor;
         $cm = $this->cm;
         $context = $this->context;
-        
+
+        // Set up URL parameters for the page.
+        $paramsurl['id'] = $cm->id;
+
+        // Set up the Moodle page.
+        $PAGE->set_context($context);
+        $PAGE->set_url('/mod/spromonitor/view.php', $paramsurl);
+        $PAGE->set_pagelayout('standard');
+
+        // Include necessary JavaScript for Chart.js.
+        $PAGE->requires->js_call_amd(
+            'core/first',
+            'require',
+            ['charts/chartjs/Chart.min', 'Chart'],
+            ['exports' => 'Chart'],
+            true
+        );
+
         $utility = new \mod_spromonitor\utility();
         // Retrieve parameters safely.
         $username = optional_param('username', null, PARAM_TEXT);
         $singlecsv = optional_param('singlecsv', null, PARAM_TEXT);
+
         $courseid = $spromonitor->course;
         $selectedfieldsid = $spromonitor->fieldscsv;
         $selecteddateid = $spromonitor->measuredateid;
@@ -128,23 +146,6 @@ class viewmanager {
         // Get the page title.
         $pagetitle = get_string('pagetitle', 'spromonitor');
 
-        // Set up URL parameters for the page.
-        $paramsurl['id'] = $cm->id;
-
-        // Set up the Moodle page.
-        $PAGE->set_context($context);
-        $PAGE->set_url('/mod/spromonitor/view.php', $paramsurl);
-        $PAGE->set_pagelayout('standard');
-
-        // Include necessary JavaScript for Chart.js.
-        $PAGE->requires->js_call_amd(
-            'core/first',
-            'require',
-            ['charts/chartjs/Chart.min', 'Chart'],
-            ['exports' => 'Chart'],
-            true
-        );
-
         // Set up URL for the course dashboard.
         $paramurl['id'] = $courseid;
         $paramurl['section'] = 0;
@@ -153,7 +154,7 @@ class viewmanager {
         $coursename = $course->fullname;
         $hoverlinktest = get_string('hoverlinktest', 'spromonitor');
 
-          // Data for the header template.
+        // Data for the header template.
         $dataheader = [
             'pagetitle' => $pagetitle,
             'urldashboard' => $urldashboard,
@@ -184,7 +185,6 @@ class viewmanager {
         $titlechart = get_string('titlechart', 'spromonitor');
         $messageemptychart = get_string('messageemptychart', 'spromonitor');
         $csvgen = get_string('csvgen', 'spromonitor');
-        //$goback = get_string('goback', 'spromonitor');
 
         $datevariable = '';
 
@@ -209,6 +209,21 @@ class viewmanager {
                 null
             );
         } else {
+
+            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+                $url = "https://";
+            } else {
+                $url = "http://";
+            }
+
+            // Append the host(domain name, ip) to the URL.
+            $url .= $_SERVER['HTTP_HOST'];
+            // Append the requested resource location to the URL.
+            $url .= $_SERVER['REQUEST_URI'];
+            if (!strpos($url , 'id=')) {
+                $url .= "?id=". $_SESSION['monitorid'];
+            }
+
             // Prepare data for the search bar template.
             $data = [
                 'searchusername' => $searchusername,
@@ -217,6 +232,7 @@ class viewmanager {
                 'search' => $search,
                 'courseid' => $courseid,
                 'selectedfields' => $selectedfieldsid,
+                'url' => $url,
             ];
 
             // Render the search bar template.

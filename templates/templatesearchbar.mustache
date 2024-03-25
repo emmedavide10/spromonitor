@@ -9,6 +9,7 @@
 </head>
 
 <body>
+
     <!-- Container for the search bar -->
     <div id="searchbar">
         <!-- Navigation bar with light background and content alignment -->
@@ -16,7 +17,7 @@
             <!-- Navbar brand for displaying search username -->
             <a class="navbar-brand">{{searchusername}}</a>
             <!-- Form for searching users -->
-            <form class="form-inline" method="post" action="">
+            <form class="form-inline" method="post" action="{{url}}">
                 <!-- Hidden input for course ID -->
                 <input type="hidden" name="courseid" value="{{courseid}}">
                 <!-- Hidden input for selected fields -->
@@ -34,3 +35,5 @@
 </body>
 
 </html>
+
+
