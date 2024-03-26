@@ -210,20 +210,13 @@ class viewmanager {
             );
         } else {
 
-            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
-                $url = "https://";
-            } else {
-                $url = "http://";
-            }
+            // Construct the base URL (protocol + domain name).
+            $useHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+            $url = ($useHttps ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-            // Append the host(domain name, ip) to the URL.
-            $url .= $_SERVER['HTTP_HOST'];
-            // Append the requested resource location to the URL.
-            $url .= $_SERVER['REQUEST_URI'];
-            if (!strpos($url , 'id=')) {
-                $url .= "?id=". $_SESSION['monitorid'];
-            }
-
+            // Efficiently handle the optional "id" parameter.
+            $url .= strpos($url, 'id=') !== false ? '' : "?id=" . ($_SESSION['monitorid'] ?? '');
+            
             // Prepare data for the search bar template.
             $data = [
                 'searchusername' => $searchusername,
