@@ -76,12 +76,13 @@ class viewmanager {
 
         global $DB, $PAGE, $CFG;
 
+        $id = optional_param('id', 0, PARAM_INT); // Form page number.
+
         $spromonitor = $this->spromonitor;
-        $cm = $this->cm;
         $context = $this->context;
 
         // Set up URL parameters for the page.
-        $paramsurl['id'] = $cm->id;
+        $paramsurl['id'] = $id;
 
         // Set up the Moodle page.
         $PAGE->set_context($context);
@@ -210,13 +211,8 @@ class viewmanager {
             );
         } else {
 
-            // Construct the base URL (protocol + domain name).
-            $useHttps = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
-            $url = ($useHttps ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            $url = $utility->geturlwithidparam();
 
-            // Efficiently handle the optional "id" parameter.
-            $url .= strpos($url, 'id=') !== false ? '' : "?id=" . ($_SESSION['monitorid'] ?? '');
-            
             // Prepare data for the search bar template.
             $data = [
                 'searchusername' => $searchusername,

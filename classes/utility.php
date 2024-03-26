@@ -518,4 +518,30 @@ class utility {
         // Reset array keys to ensure a numerically indexed array.
         return array_values($transformedarray);
     }
+
+    /**
+     * Retrieves the current URL with the 'id' parameter if available.
+     *
+     * @return string The current URL with the 'id' parameter appended.
+     */
+    public function geturlwithidparam(){
+        // Determine protocol, Host and URI.
+        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
+        $host = $_SERVER['HTTP_HOST'];
+        $uri = $_SERVER['REQUEST_URI'];
+
+        // Determine idparam.
+        $idparam = isset($_GET['id']) ? 'id=' . urlencode($_GET['id']) : (isset($_POST['id']) ? 'id=' . urlencode($_POST['id']) : '');
+
+        // Construct full URL.
+        $fullurl = $protocol . $host . $uri;
+        
+        // Append 'id' parameter if found.
+        if (!empty($idparam)) {
+            $fullurl .= '?' . $idparam;
+        }
+        
+        return $fullurl;
+    }
+
 }
