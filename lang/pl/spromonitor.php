@@ -55,3 +55,4 @@ $string['hoverlinktest'] = 'Wróć do kursu';
 $string['dubleidnotallowed'] = 'Utworzono już monitor wskazujący tę samą ankietę. Proszę wybrać innego dostawcę ankiety.';
 $string['missingfieldscsv'] = 'Wybierz pola numeryczne ankiety, które chcesz przedstawić na wykresie.';
 $string['selectspro'] = 'Wybierz Surveypro';
+$string['creationdate'] = 'Data utworzenia';

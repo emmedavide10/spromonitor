@@ -74,7 +74,6 @@ class mod_spromonitor_mod_form extends moodleform_mod {
         $fieldname = 'surveyproid';
         $surveysnames = $DB->get_records_menu('surveypro', ['course' => $COURSE->id], 'name', 'id, name');
         $mform->registerNoSubmitButton('reload');
-        $elementgroup = [];
         $elementgroup[] = $mform->createElement('select', $fieldname, get_string($fieldname, 'mod_spromonitor'), $surveysnames);
         $selectspro = get_string('selectspro', 'mod_spromonitor');
 
@@ -139,18 +138,17 @@ class mod_spromonitor_mod_form extends moodleform_mod {
                 $records = $DB->get_records_sql($sqldate, $sqlparams);
 
                 if ($records) {
-                    $options = [];
+                    // Add "Creation date" as the first element in the options array.
+                    $options = ['0' => get_string('creationdate', 'mod_spromonitor')];
                     foreach ($records as $record) {
                         $datefield[$record->id] = $record->variable;
                     }
+                    // Merge the options array with the date array.
+                    $datefield = $options + $datefield;
                     $mform->addElement('select', $fieldname, get_string($fieldname, 'mod_spromonitor'), $datefield);
                 } else {
                     $content = \html_writer::start_tag('div', ['class' => 'fitem']);
-                    $content .= \html_writer::start_tag(
-                        'div',
-
-                        ['class' => 'fstatic fullwidth label_static']
-                    );
+                    $content .= \html_writer::start_tag('div', ['class' => 'fstatic fullwidth label_static']);
                     $content .= get_string('missingdate', 'mod_spromonitor');
                     $content .= \html_writer::end_tag('div');
                     $content .= \html_writer::end_tag('div');

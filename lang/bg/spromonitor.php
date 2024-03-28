@@ -55,3 +55,4 @@ $string['hoverlinktest'] = 'Vrŭshtane kŭm kursa';
 $string['dubleidnotallowed'] = 'Veche e sŭzdaden monitor, sochesht kŭm sŭshtiya surveypro. Molya, izberete razlichno prouchvane.';
 $string['missingfieldscsv'] = 'Izberete chislovite poleta na surveypro, koito iskate da izobrazite v grafika.';
 $string['selectspro'] = 'Izberete Surveypro';
+$string['creationdate'] = 'Data na sŭzdavane';

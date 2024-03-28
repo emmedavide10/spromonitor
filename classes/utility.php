@@ -27,23 +27,64 @@ namespace mod_spromonitor;
 class utility {
 
     /**
-     * Check if all elements in the given array are equal.
-     * @return bool True if all elements are equal, false otherwise.
+     * Check if the elements of an array of dates (d/m/Y) are in chronological order.
+     * @param array $dates An array of dates in the format "d/m/Y".
+     * @return bool True if the dates are in chronological order, false otherwise.
      */
-    private function checkequalelements($array) {
-        // If the array is empty, return true since there are no elements to compare.
-        if (empty($array)) {
+    private function checkchronologicalorder($dates) {
+        // If the array is empty or has only one element, it's considered ordered.
+        if (empty($dates) || count($dates) === 1) {
             return true;
         }
-        // Compare each element with the first element of the array.
-        $firstelement = $array[0];
-        foreach ($array as $element) {
-            if ($element !== $firstelement) {
-                return false; // If it finds a different element, return false.
+
+        // Iterate through the array of dates starting from the second element.
+        for ($i = 1; $i < count($dates); $i++) {
+            // Convert the dates in "d/m/Y" format to timestamps for comparison.
+            $currenttimestamp = strtotime(str_replace('/', '-', $dates[$i]));
+            $previoustimestamp = strtotime(str_replace('/', '-', $dates[$i - 1]));
+
+            // If the current date is less than the previous date, it's not in chronological order.
+            if ($currenttimestamp < $previoustimestamp) {
+                return false;
             }
         }
-        return true; // If all elements are equal, return true.
+
+        // If all dates are in chronological order, return true.
+        return true;
     }
+
+    /**
+     * Get the final array for chart generation.
+     * @param array $transformedarray The transformed array.
+     * @param array $variablesarray The variables array.
+     * @return array The final array for chart generation.
+     */
+    private function getfinalarray($transformedarray, $variablesarray) {
+
+        // Extract dates from the transformed array.
+        $dates = $transformedarray[0]['timecreated'];
+
+        // Check if the dates are in chronological order.
+        $checkorderarray = $this->checkchronologicalorder($dates);
+
+        // Initialize chart values array.
+        $chartvaluesarray = [];
+
+        // If dates are not in chronological order, convert and revert the array.
+        if (!$checkorderarray) {
+            // Convert the input array into the required format for chart generation.
+            $arrayconverted = $this->convertarray($variablesarray, $transformedarray);
+            // Revert the converted array back to the original format.
+            $chartvaluesarray = $this->revertarray($arrayconverted);
+        } else {
+            // If dates are in chronological order, use the transformed array as is.
+            $chartvaluesarray = $transformedarray;
+        }
+
+        return $chartvaluesarray;
+    }
+
+
 
     /**
      * Generates a line chart based on input data arrays.
@@ -62,20 +103,8 @@ class utility {
         global $OUTPUT;
         // Create chart series for each data array.
         $chartseries = [];
-        $chartvaluesarray = [];
 
-        $checkfirstdaterray = $this->checkequalelements($transformedarray[0]['timecreated']);
-
-        if (!$checkfirstdaterray) {
-            // Convert the input array into the required format for chart generation.
-            $arrayconverted = $this->convertarray($variablesarray, $transformedarray);
-
-            // Revert the converted array back to the original format.
-            $chartvaluesarray = $this->revertarray($arrayconverted);
-        } else {
-            $chartvaluesarray = $transformedarray;
-        }
-
+        $chartvaluesarray = $this->getfinalarray($transformedarray, $variablesarray);
         // Iterate through each variable to create chart series.
         foreach ($variablesarray as $index => $variable) {
             $contentarray = $chartvaluesarray[$index]['content'];
@@ -84,6 +113,7 @@ class utility {
             // Create a new chart series for each variable.
             $chartseries[] = new \core\chart_series($variable, $contentarray);
         }
+
         // Create a new line chart and set its properties.
         $chart = new \core\chart_line();
         $chart->set_title($title);
@@ -164,7 +194,6 @@ class utility {
         return $revertedarray;
     }
 
-
     /**
      * Executes queries to retrieve data for generating charts.
      *
@@ -213,7 +242,6 @@ class utility {
                     if ($value !== '@@_NOANSW_@@' && is_numeric($value) && $value >= 0) {
                         $date = 0;
 
-                        if (!empty($selecteddateid)) {
                             $querydate = 'SELECT a.content
                                 FROM {surveypro_submission} s
                                 JOIN {surveypro_answer} a ON a.submissionid = s.id
@@ -222,15 +250,11 @@ class utility {
 
                             $resultdate = $DB->get_record_sql($querydate, ['itemid' => $selecteddateid, 'submissionid' => $id]);
 
-                            if ($resultdate->content === '@@_NOANSW_@@') {
-                                $date = 0;
-                            } else {
-                                $date = $resultdate->content;
-                            }
-                        } else {
+                        if ($resultdate->content === '@@_NOANSW_@@' || $resultdate == 0) {
                             $date = $item->timecreated;
+                        } else {
+                            $date = $resultdate->content;
                         }
-
                         // Create an associative array with 'id', 'content', 'timecreated', and 'itemid'.
                         $resultwithfirstdatendid = ['id' => $id, 'content' => $value, 'timecreated' => $date, 'itemid' => $itemid];
                         // Check if the value to search for is present.
@@ -329,26 +353,21 @@ class utility {
      */
     public function createmergedarray($variablesarray, $transformedarray) {
         // Create an empty array to hold the merged data.
-
-        // Convert the input array into the required format for chart generation.
-        $arrayconverted = $this->convertarray($variablesarray, $transformedarray);
-
-        // Revert the converted array back to the original format.
-        $arrayreverted = $this->revertarray($arrayconverted);
-
         $mergedarray = [];
+
+        $chartvaluesarray = $this->getfinalarray($transformedarray, $variablesarray);
         // Get the length of any of the arrays (assuming they all have the same length).
-        $lengthdata = count($arrayreverted[0]['content']);
+        $lengthdata = count($chartvaluesarray[0]['content']);
         $lengthvar = count($variablesarray);
         // Iterate through all arrays at once.
         for ($k = 0; $k < $lengthdata; $k++) {
             // Create a new array containing the current elements from all arrays in $transformedarray.
             $elementarray = [];
             // Add the current timecreated element to the new array.
-            $elementarray[] = $arrayreverted[0]['timecreated'][$k];
+            $elementarray[] = $chartvaluesarray[0]['timecreated'][$k];
             for ($j = 0; $j < $lengthvar; $j++) {
                 // Add the current content element for each variable to the new array.
-                $elementarray[] = $arrayreverted[$j]['content'][$k];
+                $elementarray[] = $chartvaluesarray[$j]['content'][$k];
             }
             // Add the new array to the merged array.
             array_push($mergedarray, $elementarray);
@@ -524,24 +543,22 @@ class utility {
      *
      * @return string The current URL with the 'id' parameter appended.
      */
-    public function geturlwithidparam(){
+    public function geturlwithidparam() {
         // Determine protocol, Host and URI.
         $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https://" : "http://";
         $host = $_SERVER['HTTP_HOST'];
         $uri = $_SERVER['REQUEST_URI'];
 
         // Determine idparam.
-        $idparam = isset($_GET['id']) ? 'id=' . urlencode($_GET['id']) : (isset($_POST['id']) ? 'id=' . urlencode($_POST['id']) : '');
+        $idparam = isset($_GET['id']) ? 'id=' . urlencode($_GET['id']) : (isset($_POST['id'])
+        ? 'id=' . urlencode($_POST['id']) : '');
 
         // Construct full URL.
         $fullurl = $protocol . $host . $uri;
-        
         // Append 'id' parameter if found.
         if (!empty($idparam)) {
             $fullurl .= '?' . $idparam;
         }
-        
         return $fullurl;
     }
-
 }
